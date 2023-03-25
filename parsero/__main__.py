@@ -124,8 +124,8 @@ def lexical_loop(lexical_list):
                         print("Tabela de Símbolos: ")
                         print(result[1])
                         print("Sucesso!")
-                    except LexicalError:
-                        print("Essa palavra não pode ser gerada a partir da gramática")
+                    except LexicalError as e:
+                        print("Essa palavra não pode ser gerada a partir da gramática. Erro: " + str(e))
             case "2":
                 break
             case _:
@@ -605,6 +605,6 @@ def check_ll1(cfg: ContextFreeGrammar) -> bool:
     return True
 
 
-os.system("cls||clear")
+# os.system("cls||clear")
 welcome_message()
 select_analyser()

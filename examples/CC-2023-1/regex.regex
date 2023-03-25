@@ -26,9 +26,7 @@ def:def
 # para elas
 digit: [0-9]
 letter: [a-zA-Z]
-symbols: (_| |!|\=|\&|@|#|$|%|\&|\||\+|-|\&|\*|/|\\|\"|\.|,| |
- | |
- |\{|\}|\<|\>|:|;|\?|\^|\Σ|\→)
+symbols: (_| |!|\=|\&|@|#|$|\%|\&|\||\+|-|\&|\*|'|"|/|\\|\.|,|\[|\]|\(|\)|\{|\}|\<|\>|:|;|\?|\^|\~|\Σ|\→)
 sign: (\+|-)
 decimal: (\.digit*)
 scientific_notation: (e(\+|-)?digit+)
@@ -42,9 +40,6 @@ comma: ,
 colon: :
 semicolon: ;
 backslash: \\
-open_bracket:  closebracket:
-
-open_square_bracket:  closesquarebracket:
 
 open_curly_bracket: \{
 close_curly_bracket: \}
@@ -55,7 +50,9 @@ close_square_bracket: \]
 
 equal: =
 
-
+symbols_string: (_| |!|\=|\&|@|#|$|\%|\&|\||\+|-|\&|\*|'|"|/|\\|\.|,|\[|\]|\(|\)|\{|\}|\<|\>|:|;|\?|\^|\~|\Σ|\→)
+acentuated: (á|à|â|ã|é|ê|í|ó|ô|ú|ü|ç|Á|À|Â|É|Ê|Í|Ó|Ô|Ú|Ü|Ç)
+inside_string: (\w|\d|symbols_string|acentuated)
 string_text: "inside_string*"
 number: (sign?)(digit+)(decimal?)(scientific_notation?)
-ident: letter(letter|digit|_)*
+id: letter(letter|digit|_)*
