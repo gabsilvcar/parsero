@@ -1,4 +1,3 @@
-from . import automata, cfg, common, lexical, machines, regex, syntactic
-from .parser import Parsero
+from . import automata, common, lexical, machines, regex
 
 __version__ = "1.2"
