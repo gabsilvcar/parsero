@@ -1,18 +1,87 @@
-def func1(int A, int B)
-{
-  int SM[2];
-  SM[0] = A + B;
-  SM[1] = B * C;
-  return;
+def selection_sort(int arr[]) {
+    int n = arr.length
+
+    for (int i = 0; i < n-1; i++) {
+        int min_idx = i
+        for (int j = i+1; j < n; j++) {
+            if (arr[j] < arr[min_idx]) {
+                min_idx = j
+            }
+        }
+
+        int temp = arr[min_idx]
+        arr[min_idx] = arr[i]
+        arr[i] = temp
+    }
 }
 
-def principal()
-{
-  int C;
-  int D;
-  int R;
-  C = 4;
-  D = 5;
-  R = func1(C, D);
-  return;
+def void floydWarshall(int n, float dist[n][n]) {
+  int i, j, k;
+
+  for (k = 0; k < n; k++) {
+    for (i = 0; i < n; i++) {
+      for (j = 0; j < n; j++) {
+        if (dist[i][j] > dist[i][k] + dist[k][j]) {
+          dist[i][j] = dist[i][k] + dist[k][j];
+        }
+      }
+    }
+  }
 }
+
+int a[10];
+float b;
+string c = "Hello, world!";
+
+def sum(a, b) {
+    return a + b;
+}
+
+def square(n) {
+    return n * n;
+}
+
+if (a[0] < 10) {
+    print "a[0] é menor que 10";
+} else {
+    print "a[0] é maior ou igual a 10";
+}
+
+for (int i = 0; i < 10; i++) {
+    a[i] = i;
+}
+
+while (b < 100) {
+    b += 10;
+}
+
+int x = 5;
+int y = 3;
+float z = 2.5;
+
+int sum_xy = x + y;
+float diff_zx = z - x;
+float prod_yz = y * z;
+float div_xy = x / y;
+int mod_xy = x % y;
+float neg_z = -z;
+float abs_z = |z|;
+float pow_zx = z ** x;
+
+bool cond1 = (x == y);
+bool cond2 = (x != y);
+bool cond3 = (x < y);
+bool cond4 = (x > y);
+bool cond5 = (x <= y);
+bool cond6 = (x >= y);
+bool cond7 = (x < y && y < z);
+bool cond8 = (x < y || y < z);
+bool cond9 = !(x < y);
+
+read a[5];
+print c;
+
+int s = sum(x, y);
+float t = square(z);
+
+return s;

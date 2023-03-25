@@ -1,19 +1,19 @@
 PROGRAM -> STATEMENT | FUNCLIST
 FUNCLIST -> FUNCDEF FUNCLIST | FUNCDEF
-FUNCDEF -> def ident open_bracket PARAMLIST close_bracket open_curly_bracket STATELIST close_curly_bracket
-PARAMLIST -> SYMBOL ident comma PARAMLIST | SYMBOL ident
+FUNCDEF -> def id open_bracket PARAMLIST close_bracket open_curly_bracket STATELIST close_curly_bracket
+PARAMLIST -> SYMBOL id comma PARAMLIST | SYMBOL id
 
 SYMBOL -> int | float | string
 
 STATEMENT -> VARDECL semicolon | ATRIBSTAT semicolon | PRINTSTAT semicolon | READSTAT semicolon | RETURNSTAT semicolon | IFSTAT | FORSTAT | open_curly_bracket STATELIST close_curly_bracket | break semicolon | semicolon
 
-VARDECL -> SYMBOL ident open_square_bracket int_constant close_square_bracket
+VARDECL -> SYMBOL id open_square_bracket int_constant close_square_bracket
 
 ATRIBSTAT -> LVALUE equal ATRIBSTAT_AUX
 ATRIBSTAT_AUX -> EXPRESSION | ALLOCEXPRESSION | FUNCCALL
 
-FUNCCALL -> ident open_bracket PARAMLISTCALL close_bracket
-PARAMLISTCALL -> ident comma PARAMLISTCALL | ident
+FUNCCALL -> id open_bracket PARAMLISTCALL close_bracket
+PARAMLISTCALL -> id comma PARAMLISTCALL | id
 PRINTSTAT -> print EXPRESSION
 READSTAT -> read LVALUE
 RETURNSTAT -> return
@@ -25,4 +25,4 @@ EXPRESSION -> NUMEXPRESSION  comparator NUMEXPRESSION
 NUMEXPRESSION -> TERM sign TERM
 TERM -> UNARYEXPR -> sign FACTOR
 FACTOR ->  int_constant | float_contant | string_constant | null | LVALUE | open_bracket NUMEXPRESSION close_bracket
-LVALUE -> ident open_square_bracket NUMEXPRESSION close_square_bracket
+LVALUE -> id open_square_bracket NUMEXPRESSION close_square_bracket

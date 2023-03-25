@@ -37,4 +37,68 @@
 
   return;
 }
+
+{
+    def func1(int A, int B)
+    {
+      int SM[2];
+      SM[0] = A + B;
+      SM[1] = B * C;
+      return;
+    }
+
+    def principal()
+    {
+      int C;
+      int D;
+      int R;
+      C = 4;
+      D = 5;
+      R = func1(C, D);
+      return;
+    }
+}
+
+{
+    def factorial(n) {
+        if (n == 0) {
+            return 1;
+        } else {
+            return n * factorial(n-1);
+        }
+    }
+
+    def fibonacci(n) {
+        if (n < 2) {
+            return n;
+        } else {
+            return fibonacci(n-1) + fibonacci(n-2);
+        }
+    }
+
+    int a[5] = {1, 2, 3, 4, 5};
+    string s = "Hello, world!";
+    float x = 3.14159;
+    int i = 0;
+    while (i < 5) {
+        print(a[i] + "\n");
+        i++;
+    }
+    print("Fibonacci numbers: ");
+    for (i = 0; i < 10; i++) {
+        print(fibonacci(i) + " ");
+    }
+    print("\n");
+    if (x > 0) {
+        print("x is positive\n");
+    } else if (x < 0) {
+        print("x is negative\n");
+    } else {
+        print("x is zero\n");
+    }
+    string name = read("What is your name? ");
+    print("Hello, " + name + "!\n");
+    return 0;
+}
+
 }
