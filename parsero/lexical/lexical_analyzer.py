@@ -37,8 +37,10 @@ class LexicalAnalyzer:
         sym_table = SymbolTable()
         tokens = self.tokenize_string(string)
 
-        for word in self.keywords:
-            sym_table.insert(word, word)
+        # add all tokens into the symbols table
+        # as this subject does not consider that, taking it off
+        # for word in self.keywords:
+        #     sym_table.insert(word, word)
 
         for token in tokens:
             if token.name == "id":
