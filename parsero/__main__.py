@@ -1,14 +1,21 @@
 import os
 import tkinter
-from tkinter.filedialog import askopenfilenames
+from tkinter.filedialog import askopenfilename, askopenfilenames
 
 from termcolor import colored
 
 import parsero
 from parsero import *
 from parsero.automata import *
+from parsero.cfg import ContextFreeGrammar
 from parsero.common import LexicalError
 from parsero.lexical import LexicalAnalyzer
+from parsero.syntactic import (
+    calculate_first,
+    calculate_follow,
+    create_table,
+    ll1_parse,
+)
 
 
 def welcome_message():
@@ -20,8 +27,11 @@ def select_analyser():
         print("Selecione o analisador a ser usado:")
         print("(0) Automatos Finitos")
         print("(1) Expressões Regulares")
-        print("(2) Analisador Léxico")
-        print("(3) Encerrar Execução")
+        print("(2) Gramáticas Livres de Contexto")
+        print("(3) Analisador Léxico")
+        print("(4) Analisador Sintático")
+        print("(5) Parsero")
+        print("(6) Encerrar Execução")
         selected = number_input()
         match selected:
             case "0":
@@ -40,11 +50,44 @@ def select_analyser():
                     if not boolean_select():
                         break
             case "2":
-                lexical_cli()
+                cfg_cli()
             case "3":
+                lexical_cli()
+            case "4":
+                syntactic()
+            case "5":
+                parsero_cli()
+            case "6":
                 break
             case _:
                 invalid_command()
+
+
+def parsero_cli():
+    while True:
+        print("Forneça a expressão regular")
+        tkinter.Tk().withdraw()
+        filename_regex = askopenfilename(
+            filetypes=[("Expressões Regulares", ".regex")], initialdir="examples"
+        )
+        print("Forneça a gramática livre de contexto")
+        tkinter.Tk().withdraw()
+        filename_ghm = askopenfilename(
+            filetypes=[("Gramáticas Livres de Contexto", ".ghm .cfg")], initialdir="examples"
+        )
+        print("Tratar gramática?")
+        result = boolean_select()
+        parsero_obj = Parsero(filename_regex, filename_ghm, result)
+        while True:
+            print("Forneça o arquivo para analisar")
+            filename_word = askopenfilename(filetypes=[("All Files", "*")], initialdir="examples")
+            print(parsero_obj.highlight(filename_word))
+            print("Continuar com o mesmo parser?")
+            if not boolean_select():
+                break
+        print("Carregar novo parser?")
+        if not boolean_select():
+            break
 
 
 def lexical_cli():
@@ -82,8 +125,78 @@ def lexical_loop(lexical_list):
                         print(result[1])
                         print("Sucesso!")
                     except LexicalError as e:
-                        print("Essa palavra não pode ser gerada a partir das definições regulares. Erro: " + str(e))
+                        print("Essa palavra não pode ser gerada a partir da gramática. Erro: " + str(e))
             case "2":
+                break
+            case _:
+                invalid_command()
+
+
+def cfg_cli():
+    files = select_files([("Gramáticas Livres de Contexto", ".ghm .cfg")])
+    cfg_list = load_cfgs(files)
+    if cfg_list:
+        cfg_loop(cfg_list)
+    else:
+        pass
+
+
+def cfg_loop(cfg_list):
+    while True:
+        print("Selecione uma operação:")
+        print("(0) Exibir gramática")
+        print("(1) Remover &-transições")
+        print("(2) Remover produções unitárias")
+        print("(3) Remover símbolos inalcançáveis")
+        print("(4) Remover símbolos não produtivos")
+        print("(5) Remover símbolos inúteis")
+        print("(6) Remover recursão à esquerda")
+        print("(7) Fatorar gramática")
+        print("(8) Salvar gramática")
+        print("(9) Voltar para o menu")
+
+        selected = number_input()
+        match selected:
+            case "0":
+                show_glc(cfg_list)
+            case "1":
+                show_glc_list(cfg_list)
+                selected = select_single_cfg(cfg_list)
+                cfg_list[int(selected)].refactor_epsilon_free()
+                print(cfg_list[int(selected)])
+            case "2":
+                show_glc_list(cfg_list)
+                selected = select_single_cfg(cfg_list)
+                cfg_list[int(selected)].refactor_unitary_productions()
+                print(cfg_list[int(selected)])
+            case "3":
+                show_glc_list(cfg_list)
+                selected = select_single_cfg(cfg_list)
+                cfg_list[int(selected)].remove_unreachable_symbols()
+                print(cfg_list[int(selected)])
+            case "4":
+                show_glc_list(cfg_list)
+                selected = select_single_cfg(cfg_list)
+                cfg_list[int(selected)].remove_unproductive_symbols()
+                print(cfg_list[int(selected)])
+            case "5":
+                show_glc_list(cfg_list)
+                selected = select_single_cfg(cfg_list)
+                cfg_list[int(selected)].remove_useless_symbols()
+                print(cfg_list[int(selected)])
+            case "6":
+                show_glc_list(cfg_list)
+                selected = select_single_cfg(cfg_list)
+                cfg_list[int(selected)].refactor_left_recursion()
+                print(cfg_list[int(selected)])
+            case "7":
+                show_glc_list(cfg_list)
+                selected = select_single_cfg(cfg_list)
+                cfg_list[int(selected)].left_factor()
+                print(cfg_list[int(selected)])
+            case "8":
+                save_glc(cfg_list)
+            case "9":
                 break
             case _:
                 invalid_command()
@@ -132,6 +245,16 @@ def save_automata(built: list):
     print("Arquivo salvo com sucesso!")
 
 
+def save_glc(built: list):
+    if len(built) > 1:
+        pos = select_single_cfg(built)
+    else:
+        pos = 0
+    filename = input("Forneça o nome do arquivo. Ex: pasta/nome.glc: ")
+    built[pos].to_file(filename)
+    print("Arquivo salvo com sucesso!")
+
+
 def unite(built: list):
     print("Selecione uma operação:")
     print("(0) Unir dois")
@@ -177,6 +300,12 @@ def show_automata(built: list):
     print(built[int(selected)])
 
 
+def show_glc(built: list):
+    show_glc_list(built)
+    selected = number_input()
+    print(built[int(selected)])
+
+
 def show_automata_list(built: list):
     match len(built):
         case 0:
@@ -185,6 +314,16 @@ def show_automata_list(built: list):
             print("Automato finito carregado [0]")
         case _:
             print("Automatos finitos carregados [0, ..., {}]".format(len(built) - 1))
+
+
+def show_glc_list(built: list):
+    match len(built):
+        case 0:
+            file_not_valid()
+        case 1:
+            print("Gramática Livre de Contexto carregada [0]")
+        case _:
+            print("Gramáticas Livres de Contexto carregadas [0, ..., {}]".format(len(built) - 1))
 
 
 def show_regex_list(built: list):
@@ -220,6 +359,19 @@ def select_single_automata(built) -> int:
         selected = number_input()
         print(selected)
         print("Você deseja selecionar este automato?")
+        if boolean_select():
+            return int(selected)
+
+
+def select_single_cfg(built) -> int:
+    if len(built) == 1:
+        return 0
+
+    print("Selecione a gramática para fazer uma operação:")
+    while True:
+        selected = number_input()
+        print(selected)
+        print("Você deseja selecionar esta gramática?")
         if boolean_select():
             return int(selected)
 
@@ -279,6 +431,137 @@ def determinize_automata(built: list) -> list:
     return built
 
 
+def syntactic():
+    files = select_files([("Gramáticas Livres de Contexto", ".ghm .cfg")])
+    cfg_list = load_cfgs(files)
+    if cfg_list:
+        syntactic_loop(cfg_list)
+    else:
+        pass
+
+
+def select_glc(cfg_list) -> int:
+    print("Selecione a GLC para fazer uma operação:")
+    while True:
+        selected = number_input()
+        print(selected)
+        print("Você deseja selecionar este automato?")
+        if boolean_select():
+            return int(selected)
+
+
+def syntatic_parse(cfg_list):
+    if len(cfg_list) > 1:
+        pos = select_glc(cfg_list)
+    else:
+        pos = 0
+    cfg = cfg_list[pos]
+    print("Terminais: ", cfg.terminal_symbols)
+    word_input = input("Forneça a palavra: ")
+    word = word_input.split(" ")
+    word.append("$")
+    table: dict = create_table(cfg)
+    print(ll1_parse(word, table, cfg))
+
+
+def syntactic_loop(cfg_list):
+    while True:
+        print("Selecione uma operação:")
+        print("(0) Exibir GLC")
+        print("(1) Preparar GLC")
+        print("(2) Parsear LL(1) por entrada")
+        print("(3) Parsear LL(1) por arquivo")
+        print("(4) Mostrar tabela de análise")
+        print("(5) Verificar interseção dos first e follows que derivam epsilon")
+        print("(6) Voltar para o menu")
+
+        selected = number_input()
+        match selected:
+            case "0":
+                show_glc(cfg_list)
+            case "1":
+                pos = select_single_cfg(cfg_list)
+                cfg_list[pos].left_factor()
+                cfg_list[pos].refactor_left_recursion()
+
+                cfg_list[pos].refactor_unitary_productions()
+                cfg_list[pos].remove_useless_symbols()
+                print(cfg_list[pos])
+            case "2":
+                syntatic_parse(cfg_list)
+            case "3":
+                if len(cfg_list) > 1:
+                    pos = select_glc(cfg_list)
+                else:
+                    pos = 0
+                selected_cfg = cfg_list[pos]
+                print("Terminais: ", selected_cfg.terminal_symbols)
+                files = select_files([("All Files", "*")])
+                for filename in files:
+                    with open(filename, "r") as file:
+                        table: dict = create_table(selected_cfg)
+                        word = file.read().split(" ")
+                        word.append("$")
+                        print(ll1_parse(word, table, selected_cfg))
+            case "4":
+                pos = select_single_cfg(cfg_list)
+                selected_cfg = cfg_list[pos]
+                table: dict = create_table(selected_cfg)
+                order = list(selected_cfg.terminal_symbols)
+                flattened = dict()
+                non_terminals = list(selected_cfg.non_terminal_symbols)
+                for non_term in non_terminals:
+                    flat = []
+                    for i in range(len(order)):
+                        if (non_term, order[i]) in table:
+                            flat.append(table[(non_term, order[i])])
+                        else:
+                            flat.append("/")
+                    flattened[non_term] = flat
+                print(
+                    tabulate(
+                        [
+                            [
+                                k,
+                            ]
+                            + v
+                            for k, v in flattened.items()
+                        ],
+                        headers=order,
+                        tablefmt="fancy_grid",
+                    )
+                )
+
+            case "5":
+                pos = select_single_cfg(cfg_list)
+                if check_ll1(cfg_list[pos]):
+                    print(colored("Esta gramática é LL1", "green"))
+                else:
+                    print(
+                        colored(
+                            "ERRO! Esta gramática não é LL1, a interseção dos firsts e follows dos"
+                            "não terminais que derivam epsilon não é nula",
+                            "red",
+                        )
+                    )
+            case "6":
+                break
+            case _:
+                invalid_command()
+
+
+def load_cfgs(filenames) -> list:
+    cfg_list = []
+    i = 0
+    for file in filenames:
+        built_cfg = ContextFreeGrammar(file)
+        print(i, ": ", os.path.basename(file))
+        print(built_cfg)
+        i += 1
+        cfg_list.append(built_cfg)
+    return cfg_list
+
+
 def load_lexical(filenames) -> list:
     lexical_list = []
     i = 0
@@ -305,6 +588,21 @@ def wait_user():
 
 def number_input() -> str:
     return input("Formato de entrada: 0, 1, ... n: ")
+
+
+def check_ll1(cfg: ContextFreeGrammar) -> bool:
+    first_dict = calculate_first(cfg)
+    follow_dict = calculate_follow(cfg, first_dict)
+
+    for head, prod in cfg.production_rules.items():
+        for body in prod:
+            if body[0] == "&":
+                intersection = first_dict[head].intersection(follow_dict[head])
+                if intersection:
+                    print(head)
+                    print(intersection)
+                    return False
+    return True
 
 
 # os.system("cls||clear")

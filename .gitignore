@@ -1,7 +1,5 @@
 __pycache__/
 examples/output/
 .idea/
-.github
-.pytest_cache
 
 !examples/output/.gitkeep
