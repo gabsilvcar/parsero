@@ -7,7 +7,9 @@ FUNCDEF -> def id open_bracket PARAMLIST close_bracket open_curly_bracket STATEL
 TYPE -> int | float | string
 PARAMLIST -> TYPE id comma PARAMLIST | TYPE id | &
 
-STATEMENT -> VARDECL semicolon | ATRIBSTAT semicolon | PRINTSTAT semicolon | READSTAT semicolon | RETURNSTAT semicolon | IFSTAT | FORSTAT | open_curly_bracket STATELIST close_curly_bracket | break semicolon | semicolon
+STATEMENT -> IFSTAT | STATEMENT_AUX
+STATEMENT_WITH_ELSE -> else IFSTAT | STATEMENT_AUX | else STATEMENT_AUX
+STATEMENT_AUX -> VARDECL semicolon | ATRIBSTAT semicolon | PRINTSTAT semicolon | READSTAT semicolon | RETURNSTAT semicolon | FORSTAT | open_curly_bracket STATELIST close_curly_bracket | break semicolon | semicolon
 
 VARDECL -> TYPE id VARDECL1
 VARDECL1 -> open_square_bracket int_constant close_square_bracket VARDECL1 | &
@@ -21,8 +23,7 @@ PRINTSTAT -> print EXPRESSION
 READSTAT -> read LVALUE
 RETURNSTAT -> return
 
-IFSTAT -> if open_bracket EXPRESSION close_bracket STATEMENT IFSTAT_AUX
-IFSTAT_AUX -> else STATEMENT | &
+IFSTAT -> if open_bracket EXPRESSION close_bracket STATEMENT_WITH_ELSE
 
 FORSTAT -> for open_bracket ATRIBSTAT semicolon EXPRESSION semicolon ATRIBSTAT close_bracket STATEMENT
 
