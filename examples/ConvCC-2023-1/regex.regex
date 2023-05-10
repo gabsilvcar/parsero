@@ -14,9 +14,6 @@ print:print
 int:int
 float:float
 string:string
-int_constant:int_constant
-float_constant:float_constant
-string_constant:string_constant
 def:def
 
 # Expressões auxiliares
@@ -51,9 +48,11 @@ close_square_bracket: \]
 
 equal: =
 
-symbols_string: (_| |!|\=|\&|@|#|$|\%|\&|\||\+|-|\&|\*|'|"|/|\\|\.|,|\[|\]|\(|\)|\{|\}|\<|\>|:|;|\?|\^|\~|\Σ|\→)
 acentuated: (á|à|â|ã|é|ê|í|ó|ô|ú|ü|ç|Á|À|Â|É|Ê|Í|Ó|Ô|Ú|Ü|Ç)
-inside_string: (\w|\d|symbols_string|acentuated)
+inside_string: (\w|\d|symbols|acentuated)
 string_text: "inside_string*"
-number: (sign?)(digit+)(decimal?)(scientific_notation?)
 id: letter(letter|digit|_)*
+
+int_constant:(sign?)(digit+)
+float_constant:(sign?)(digit+)(decimal)(scientific_notation?)
+string_constant:string_text

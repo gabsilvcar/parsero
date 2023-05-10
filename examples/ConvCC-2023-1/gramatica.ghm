@@ -7,9 +7,15 @@ FUNCDEF -> def id open_bracket PARAMLIST close_bracket open_curly_bracket STATEL
 TYPE -> int | float | string
 PARAMLIST -> TYPE id comma PARAMLIST | TYPE id | &
 
-STATEMENT -> IFSTAT | STATEMENT_AUX
-STATEMENT_WITH_ELSE -> else IFSTAT | STATEMENT_AUX | else STATEMENT_AUX
-STATEMENT_AUX -> VARDECL semicolon | ATRIBSTAT semicolon | PRINTSTAT semicolon | READSTAT semicolon | RETURNSTAT semicolon | FORSTAT | open_curly_bracket STATELIST close_curly_bracket | break semicolon | semicolon
+STATEMENT -> IF_STMT | STATEMENT_AUX
+STATEMENT_AUX -> VARDECL semicolon | ATRIBSTAT semicolon | PRINTSTAT semicolon | READSTAT semicolon | RETURNSTAT semicolon | FORSTAT | open_curly_bracket STATELIST close_curly_bracket | open_curly_bracket FUNCLIST close_curly_bracket | break semicolon | semicolon
+
+IF_STMT -> IF_SIMPLE else STATEMENT_AUX | IF_SIMPLE else IF_STMT | IF_SIMPLE
+IF_SIMPLE -> if open_bracket EXPRESSION close_bracket SIMPE_IF_STATE_AUX
+SIMPE_IF_STATE_AUX -> open_curly_bracket STATELIST close_curly_bracket
+
+# IFSTAT -> if open_bracket EXPRESSION close_bracket STATEMENT_WITH_ELSE
+# STATEMENT_WITH_ELSE -> else IFSTAT | STATEMENT_AUX | else STATEMENT_AUX
 
 VARDECL -> TYPE id VARDECL1
 VARDECL1 -> open_square_bracket int_constant close_square_bracket VARDECL1 | &
@@ -23,8 +29,6 @@ PRINTSTAT -> print EXPRESSION
 READSTAT -> read LVALUE
 RETURNSTAT -> return
 
-IFSTAT -> if open_bracket EXPRESSION close_bracket STATEMENT_WITH_ELSE
-
 FORSTAT -> for open_bracket ATRIBSTAT semicolon EXPRESSION semicolon ATRIBSTAT close_bracket STATEMENT
 
 STATELIST -> STATEMENT STATELIST_AUX
@@ -37,14 +41,14 @@ EXPRESSION -> NUMEXPRESSION EXPRESSION_AUX
 EXPRESSION_AUX -> comparator NUMEXPRESSION | &
 
 NUMEXPRESSION -> TERM NUMEXPRESSION_AUX
-NUMEXPRESSION_AUX -> sign TERM NUMEXPRESSION_AUX | &
+NUMEXPRESSION_AUX -> operator TERM NUMEXPRESSION_AUX | &
 
 TERM -> UNARYEXPR TERM_AUX
 TERM_AUX -> symbol_aux UNARYEXPR TERM_AUX | &
 
 UNARYEXPR -> sign FACTOR | FACTOR
 
-FACTOR ->  int_constant | float_contant | string_constant | null | LVALUE | open_bracket NUMEXPRESSION close_bracket
+FACTOR ->  int_constant | float_constant | string_constant | null | LVALUE | open_bracket NUMEXPRESSION close_bracket
 
 LVALUE -> id LVALUE_AUX
 LVALUE_AUX -> open_square_bracket NUMEXPRESSION close_square_bracket LVALUE_AUX | &
