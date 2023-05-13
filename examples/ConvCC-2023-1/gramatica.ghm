@@ -11,11 +11,8 @@ STATEMENT -> IF_STMT | STATEMENT_AUX
 STATEMENT_AUX -> VARDECL semicolon | ATRIBSTAT semicolon | PRINTSTAT semicolon | READSTAT semicolon | RETURNSTAT semicolon | FORSTAT | open_curly_bracket STATELIST close_curly_bracket | open_curly_bracket FUNCLIST close_curly_bracket | break semicolon | semicolon
 
 IF_STMT -> IF_SIMPLE else STATEMENT_AUX | IF_SIMPLE else IF_STMT | IF_SIMPLE
-IF_SIMPLE -> if open_bracket EXPRESSION close_bracket SIMPE_IF_STATE_AUX
-SIMPE_IF_STATE_AUX -> open_curly_bracket STATELIST close_curly_bracket
-
-# IFSTAT -> if open_bracket EXPRESSION close_bracket STATEMENT_WITH_ELSE
-# STATEMENT_WITH_ELSE -> else IFSTAT | STATEMENT_AUX | else STATEMENT_AUX
+IF_SIMPLE -> if open_bracket EXPRESSION close_bracket SIMPLE_IF_STATE_AUX
+SIMPLE_IF_STATE_AUX -> open_curly_bracket STATELIST close_curly_bracket
 
 VARDECL -> TYPE id VARDECL1
 VARDECL1 -> open_square_bracket int_constant close_square_bracket VARDECL1 | &
