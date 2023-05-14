@@ -1,0 +1,92 @@
+def pow(int n, int e)
+{
+    int output;
+    output = 1;
+    int i;
+
+    for (i = 0; i < e; i = i + 1)
+    {
+        output = output * n;
+    }
+
+    print output;
+
+    return;
+}
+
+def calculate_delta(float a, float b, float c)
+{
+    float delta;
+
+    delta = (b * b) - (4 * a * c);
+
+    if (delta < 0)
+    {
+        print "Sem raiz";
+    }
+
+    if (delta == 0)
+    {
+        print "Uma raiz real";
+    }
+
+    if (delta > 0)
+    {
+        print "Duas raizes distintas";
+    }
+
+    return;
+}
+
+def bhaskara(float a, float b, float c)
+{
+    float x1;
+    float x2;
+
+    if (a == 0)
+    {
+        print "a deve ser diferente de 0";
+        return;
+    }
+
+    float delta;
+
+    delta = (b * b) - (4 * a * c);
+
+    if (delta < 0)
+    {
+        return;
+    }
+
+    if (delta == 0)
+    {
+        b = b * -1;
+        x1 = b / (2 * a);
+
+        print "x = ";
+        print x1;
+
+        return;
+    }
+
+    if (delta > 0)
+    {
+        float sqrt_delta;
+        sqrt_delta = pow(delta, half);
+
+        b = b * -1;
+        divider = 2 * a;
+
+        x1 = (b + sqrt_delta) / divider;
+        x2 = (b - sqrt_delta) / divider;
+
+        print "x1 = ";
+        print x1;
+        print "\n x2 = ";
+        print x2;
+
+        return;
+    }
+
+    return;
+}
