@@ -5,6 +5,12 @@ Parsero is a lexical and syntactic analyzer made from scratch
 The only libraries used are for purposes of managing the project
 and printing tables and other structures more beautifully.
 
+The project have the following members:
+* Anthony Bernardo Kamers (19204700)
+* Gabriel da Silva Cardoso (20100524)
+* Gabriel Holstein Meireles (19102918)
+* Nicole Schmidt (18203344)
+
 In order to install and run this project, it is necessary:
 * Python: at least version 3.10
   * https://www.python.org/downloads/release/python-31010/

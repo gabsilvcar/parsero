@@ -8,6 +8,13 @@ from parsero import *
 
 def welcome_message():
     print(colored("Parsero " + parsero.__version__, "cyan") + "\n")
+    print("""
+        Integrantes do grupo:
+        Anthony Bernardo Kamers (19204700)
+        Gabriel da Silva Cardoso (20100524)
+        Gabriel Holstein Meireles (19102918)
+        Nicole Schmidt (18203344)
+    """)
 
 
 def parsero_cli():
