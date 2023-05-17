@@ -90,3 +90,18 @@ def bhaskara(float a, float b, float c)
 
     return;
 }
+
+def termial(int teste)
+{
+    int result;
+    if (teste == 0) {
+        result = 0;
+        return;
+    }
+    int x;
+    int aux;
+    aux = teste - 1;
+    x = termial(aux);
+    result = result + x;
+    return;
+}

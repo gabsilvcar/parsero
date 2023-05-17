@@ -15,6 +15,11 @@ In order to install and run this project, it is necessary:
   * `sudo apt install python3-tk`
   * `sudo pacman -S tk` or `sudo pacman -S tk-dev` 
 
+The project is started using the default regex and grammar files, located in
+`examples/ConvCC-2023-1`, requested by the teacher. You can normally change the
+locations in the code, in `parsero/__main__.py` in lines 14 and 15 or change
+directly the files in the examples folder.
+
 ## Execution
 
 The dependencies of this project are managed with poetry. Learn about it in https://python-poetry.org/.
@@ -27,35 +32,9 @@ The dependencies of this project are managed with poetry. Learn about it in http
 
     make
 
-## Testing the lexical analyzer for INE5426
-The grammar and regex from this semester are called: CC-2023-1.
-In order to test the execution of Parsero, there are 3 example
-files in `examples/CC-2023-1/`, starting with the name: `exemplo`.
-
-### Testing
-Step by Step to test the application:
-* make
-* 2
-* select the regex file, located in `examples/CC-2023-1/regex.regex`
-* n
-* 1
-* select some of the example files in `examples/CC-2023-1/exemplo*`
-* n
-
-That's it, the symbol table, as well as the tokens list will
-be presented into the terminal.
-
-To close the application properly from this point:
-* 2
-* 3
-
 ## Developer Tools
 
 **Fix your code formating:**
 
     make format
-
-**Execute tests:**
-
-    make test
 

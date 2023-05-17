@@ -44,7 +44,29 @@
       int SM[2];
       SM[0] = A + B;
       SM[1] = B * C;
+      int teste;
+      int a;
+      int b;
+      a = 1;
+      b = 2;
+      teste = func1(a, b);
       return;
+    }
+
+    def factorial(int n)
+    {
+        int result;
+        if (n == 0) {
+            result = 1;
+            return;
+        } else {
+            int teste;
+            int aux;
+            aux = n - 1;
+            teste = factorial(aux);
+            result = n * teste;
+            return;
+        }
     }
 
     def principal()
@@ -64,6 +86,7 @@
     x = 3.14159;
     int i;
     i = 0;
+
     print("\n");
     if (x > 0) {
         print("x is positive\n");
