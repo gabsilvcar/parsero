@@ -28,6 +28,11 @@ class ContextFreeGrammar:
                 production_head = production_pieces[0].strip()
                 non_terminal_symbols.add(production_head)
 
+                if "{" in production_pieces[1]:
+                    semantic_pieces = production_pieces[1].split("{", 1)
+                    production_pieces[1] = semantic_pieces[0]
+                    semantic_pieces = semantic_pieces[1][:-1]
+
                 if initial_symbol == "":
                     initial_symbol = production_head
 
@@ -48,16 +53,17 @@ class ContextFreeGrammar:
                 if entry:
                     lentry = list(entry)
                     lentry[1] += production_rule
+                    lentry[2].append(semantic_pieces)
                     productions[productions.index(entry)] = lentry
                 else:
-                    productions.append((production_head, production_rule))
+                    productions.append((production_head, production_rule, [semantic_pieces]))
 
         terminal_symbols = all_symbols - non_terminal_symbols
 
         self.non_terminal_symbols = non_terminal_symbols
         self.terminal_symbols = terminal_symbols
         self.initial_symbol = initial_symbol
-        self.production_rules = self.__create_production_rule(productions)
+        self.__create_production_rule(productions)
         self.original_symbol = dict()
 
         self.__sort_productions()
@@ -68,11 +74,18 @@ class ContextFreeGrammar:
         """
 
         production_rules = defaultdict(list)
+        semantic_rules = defaultdict(lambda: defaultdict(list))
 
-        for symbol, production in productions:
+        for symbol, production, semantic_rule in productions:
             production_rules[symbol] = production
+            for i in range(0, len(production)):
+                print(production, semantic_rule)
+                semantic_rules[symbol][",".join(str(x) for x in production[i])] = semantic_rule[i]
+        self.production_rules = production_rules
+        self.semantic_rules = semantic_rules
 
-        return production_rules
+    def get_rule(self, head, prod: list):
+        return self.semantic_rules[head][",".join(str(x) for x in prod)]
 
     def __sort_productions(self):
         for productions in self.production_rules.values():
