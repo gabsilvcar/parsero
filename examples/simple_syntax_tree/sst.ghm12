@@ -1,0 +1,24 @@
+E -> T E1
+{
+    E.node = E1.syn;
+    E.syn = T.node;
+}
+
+E1 -> minus T E1 | plus T E1 | &
+{
+
+    E1.inh = new Node('+',E1Prod.inh, T.node)     # Talvez tratar diferente a desambiguação como head[E1] e prod[E1]
+    E1.syn= E1Prod.syn;  # Separador de bloco como semicolon, talvez trocar?
+
+    E1.inh = new Node('-',E1Prod.inh, T.node)
+    E1.syn= E1Prod.syn;
+
+    E1.syn= E1.in
+}
+
+T -> number | id | open_bracket E close_bracket
+{
+    T.node = Leaf(id, id.entry);
+    T.node = Leaf(num.val, num.val);
+    T.node = E1.node
+}

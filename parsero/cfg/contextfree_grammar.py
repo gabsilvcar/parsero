@@ -42,8 +42,15 @@ class ContextFreeGrammar:
                         all_symbols.add(symbol)
 
                     production_rule.append(production)
+                entry: tuple = next((tup for tup in productions if tup[0] == production_head), None)
 
-                productions.append((production_head, production_rule))
+                # Allows declaration of same production head multiple times
+                if entry:
+                    lentry = list(entry)
+                    lentry[1] += production_rule
+                    productions[productions.index(entry)] = lentry
+                else:
+                    productions.append((production_head, production_rule))
 
         terminal_symbols = all_symbols - non_terminal_symbols
 

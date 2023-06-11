@@ -1,0 +1,5 @@
+E -> T E1
+
+E1 -> minus T E1 | plus T E1 | &
+
+T -> number | id | open_bracket E close_bracket
