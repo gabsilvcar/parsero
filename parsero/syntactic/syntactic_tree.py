@@ -43,8 +43,8 @@ class Node(Element):
             ret += child.__str__(level + 1)
         return ret
 
-    def find(self, head: str, desired_level=0, current_level=0):
-        if self.val == head and desired_level == current_level:
+    def find(self, head: str, desired_level=None, current_level=0):
+        if self.val == head and (not desired_level or desired_level == current_level):
             return self
         if len(self.children) == 0:
             return None
@@ -73,8 +73,8 @@ class SyntacticTree(Node):
             result += str(self.children[i].__str__(1))
         return result
 
-    def find_node(self, head: str, desired_level=0, current_level=0) -> Node:
-        if self.val == head and desired_level == current_level:
+    def find_node(self, head: str, desired_level=None, current_level=0) -> Node:
+        if self.val == head and (not desired_level or desired_level == current_level):
             return self.itself()  # Inheritance in python is fucking strange
         if len(self.children) == 0:
             return None
