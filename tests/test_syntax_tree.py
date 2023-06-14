@@ -4,11 +4,12 @@ from parsero import Parsero
 
 
 def test():
-    path = "examples/simple_syntax_tree/sst"
+    base = "examples/simple_syntax_tree/"
+    path = base + "sst"
     parser = Parsero(
         path + ".regex",
         path + ".ghm12",
-        path + ".py",
+        base + "/semantics/__init__.py",
         False,
     )
     parser.parse(path + ".example")

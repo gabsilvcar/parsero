@@ -1,3 +1,4 @@
+import importlib.util
 from itertools import cycle
 
 from termcolor import colored
@@ -7,6 +8,7 @@ from parsero.cfg.contextfree_grammar import ContextFreeGrammar
 from parsero.common.errors import LexicalError, SyntacticError
 from parsero.lexical import LexicalAnalyzer, Token
 from parsero.syntactic import (
+    SyntacticTree,
     calculate_first,
     calculate_follow,
     ll1_parse,
@@ -15,9 +17,14 @@ from parsero.syntactic import (
 
 
 class Parsero:
-    def __init__(self, regex_path, grammar_path, adapt=True):
+    def __init__(self, regex_path, grammar_path, semantic_path=None, adapt=True):
         self.lexical = LexicalAnalyzer(regex_path)
         self.cfg = ContextFreeGrammar(grammar_path)
+
+        if semantic_path:
+            spec = importlib.util.spec_from_file_location("semantics", semantic_path)
+            semantic_lib = spec.loader.load_module()
+            self.semantic_handler = semantic_lib.Semantics()
 
         if adapt:
             self.adapt_grammar()
@@ -28,7 +35,7 @@ class Parsero:
             msg = "Não foi possível remover a recursão à esquerda desta gramática."
             raise SyntacticError(grammar_path, msg)
 
-    def parse(self, path: str):
+    def parse(self, path: str) -> SyntacticTree:
         with open(path) as file:
             string = file.read()
 
@@ -52,16 +59,14 @@ class Parsero:
                         return False
         return True
 
-    def parse_string(self, string):
+    def parse_string(self, string) -> SyntacticTree:
         string = treat_identation(string)
 
         tokens = self.lexical.tokenize_string(string)
         tokens.append(Token("$", "$"))
-        # print("TOKENS:")
-        # print(tokens)
 
         try:
-            tree = ll1_parse(tokens, self.table, self.cfg)
+            return ll1_parse(tokens, self.table, self.cfg)
         except SyntacticError as error:
             error.data = string
             raise error

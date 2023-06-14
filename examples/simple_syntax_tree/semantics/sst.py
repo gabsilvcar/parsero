@@ -1,6 +1,6 @@
 class Semantics:
     def E(self):
-        pass
+        print("TESTE")
 
     def E1Minus(self):
         pass

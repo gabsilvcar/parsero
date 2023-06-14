@@ -1,9 +1,9 @@
-E -> T E1 {Semantics.E()}
+E -> T E1 {E()}
 
-E1 -> minus T E1 {Semantics.E1Minus()}
-E1 -> plus T E1 {Semantics.E1Plus()}
-E1 -> & {Semantics.E1Epsilon()}
+E1 -> minus T E1 {E1Minus()}
+E1 -> plus T E1 {E1Plus()}
+E1 -> & {E1Epsilon()}
 
-T -> number {Semantics.TNumber()}
-T -> id {Semantics.TId()}
-T -> open_bracket E close_bracket {Semantics.TBrackets()}
+T -> number {TNumber()}
+T -> id {TId()}
+T -> open_bracket E close_bracket {TBrackets()}
