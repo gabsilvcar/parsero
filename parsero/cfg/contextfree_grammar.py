@@ -7,13 +7,13 @@ from parsero.common.errors import SyntacticError
 
 
 class ContextFreeGrammar:
-    def __init__(self, path_to_file):
+    def __init__(self, path_to_file, semantic_path=None):
         all_symbols = set()
         non_terminal_symbols = set()
         productions = list()
         initial_symbol = ""
         self.path_to_file = path_to_file
-
+        self.semantic_path = semantic_path
         with open(path_to_file, "r") as file:
             while line := file.readline():
                 line = line.strip()
@@ -79,7 +79,6 @@ class ContextFreeGrammar:
         for symbol, production, semantic_rule in productions:
             production_rules[symbol] = production
             for i in range(0, len(production)):
-                print(production, semantic_rule)
                 semantic_rules[symbol][",".join(str(x) for x in production[i])] = semantic_rule[i]
         self.production_rules = production_rules
         self.semantic_rules = semantic_rules

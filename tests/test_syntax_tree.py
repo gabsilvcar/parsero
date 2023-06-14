@@ -1,8 +1,14 @@
+import importlib.util
+
 from parsero import Parsero
 
 
 def test():
+    path = "examples/simple_syntax_tree/sst"
     parser = Parsero(
-        f"examples/simple_syntax_tree/sst.regex", f"examples/simple_syntax_tree/sst.ghm12"
+        path + ".regex",
+        path + ".ghm12",
+        path + ".py",
+        False,
     )
-    parser.parse(f"examples/simple_syntax_tree/sst.example")
+    parser.parse(path + ".example")
