@@ -4,12 +4,14 @@ from __future__ import annotations
 class Element:
     def __init__(self, val):
         self.val = val
+        self.struct = None
 
     def __str__(self):
         return str(self.val)
 
     def __repr__(self):
         return self.val
+
 
 class Leaf(Element):
     def __init__(self, val: str, entry: str):
@@ -18,6 +20,7 @@ class Leaf(Element):
 
     def __str__(self, level=0):
         return "\t" * level + self.val + " : " + self.entry + "\n"
+
 
 class Node(Element):
     def __init__(self, val: str, prod, elements: list[Element] = None):

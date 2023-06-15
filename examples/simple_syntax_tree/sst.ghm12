@@ -1,9 +1,9 @@
-E -> T E1 {E()}
+E -> T E1 {EInh, ENode}
 
-E1 -> minus T E1 {E1Minus()}
-E1 -> plus T E1 {E1Plus()}
-E1 -> & {E1Epsilon()}
+E1 -> minus T E1 {E1Minus}
+E1 -> plus T E1 {E1Plus}
+E1 -> & {E1Epsilon}
 
-T -> number {TNumber()}
-T -> id {TId()}
-T -> open_bracket E close_bracket {TBrackets()}
+T -> number {TNumber}
+T -> id {TId}
+T -> open_bracket E close_bracket {TBrackets}

@@ -132,7 +132,9 @@ def ll1_parse(tokens: list, table: dict, cfg: ContextFreeGrammar) -> SyntacticTr
             stacktrace.append(stack_text.format(before_pop[0], current[0], symbol))
 
             if symbol == current[0]:
-                tree.find_node(current[1][0], current[1][1]).add_child(Leaf(symbol, token.attribute))
+                tree.find_node(current[1][0], current[1][1]).add_child(
+                    Leaf(symbol, token.attribute)
+                )
                 break
 
             if not (current[0], symbol) in table:
@@ -162,7 +164,9 @@ def ll1_parse(tokens: list, table: dict, cfg: ContextFreeGrammar) -> SyntacticTr
                     stack.append([next_symbol, [current[0], current[1][1] + 1]])
 
             if stack[-1] == symbol:
-                tree.find_node(current[0], current[1][1] + 1).add_child(Leaf(symbol, token.attribute)) # check later
+                tree.find_node(current[0], current[1][1] + 1).add_child(
+                    Leaf(symbol, token.attribute)
+                )  # check later
                 stack.pop()
                 break
     return tree

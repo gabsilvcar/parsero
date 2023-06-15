@@ -13,5 +13,5 @@ def test():
         False,
     )
     tree = parser.parse(path + ".example")
-    print(tree)
     parser.semantic_analysis(tree)
+    print(tree)

@@ -22,13 +22,12 @@ class Parsero:
         self.lexical = LexicalAnalyzer(regex_path)
         self.cfg = ContextFreeGrammar(grammar_path)
 
-        if semantic_path:
-            spec = importlib.util.spec_from_file_location("semantics", semantic_path)
-            semantic_lib = spec.loader.load_module()
-            self.semantic = SemanticAnalyser(semantic_lib.Semantics())
-
         if adapt:
             self.adapt_grammar()
+
+        if semantic_path:
+            spec = importlib.util.spec_from_file_location("semantics", semantic_path)
+            self.semantic_lib = spec.loader.load_module()
 
         try:
             self.table: dict = syntactic.create_table(self.cfg)
@@ -47,7 +46,8 @@ class Parsero:
             raise error
 
     def semantic_analysis(self, tree: SyntacticTree):
-        return self.semantic.parse(tree)
+        semantic = SemanticAnalyser(self.semantic_lib.Semantics(self.cfg, tree))
+        return semantic.parse(tree, self.cfg)
 
     def check_ll1(self) -> bool:
         first_dict = calculate_first(self.cfg)
