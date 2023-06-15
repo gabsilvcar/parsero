@@ -116,12 +116,11 @@ def create_table(cfg: ContextFreeGrammar) -> dict:
     return table
 
 
-def ll1_parse(tokens: list, table: dict, cfg: ContextFreeGrammar):
+def ll1_parse(tokens: list, table: dict, cfg: ContextFreeGrammar) -> SyntacticTree:
     stack = ["$", [cfg.initial_symbol, [None, -1]]]  # None represents the origin and 0 the level
     stacktrace = []
     stack_text = "Pilha: {} \nDesempilhado: {} Símbolo: {}"
     tree: SyntacticTree = None
-    previous = None
     for token in tokens:
         if token.name == "comment":
             continue
@@ -133,7 +132,7 @@ def ll1_parse(tokens: list, table: dict, cfg: ContextFreeGrammar):
             stacktrace.append(stack_text.format(before_pop[0], current[0], symbol))
 
             if symbol == current[0]:
-                tree.find_node(current[1][0], current[1][1]).add_child(Leaf(symbol))
+                tree.find_node(current[1][0], current[1][1]).add_child(Leaf(symbol, token.attribute))
                 break
 
             if not (current[0], symbol) in table:
@@ -163,6 +162,7 @@ def ll1_parse(tokens: list, table: dict, cfg: ContextFreeGrammar):
                     stack.append([next_symbol, [current[0], current[1][1] + 1]])
 
             if stack[-1] == symbol:
+                tree.find_node(current[0], current[1][1] + 1).add_child(Leaf(symbol, token.attribute)) # check later
                 stack.pop()
                 break
     return tree

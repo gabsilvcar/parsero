@@ -8,14 +8,16 @@ class Element:
     def __str__(self):
         return str(self.val)
 
+    def __repr__(self):
+        return self.val
 
 class Leaf(Element):
-    def __init__(self, val: str):
+    def __init__(self, val: str, entry: str):
         super().__init__(val)
+        self.entry = entry
 
     def __str__(self, level=0):
-        return "\t" * level + self.val + "\n"
-
+        return "\t" * level + self.val + " : " + self.entry + "\n"
 
 class Node(Element):
     def __init__(self, val: str, prod, elements: list[Element] = None):
@@ -25,9 +27,11 @@ class Node(Element):
         else:
             self.children = []
         self.prod = prod
+        self.parent = None
 
     def add_child(self, child: Element) -> Element:
         self.children.append(child)
+        child.parent = self
         return child
 
     def add_node(self, child: Node) -> Node:
@@ -96,3 +100,4 @@ if __name__ == "__main__":
 
     print(st.find("D").add_node(Node("X", "a")))
     print(st)
+    print(c.parent)

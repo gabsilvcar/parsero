@@ -7,6 +7,7 @@ from parsero import syntactic
 from parsero.cfg.contextfree_grammar import ContextFreeGrammar
 from parsero.common.errors import LexicalError, SyntacticError
 from parsero.lexical import LexicalAnalyzer, Token
+from parsero.semantic.semantic_analyzer import SemanticAnalyser
 from parsero.syntactic import (
     SyntacticTree,
     calculate_first,
@@ -24,7 +25,7 @@ class Parsero:
         if semantic_path:
             spec = importlib.util.spec_from_file_location("semantics", semantic_path)
             semantic_lib = spec.loader.load_module()
-            self.semantic_handler = semantic_lib.Semantics()
+            self.semantic = SemanticAnalyser(semantic_lib.Semantics())
 
         if adapt:
             self.adapt_grammar()
@@ -44,6 +45,9 @@ class Parsero:
         except SyntacticError as error:
             error.filename = path
             raise error
+
+    def semantic_analysis(self, tree: SyntacticTree):
+        return self.semantic.parse(tree)
 
     def check_ll1(self) -> bool:
         first_dict = calculate_first(self.cfg)

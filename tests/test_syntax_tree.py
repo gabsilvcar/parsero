@@ -12,4 +12,6 @@ def test():
         base + "/semantics/__init__.py",
         False,
     )
-    parser.parse(path + ".example")
+    tree = parser.parse(path + ".example")
+    print(tree)
+    parser.semantic_analysis(tree)
