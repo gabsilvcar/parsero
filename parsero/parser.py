@@ -46,8 +46,8 @@ class Parsero:
             raise error
 
     def semantic_analysis(self, tree: SyntacticTree):
-        semantic = SemanticAnalyser(self.semantic_lib.Semantics(self.cfg, tree))
-        return semantic.parse(tree, self.cfg)
+        semantic = SemanticAnalyser(self.semantic_lib, self.cfg, tree)
+        return semantic.parse()
 
     def check_ll1(self) -> bool:
         first_dict = calculate_first(self.cfg)

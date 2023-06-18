@@ -21,10 +21,8 @@ class Semantics:
         T = head.children[0]
         E1 = head.children[1]
         self.T(T)
-        E1.struct = Struct()
         E1.struct.inh = T.struct.node
         self.E1(E1)
-        head.struct = Struct()
         head.struct.node = E1.struct.syn
 
     def E1(self, head):
@@ -54,7 +52,6 @@ class Semantics:
         E_child = head.children[2]
         T_child = head.children[1]
         self.T(T_child)
-        E_child.struct = Struct()
         E_child.struct.inh = Node(head.val, [sign, head.struct.inh, T_child.struct.node])
         self.E1(E_child)
         self.E1Syn(head)
@@ -77,20 +74,14 @@ class Semantics:
         id = head.val
         id_val = head.entry
         result = Leaf(id, id_val)
-        struct = Struct()
-        struct.node = result
-        head.parent.struct = struct
+        head.parent.struct.node = result
 
     def TNumber(self, head: Node):
         id = head.val
         id_val = head.entry
         result = Leaf(id, id_val)
-        struct = Struct()
-        struct.node = result
-        head.parent.struct = struct
+        head.parent.struct.node = result
 
     def TBrackets(self, head: Node, production: dict):
         assert head.val == "T"
-        struct = Struct()
-        struct.node = head.children[0].struct.node
-        head.struct = struct
+        head.struct.node = head.children[0].struct.node

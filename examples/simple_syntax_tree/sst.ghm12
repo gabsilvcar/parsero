@@ -1,4 +1,4 @@
-E -> T E1 {EInh, ENode}
+E -> T E1 {E}
 
 E1 -> minus T E1 {E1Minus}
 E1 -> plus T E1 {E1Plus}
