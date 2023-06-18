@@ -83,8 +83,8 @@ class ContextFreeGrammar:
         self.production_rules = production_rules
         self.semantic_rules = semantic_rules
 
-    def get_rule(self, head, prod: list):
-        return self.semantic_rules[head][",".join(str(x) for x in prod)]
+    def get_rules(self, head, prod: list):
+        return self.semantic_rules[head][",".join(str(x) for x in prod)].replace(" ", "").split(",")
 
     def __sort_productions(self):
         for productions in self.production_rules.values():

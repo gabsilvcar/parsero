@@ -10,36 +10,34 @@ class Struct:
 
 
 class Semantics:
-    EXPRESSION = "self.{}(target)"
-
     def __init__(self, cfg: ContextFreeGrammar, tree: SyntacticTree):
         self.cfg = cfg
         self.tree = tree
 
-    def E(self, head: Node):
+    def e_e1_inh(self, head: Node):
         assert head.val == "E"
         T = head.children[0]
         E1 = head.children[1]
-        self.T(T)
         E1.struct.inh = T.struct.node
-        self.E1(E1)
+
+    def e_self_node(self, head):
+        E1 = head.children[1]
         head.struct.node = E1.struct.syn
 
-    def E1(self, head):
+    def e1minus_e1_inh(self, head):
         assert head.val == "E1"
-        target = head
-        rule = self.cfg.get_rule(head.val, head.prod)
-        eval(self.EXPRESSION.format(rule))
+        self._e1_inh(head, "-")
 
-    def E1Minus(self, head):
+    def e1plus_e1_inh(self, head):
         assert head.val == "E1"
-        self.E1Inh(head, "-")
+        self._e1_inh(head, "+")
 
-    def E1Plus(self, head):
-        assert head.val == "E1"
-        self.E1Inh(head, "+")
+    def _e1_inh(self, head, sign):
+        E_child = head.children[2]
+        T_child = head.children[1]
+        E_child.struct.inh = Node(head.val, [sign, head.struct.inh, T_child.struct.node])
 
-    def E1Epsilon(self, head):
+    def e1epsilon_self_syn(self, head):
         assert head.val == "E1"
         assert head.children[0].val == "$"
         assert head.struct is not None
@@ -47,16 +45,13 @@ class Semantics:
 
         head.struct.syn = head.struct.inh
 
-    def E1Inh(self, head, sign):
+    def e1_inh(self, head, sign):
         assert head.val == "E1"
         E_child = head.children[2]
         T_child = head.children[1]
-        self.T(T_child)
         E_child.struct.inh = Node(head.val, [sign, head.struct.inh, T_child.struct.node])
-        self.E1(E_child)
-        self.E1Syn(head)
 
-    def E1Syn(self, head):
+    def e1_self_syn(self, head):
         E_child = head.children[2]
 
         assert head.val == "E1"
@@ -64,24 +59,20 @@ class Semantics:
 
         head.struct.syn = E_child.struct.syn
 
-    def T(self, head):
-        assert head.val == "T"
-        rule = self.cfg.get_rule(head.val, head.prod)
-        target = head.children[0]
-        eval(self.EXPRESSION.format(rule))
-
-    def TId(self, head: Node):
-        id = head.val
-        id_val = head.entry
+    def tid_self_node(self, head: Node):
+        id_node = head.children[0]
+        id = id_node.val
+        id_val = id_node.entry
         result = Leaf(id, id_val)
-        head.parent.struct.node = result
+        head.struct.node = result
 
-    def TNumber(self, head: Node):
-        id = head.val
-        id_val = head.entry
+    def tnumber_self_node(self, head: Node):
+        id_node = head.children[0]
+        id = id_node.val
+        id_val = id_node.entry
         result = Leaf(id, id_val)
-        head.parent.struct.node = result
+        head.struct.node = result
 
-    def TBrackets(self, head: Node, production: dict):
+    def tbracket_self_node(self, head: Node):
         assert head.val == "T"
         head.struct.node = head.children[0].struct.node
