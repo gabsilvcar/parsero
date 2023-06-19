@@ -132,9 +132,10 @@ def ll1_parse(tokens: list, table: dict, cfg: ContextFreeGrammar) -> SyntacticTr
             stacktrace.append(stack_text.format(before_pop[0], current[0], symbol))
 
             if symbol == current[0]:
-                tree.find_node(current[1][0], current[1][1]).add_child(
-                    Leaf(symbol, token.attribute)
-                )
+                if symbol != "$":
+                    tree.find_node(current[1][0], current[1][1]).add_child(
+                        Leaf(symbol, token.attribute)
+                    )
                 break
 
             if not (current[0], symbol) in table:

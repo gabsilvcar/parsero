@@ -10,7 +10,7 @@ def test_version():
 
 
 def test_python():
-    parser = Parsero(f"examples/python/python.regex", f"examples/python/python.ghm")
+    parser = Parsero(f"examples/python/python.regex", f"examples/python/python.ghm", True)
     parser.parse(f"examples/python/example.py")
 
     try:
@@ -25,7 +25,7 @@ def test_python():
 
 
 def test_c():
-    parser = Parsero(f"examples/c/c.regex", f"examples/c/c.ghm")
+    parser = Parsero(f"examples/c/c.regex", f"examples/c/c.ghm", True)
     parser.parse(f"examples/c/example.c")
 
     try:
@@ -40,7 +40,7 @@ def test_c():
 
 
 def test_lisp():
-    parser = Parsero(f"examples/lisp/lisp.regex", f"examples/lisp/lisp.ghm")
+    parser = Parsero(f"examples/lisp/lisp.regex", f"examples/lisp/lisp.ghm", True)
     parser.parse(f"examples/lisp/example.lisp")
 
     try:
@@ -55,7 +55,7 @@ def test_lisp():
 
 
 def test_json():
-    parser = Parsero(f"examples/json/json.regex", f"examples/json/json.ghm")
+    parser = Parsero(f"examples/json/json.regex", f"examples/json/json.ghm", True)
     parser.parse(f"examples/json/example.json")
 
     try:

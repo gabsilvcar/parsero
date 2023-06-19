@@ -32,7 +32,8 @@ class ContextFreeGrammar:
                     semantic_pieces = production_pieces[1].split("{", 1)
                     production_pieces[1] = semantic_pieces[0]
                     semantic_pieces = semantic_pieces[1][:-1]
-
+                else:
+                    semantic_pieces = None
                 if initial_symbol == "":
                     initial_symbol = production_head
 
@@ -78,8 +79,9 @@ class ContextFreeGrammar:
 
         for symbol, production, semantic_rule in productions:
             production_rules[symbol] = production
-            for i in range(0, len(production)):
-                semantic_rules[symbol][",".join(str(x) for x in production[i])] = semantic_rule[i]
+            if semantic_rule[0]:
+                for i in range(0, len(production)):
+                    semantic_rules[symbol][",".join(str(x) for x in production[i])] = semantic_rule[i]
         self.production_rules = production_rules
         self.semantic_rules = semantic_rules
 

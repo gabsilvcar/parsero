@@ -7,8 +7,8 @@ def test():
     parser = Parsero(
         path + ".regex",
         path + ".ghm12",
-        base + "/semantics/__init__.py",
         False,
+        base + "/semantics/__init__.py",
     )
 
     tree = parser.parse(path + ".example")

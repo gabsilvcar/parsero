@@ -18,7 +18,7 @@ from parsero.syntactic import (
 
 
 class Parsero:
-    def __init__(self, regex_path, grammar_path, semantic_path=None, adapt=True):
+    def __init__(self, regex_path, grammar_path, adapt, semantic_path=None):
         self.lexical = LexicalAnalyzer(regex_path)
         self.cfg = ContextFreeGrammar(grammar_path)
 

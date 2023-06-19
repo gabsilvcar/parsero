@@ -92,6 +92,8 @@ class SyntacticTree(Node):
         if len(self.children) == 0:
             return None
         for child in self.children:
+            if isinstance(child, Leaf):
+                continue
             result = child.find(head, desired_level, current_level + 1)
             if result:
                 return result
