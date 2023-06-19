@@ -1,0 +1,8 @@
+int:int
+float:float
+
+open_square_bracket: \[
+close_square_bracket: \]
+digit: [0-9]
+decimal: (\.digit*)
+number: (digit+)(decimal?)

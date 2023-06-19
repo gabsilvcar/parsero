@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from termcolor import colored, cprint
+
 
 class Element:
     def __init__(self, val):
@@ -46,6 +48,8 @@ class Node(Element):
 
     def __str__(self, level=0):
         ret = "\t" * level + repr(self.val) + " : " + ",".join(str(x) for x in self.prod) + "\n"
+        if self.struct:
+            ret += "\t" * level + "\033[0;31m" + str(self.struct) + "\033[0m" + "\n"
         for child in self.children:
             ret += child.__str__(level + 1)
         return ret
@@ -75,7 +79,9 @@ class SyntacticTree(Node):
         return super().add_child(child)
 
     def __str__(self):
-        result = repr(self.val) + " : " + ",".join(str(x) for x in self.prod) + "\n"
+        result = "\n" + repr(self.val) + " : " + ",".join(str(x) for x in self.prod) + "\n"
+        if self.struct:
+            result += "\033[0;31m" + str(self.struct) + "\033[0m"
         for i in range(0, len(self.children)):
             result += str(self.children[i].__str__(1))
         return result

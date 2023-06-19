@@ -1,0 +1,5 @@
+T -> B C {t_self_t, t_c_inh}
+B -> int {bint_self_t}
+B -> float {bfloat_self_t}
+C -> open_square_bracket number close_square_bracket C {c1_self_t, c_c_inh}
+C -> & {c2_self_t}
