@@ -1,26 +1,13 @@
-PROGRAM -> STATEMENT | FUNCLIST | &
+PROGRAM -> STATEMENT | &
 
-
-FUNCLIST -> FUNCDEF FUNCLIST | FUNCDEF
-FUNCDEF -> def id open_bracket PARAMLIST close_bracket open_curly_bracket STATELIST close_curly_bracket
-
-TYPE -> int | float | string
-PARAMLIST -> TYPE id comma PARAMLIST | TYPE id | &
-
-STATEMENT -> IF_STMT | STATEMENT_AUX
-STATEMENT_AUX -> VARDECL semicolon | ATRIBSTAT semicolon | PRINTSTAT semicolon | READSTAT semicolon | RETURNSTAT semicolon | FORSTAT | open_curly_bracket STATELIST close_curly_bracket | open_curly_bracket FUNCLIST close_curly_bracket | break semicolon | semicolon
+STATEMENT -> STATEMENT_AUX
+STATEMENT_AUX -> ATRIBSTAT semicolon | open_curly_bracket STATELIST close_curly_bracket
 
 ATRIBSTAT -> LVALUE equal ATRIBSTAT_AUX
-ATRIBSTAT_AUX -> EXPRESSION | ALLOCEXPRESSION | FUNCCALL
-
-FUNCCALL -> id open_bracket PARAMLISTCALL close_bracket
-PARAMLISTCALL -> id comma PARAMLISTCALL | id | &
+ATRIBSTAT_AUX -> EXPRESSION
 
 STATELIST -> STATEMENT STATELIST_AUX
 STATELIST_AUX -> STATELIST | &
-
-ALLOCEXPRESSION -> new TYPE open_square_bracket NUMEXPRESSION close_square_bracket ALLOCEXPRESSION_AUX
-ALLOCEXPRESSION_AUX -> open_square_bracket NUMEXPRESSION close_square_bracket | &
 
 EXPRESSION -> NUMEXPRESSION EXPRESSION_AUX
 EXPRESSION_AUX -> comparator NUMEXPRESSION | &
@@ -33,7 +20,7 @@ TERM_AUX -> symbol_aux UNARYEXPR TERM_AUX | &
 
 UNARYEXPR -> sign FACTOR | FACTOR
 
-FACTOR ->  int_constant | float_constant | string_constant | null | LVALUE | open_bracket NUMEXPRESSION close_bracket
+FACTOR ->  int_constant | float_constant | string_constant | LVALUE | open_bracket NUMEXPRESSION close_bracket
 
 LVALUE -> id LVALUE_AUX
 LVALUE_AUX -> open_square_bracket NUMEXPRESSION close_square_bracket LVALUE_AUX | &
