@@ -1,0 +1,17 @@
+PROGRAM -> STATEMENT
+PROGRAM -> &
+
+TYPE -> int
+TYPE -> float
+TYPE -> string
+
+STATEMENT -> VARDECL semicolon
+STATEMENT -> open_curly_bracket STATELIST close_curly_bracket
+
+VARDECL -> TYPE id VARDECL1
+VARDECL1 -> open_square_bracket int_constant close_square_bracket VARDECL1
+VARDECL1 -> &
+
+STATELIST -> STATEMENT STATELIST_AUX
+STATELIST_AUX -> STATELIST
+STATELIST_AUX -> &

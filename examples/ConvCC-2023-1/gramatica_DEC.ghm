@@ -2,8 +2,7 @@ PROGRAM -> STATEMENT | &
 
 TYPE -> int | float | string
 
-STATEMENT -> STATEMENT_AUX
-STATEMENT_AUX -> VARDECL semicolon | open_curly_bracket STATELIST close_curly_bracket
+STATEMENT -> VARDECL semicolon | open_curly_bracket STATELIST close_curly_bracket
 
 VARDECL -> TYPE id VARDECL1
 VARDECL1 -> open_square_bracket int_constant close_square_bracket VARDECL1 | &
