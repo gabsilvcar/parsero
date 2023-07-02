@@ -55,6 +55,7 @@ inside_string: (\w|\d|symbols|acentuated)
 string_text: "inside_string*"
 id: letter(letter|digit|_)*
 
-int_constant:(sign?)(digit+)
+number: (digit+)
+# int_constant:(sign?)(digit+)
 float_constant:(sign?)(digit+)(decimal)(scientific_notation?)
 string_constant:string_text

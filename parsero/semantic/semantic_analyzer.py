@@ -43,6 +43,7 @@ class SemanticAnalyser:
             if "self" in parts[1]:
                 mapped_rules["self"][0].insert(0, rule)  # Self operations are always last
             else:
+                print(rule)
                 mapped_rules[parts[1]][not "inh" in parts[2]].append(rule)
 
         final = dict()

@@ -3,12 +3,16 @@ from parsero import Parsero
 
 def test():
     base = "examples/ConvCC-2023-1/"
+    dec = base + "DEC/"
     parser = Parsero(
         base + "regex.regex",
-        base + "gramatica_DEC.ghm",
+        dec + "gramatica_DEC.ghm12",
         False,
-        "examples/simple_syntax_tree/semantics/__init__.py",
+        dec + "semantics/__init__.py",
     )
 
-    tree = parser.parse(base + "/DEC.example")
+    tree = parser.parse(dec + "/DEC.example")
+    parser.semantic_analysis(tree)
+    # assert (tree.find("VARDECL") == "string")
+
     print(tree)
