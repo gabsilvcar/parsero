@@ -85,9 +85,9 @@ class LexicalAnalyzer:
         sym_table = sym_tables_stack.pop()
         sym_tables[sym_table.get_id()] = sym_table
 
-        for n in range(len(sym_tables)):
-            print(sym_tables[n].get_id(), sym_tables[n].is_loop_scope())
-            print(sym_tables[n])
+        #for n in range(len(sym_tables)):
+        #    print(sym_tables[n].get_id(), sym_tables[n].is_loop_scope())
+        #    print(sym_tables[n])
 
         return tokens, sym_tables
 
