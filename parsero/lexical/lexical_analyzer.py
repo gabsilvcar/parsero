@@ -15,7 +15,7 @@ class LexicalAnalyzer:
         self.token_ids: list
         self._generate_automata(regular_definitions_path)
 
-    def parse(self, path: str) -> tuple[TokenList, SymbolTable]:
+    def parse(self, path: str) -> tuple[TokenList, dict]:
         """
         Reads a file and returns the token list and a symbol table
         """
@@ -29,12 +29,24 @@ class LexicalAnalyzer:
             error.filename = path
             raise error
 
-    def parse_string(self, string) -> tuple[TokenList, SymbolTable]:
+    def parse_string(self, string) -> tuple[TokenList, dict]:
         """
         Reads a string and returns the token list and a symbol table
         """
 
-        sym_table = SymbolTable()
+        # scope counts the number of scopes so far
+        # so we can differ the symbol tables for each scope,
+        # we also check for for/while statements to know if
+        # we're entering a loopable scope
+        scope_counter = 0
+        next_scope_loop = False
+        sym_tables = dict()
+        sym_tables_stack = list()
+
+        # putting in the st stack a symbol table with
+        # id scope_counter
+        sym_tables_stack.append(SymbolTable(scope_counter, next_scope_loop))
+
         tokens = self.tokenize_string(string)
 
         # add all tokens into the symbols table
@@ -44,9 +56,40 @@ class LexicalAnalyzer:
 
         for token in tokens:
             if token.name == "id":
-                sym_table.insert(token.attribute, token.name)
+                sym_tables_stack[-1].insert(token.attribute, token.name)
+                continue
 
-        return tokens, sym_table
+            if token.name == "for" or token.name == "while":
+                next_scope_loop = True
+                continue
+
+            if token.name == "open_curly_bracket":
+                scope_counter += 1
+                sym_tables_stack.append(SymbolTable(scope_counter, next_scope_loop))
+
+                if next_scope_loop:
+                    next_scope_loop = False
+
+                # it looks bad, basically sets the previous scope as father for the newer scope
+                if len(sym_tables_stack) > 1:
+                    sym_tables_stack[-1].set_father_scope(sym_tables_stack[-2].get_id())
+
+                continue
+
+            if token.name == "close_curly_bracket":
+                sym_table = sym_tables_stack.pop()
+                sym_tables[sym_table.get_id()] = sym_table
+
+        # after processing tokens, we must put the global scope
+        # in the dict too
+        sym_table = sym_tables_stack.pop()
+        sym_tables[sym_table.get_id()] = sym_table
+
+        for n in range(len(sym_tables)):
+            print(sym_tables[n].get_id(), sym_tables[n].is_loop_scope())
+            print(sym_tables[n])
+
+        return tokens, sym_tables
 
     def analyze(self, path: str) -> bool:
         """

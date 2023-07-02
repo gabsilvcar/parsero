@@ -66,7 +66,7 @@ class Parsero:
     def parse_string(self, string) -> SyntacticTree:
         string = treat_identation(string)
 
-        tokens = self.lexical.tokenize_string(string)
+        tokens, symbol_tables = self.lexical.parse_string(string)
         tokens.append(Token("$", "$"))
 
         try:
