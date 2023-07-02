@@ -24,13 +24,15 @@ def:def
 digit: [0-9]
 letter: [a-zA-Z]
 symbols: (_| |!|\=|\&|@|#|$|\%|\&|\||\+|-|\&|\*|'|"|/|\\|\.|,|\[|\]|\(|\)|\{|\}|\<|\>|:|;|\?|\^|\~|\Σ|\→)
-sign: (\+|-)
+plus: \+
+minus: -
 decimal: (\.digit*)
 scientific_notation: (e(\+|-)?digit+)
-symbol_aux: (\*|/|\%)
+mult: \*
+div: /
+mod: \%
 
 comparator: (==|!=|\<|\>|\<=|\>=)
-operator: (\+|-|\*|/|\||\<\<|\>\>)
 increment: (\+\+|\-\-)
 atr: (=|\+=|\-=|\*=)
 dot: \.

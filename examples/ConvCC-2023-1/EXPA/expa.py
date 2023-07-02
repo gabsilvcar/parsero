@@ -92,45 +92,12 @@ class Semantics:
         atribstat = head.children[0]
         head.struct.node = Node(head.val, [atribstat.struct.syn, ';'])
 
-    def statelist_self_node(self, head: Node):
-        pass
-
-    def statelistaux_self_node(self, head: Node):
-        pass
-
-    def numexpression_self_node(self, head: Node):
-        pass
-
-    def numexpressionaux_self_node(self, head: Node):
-        pass
-
-    def expression_self_node(self, head: Node):
-        pass
-
-    def expreessionaux_self_node(self, head: Node):
-        pass
-
-    def term_self_node(self, head: Node):
-        pass
-
-    def term_symbol_aux_self_node(self, head: Node):
-        pass
-
     def lvalue_self_node(self, head: Node):
         assert head.val == "LVALUE"
         lvalue_aux = head.children[1]
         head.struct.node = Node(head.val, ['id', lvalue_aux.struct.syn])
 
     def lvalueaux_bracket(self, head: Node):
-        pass
-
-    def epsilon_self_syn(self, head: Node):
-        assert head.struct is not None
-        assert head.struct.inh is not None
-
-        head.struct.syn = head.struct.inh
-
-    def epsilon_program_self_syn(self, head: Node):
         pass
 
     def atribstat_expression_inh(self, head: Node):
@@ -147,53 +114,240 @@ class Semantics:
 
         head.struct.syn = expression.struct.syn
 
-    def factor_self_node(self, head: Node):
+    ##########################################
+    # Epsilon
+
+    def epsilon_self_syn(self, head: Node):
+        assert head.struct is not None
+        assert head.struct.inh is not None
+
+        head.struct.syn = head.struct.inh
+
+    ##########################################
+    # Program
+
+    ##########################################
+    # Expression
+
+    ##########################################
+    # Expression_Aux
+    def expression_aux_comparator_self_node(self, head: Node):
+        assert head.val == "EXPRESSION_AUX"
+
+        numexpression = head.children[1]
+        head.struct.node = Node(head.val, ['comparator', numexpression.struct.syn])
+
+    ##########################################
+    # Factor
+    def factor_float_self_node(self, head: Node):
         assert head.val == "FACTOR"
-        lvalue = head.children[0]
-        head.struct.node = lvalue.struct.syn
 
-    def sign_unaryexpr_self_node(self, sign, head: Node):
-        factor = head.children[1]
-        head.struct.node = Node(head.val, [sign, factor.struct.syn])
-
-    def minus_sign_unaryexpr_self_node(self, head: Node):
-        assert head.val == "UNARYEXPR"
-        self.sign_unaryexpr_self_node('-', head)
-
-    def plus_sign_unaryexpr_self_node(self, head: Node):
-        assert head.val == "UNARYEXPR"
-        self.sign_unaryexpr_self_node('+', head)
-
-    def unaryexpr_self_node(self, head: Node):
-        assert head.val == "UNARYEXPR"
-        factor = head.children[0]
-        head.struct.node = factor.struct.syn
+        id_node = head.children[0]
+        id = id_node.val
+        id_val = id_node.entry
+        head.struct.node = Leaf(id, id_val)
 
     def factor_int_self_node(self, head: Node):
         assert head.val == "FACTOR"
-        id_node = head.children[0]
-        id = id_node.val
-        id_val = id_node.entry
-        result = Leaf(id, id_val)
-        head.struct.node = result
 
-    def factor_float_self_node(self, head: Node):
-        assert head.val == "FACTOR"
         id_node = head.children[0]
         id = id_node.val
         id_val = id_node.entry
-        result = Leaf(id, id_val)
-        head.struct.node = result
+        head.struct.node = Leaf(id, id_val)
 
     def factor_string_self_node(self, head: Node):
         assert head.val == "FACTOR"
+
         id_node = head.children[0]
         id = id_node.val
         id_val = id_node.entry
-        result = Leaf(id, id_val)
-        head.struct.node = result
+        head.struct.node = Leaf(id, id_val)
+
+    def factor_id_self_node(self, head: Node):
+        assert head.val == "FACTOR"
+
+        lvalue_aux = head.children[1]
+        head.struct.node = Node(head.val, ['id', lvalue_aux.struct.syn])
 
     def factor_bracket_self_node(self, head: Node):
         assert head.val == "FACTOR"
+
         numexpression = head.children[1]
-        head.struct.node = Node(head.val, ['{', numexpression.struct.syn, '}'])
+        head.struct.node = Node(head.val, ['(', numexpression.struct.syn, ')'])
+
+    ##########################################
+    # LValue_Aux
+
+    ##########################################
+    # NumExpression
+
+    ##########################################
+    # NumExpression_Aux
+
+    ##########################################
+    # StateList
+
+    ##########################################
+    # StateList_Aux
+
+    ##########################################
+    # Term
+    def term_constant_self_syn(self, head: Node):
+        assert head.val == "TERM"
+
+        termaux_child = head.children[1]
+        assert termaux_child.struct.syn is not None
+
+        head.struct.syn = termaux_child.struct.syn
+
+    def term_float_termaux1_inh(self, head: Node):
+        term_aux = head.children[1]
+        id_node = head.children[0]
+        id = id_node.val
+        id_val = id_node.entry
+        constant = Leaf(id, id_val)
+        term_aux.struct.inh = Node(head.val, [constant])
+
+    def term_int_termaux1_inh(self, head: Node):
+        term_aux = head.children[1]
+        id_node = head.children[0]
+        id = id_node.val
+        id_val = id_node.entry
+        constant = Leaf(id, id_val)
+        term_aux.struct.inh = Node(head.val, [constant])
+
+    def term_string_termaux1_inh(self, head: Node):
+        term_aux = head.children[1]
+        id_node = head.children[0]
+        id = id_node.val
+        id_val = id_node.entry
+        constant = Leaf(id, id_val)
+        term_aux.struct.inh = Node(head.val, [constant])
+
+    def term_id_self_syn(self, head: Node):
+        assert head.val == "TERM"
+
+        termaux_child = head.children[2]
+        assert termaux_child.struct.syn is not None
+
+        head.struct.syn = termaux_child.struct.syn
+
+    def term_id_termaux1_inh(self, head: Node):
+        pass
+        # term_aux = head.children[1]
+        # id_node = head.children[0]
+        # id = id_node.val
+        # id_val = id_node.entry
+        # constant = Leaf(id, id_val)
+        # term_aux.struct.inh = Node(head.val, [constant])
+
+    def term_bracket_self_syn(self, head: Node):
+        assert head.val == "TERM"
+
+        termaux_child = head.children[3]
+        assert termaux_child.struct.syn is not None
+
+        head.struct.syn = termaux_child.struct.syn
+
+    def term_bracket_termaux1_inh(self, head: Node):
+        assert head.val == "TERM"
+        numexpression = head.children[1]
+        termaux = head.children[3]
+        termaux.struct.inh = Node(head.val, ['(', numexpression.struct.syn, ')']) # eu deveria adicionar algo depois do ')'?
+
+    def term_op_self_syn(self, head: Node):
+        assert head.val == "TERM"
+
+        termaux_child = head.children[2]
+        assert termaux_child.struct.syn is not None
+
+        head.struct.syn = termaux_child.struct.syn
+
+    def term_minus_termaux1_inh(self, head: Node):
+        assert head.val == "TERM"
+        self.term_op_termaux1_inh(head, '-')
+
+    def term_plus_termaux1_inh(self, head: Node):
+        assert head.val == "TERM"
+        self.term_op_termaux1_inh(head, '+')
+
+    def term_op_termaux1_inh(self, head: Node, operation):
+        factor = head.children[1]
+        term_aux = head.children[2]
+        term_aux.struct.inh = Node(head.val, [operation, factor.struct.node])
+
+    ##########################################
+    # Term_Aux
+    def termaux_operation(self, head: Node, operation: str):
+        assert head.val == "TERM_AUX"
+
+        unaryexpr = head.children[1]
+        term_aux = head.children[2]
+        term_aux.struct.inh = Node(head.val, [operation, head.struct.inh, unaryexpr.struct.node])
+
+    def termaux_mult_termaux1_inh(self, head: Node):
+        self.termaux_operation(head, '*')
+
+    def termaux_div_termaux1_inh(self, head: Node):
+        self.termaux_operation(head, '/')
+
+    def termaux_mod_termaux1_inh(self, head: Node):
+        self.termaux_operation(head, '%')
+
+    def termaux_self_syn(self, head: Node):
+        assert head.val == "TERM_AUX"
+
+        termaux_child = head.children[2]
+        assert termaux_child.struct.syn is not None
+
+        head.struct.syn = termaux_child.struct.syn
+
+    ##########################################
+    # UnaryExpr
+    def unaryexpr_float_self_node(self, head: Node):
+        assert head.val == "UNARYEXPR"
+
+        id_node = head.children[0]
+        id = id_node.val
+        id_val = id_node.entry
+        head.struct.node = Leaf(id, id_val)
+
+    def unaryexpr_int_self_node(self, head: Node):
+        assert head.val == "UNARYEXPR"
+
+        id_node = head.children[0]
+        id = id_node.val
+        id_val = id_node.entry
+        head.struct.node = Leaf(id, id_val)
+
+    def unaryexpr_string_self_node(self, head: Node):
+        assert head.val == "UNARYEXPR"
+
+        id_node = head.children[0]
+        id = id_node.val
+        id_val = id_node.entry
+        head.struct.node = Leaf(id, id_val)
+
+    def unaryexpr_bracket_self_node(self, head: Node):
+        assert head.val == "UNARYEXPR"
+
+        numexpression = head.children[1]
+        head.struct.node = Node(head.val, ['(', numexpression.struct.syn, ')'])
+
+    def unaryexpr_id_self_node(self, head: Node):
+        assert head.val == "UNARYEXPR"
+
+        lvalue_aux = head.children[1]
+        head.struct.node = Node(head.val, ['id', lvalue_aux.struct.syn])
+
+    def unaryexpr_plus_self_node(self, head: Node):
+        assert head.val == "UNARYEXPR"
+
+        factor = head.children[1]
+        head.struct.node = Node(head.val, ['+', factor.struct.syn])
+
+    def unaryexpr_minus_self_node(self, head: Node):
+        assert head.val == "UNARYEXPR"
+
+        factor = head.children[1]
+        head.struct.node = Node(head.val, ['-', factor.struct.syn])

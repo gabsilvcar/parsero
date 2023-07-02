@@ -1,37 +1,65 @@
-PROGRAM -> STATEMENT {program_self_node}
-PROGRAM -> & {epsilon_program_self_syn}
+PROGRAM -> & {}
+PROGRAM -> id LVALUE_AUX equal EXPRESSION semicolon {}
+PROGRAM -> open_curly_bracket STATELIST close_curly_bracket {}
 
-STATEMENT -> ATRIBSTAT semicolon {statement_self_node}
-STATEMENT -> open_curly_bracket STATELIST close_curly_bracket {statement_bracket_self_node}
+EXPRESSION -> float_constant TERM_AUX NUMEXPRESSION_AUX EXPRESSION_AUX {}
+EXPRESSION -> int_constant TERM_AUX NUMEXPRESSION_AUX EXPRESSION_AUX {}
+EXPRESSION -> string_constant TERM_AUX NUMEXPRESSION_AUX EXPRESSION_AUX {}
+EXPRESSION -> id LVALUE_AUX TERM_AUX NUMEXPRESSION_AUX EXPRESSION_AUX {}
+EXPRESSION -> open_bracket NUMEXPRESSION close_bracket TERM_AUX NUMEXPRESSION_AUX EXPRESSION_AUX {}
+EXPRESSION -> minus FACTOR TERM_AUX NUMEXPRESSION_AUX EXPRESSION_AUX {}
+EXPRESSION -> plus FACTOR TERM_AUX NUMEXPRESSION_AUX EXPRESSION_AUX {}
 
-ATRIBSTAT -> LVALUE equal EXPRESSION {atribstat_expression_inh, atribstat_self_syn}
-
-STATELIST -> STATEMENT STATELIST_AUX {statelist_self_node}
-STATELIST_AUX -> STATELIST {statelistaux_self_node}
-STATELIST_AUX -> & {epsilon_self_syn}
-
-EXPRESSION -> NUMEXPRESSION EXPRESSION_AUX {expression_self_node}
-EXPRESSION_AUX -> comparator NUMEXPRESSION {expreessionaux_self_node}
 EXPRESSION_AUX -> & {epsilon_self_syn}
+EXPRESSION_AUX -> comparator NUMEXPRESSION {expression_aux_comparator_self_node}
 
-NUMEXPRESSION -> TERM NUMEXPRESSION_AUX {numexpression_self_node}
-NUMEXPRESSION_AUX -> operator TERM NUMEXPRESSION_AUX {numexpressionaux_self_node}
-NUMEXPRESSION_AUX -> & {epsilon_self_syn}
-
-TERM -> UNARYEXPR TERM_AUX {term_self_node}
-TERM_AUX -> symbol_aux UNARYEXPR TERM_AUX {term_symbol_aux_self_node}
-TERM_AUX -> & {epsilon_self_syn}
-
-UNARYEXPR -> minus FACTOR {minus_sign_unaryexpr_self_node}
-UNARYEXPR -> plus FACTOR {plus_sign_unaryexpr_self_node}
-UNARYEXPR -> FACTOR {unaryexpr_self_node}
-
-FACTOR -> int_constant {factor_int_self_node}
 FACTOR -> float_constant {factor_float_self_node}
+FACTOR -> int_constant {factor_int_self_node}
 FACTOR -> string_constant {factor_string_self_node}
-FACTOR -> LVALUE {factor_self_node}
+FACTOR -> id LVALUE_AUX {factor_id_self_node}
 FACTOR -> open_bracket NUMEXPRESSION close_bracket {factor_bracket_self_node}
 
-LVALUE -> id LVALUE_AUX {lvalue_self_node}
-LVALUE_AUX -> open_square_bracket NUMEXPRESSION close_square_bracket LVALUE_AUX {lvalueaux_bracket}
 LVALUE_AUX -> & {epsilon_self_syn}
+LVALUE_AUX -> open_square_bracket NUMEXPRESSION close_square_bracket LVALUE_AUX {}
+
+NUMEXPRESSION -> float_constant TERM_AUX NUMEXPRESSION_AUX {factor_numexpr_aux_inh, factor_float_self_node}
+NUMEXPRESSION -> int_constant TERM_AUX NUMEXPRESSION_AUX {factor_numexpr_aux_inh, factor_int_self_node}
+NUMEXPRESSION -> string_constant TERM_AUX NUMEXPRESSION_AUX {factor_numexpr_aux_inh, factor_string_self_node}
+NUMEXPRESSION -> id LVALUE_AUX TERM_AUX NUMEXPRESSION_AUX {}
+NUMEXPRESSION -> open_bracket NUMEXPRESSION close_bracket TERM_AUX NUMEXPRESSION_AUX {}
+NUMEXPRESSION -> plus FACTOR TERM_AUX NUMEXPRESSION_AUX {}
+NUMEXPRESSION -> minus FACTOR TERM_AUX NUMEXPRESSION_AUX {}
+
+NUMEXPRESSION_AUX -> & {epsilon_self_syn}
+NUMEXPRESSION_AUX -> minus TERM NUMEXPRESSION_AUX {}
+NUMEXPRESSION_AUX -> plus TERM NUMEXPRESSION_AUX {}
+NUMEXPRESSION_AUX -> mult TERM NUMEXPRESSION_AUX {}
+NUMEXPRESSION_AUX -> div TERM NUMEXPRESSION_AUX {}
+
+STATELIST -> id LVALUE_AUX equal EXPRESSION semicolon STATELIST_AUX {}
+STATELIST -> open_curly_bracket STATELIST close_curly_bracket STATELIST_AUX {}
+
+STATELIST_AUX -> & {epsilon_self_syn}
+STATELIST_AUX -> id LVALUE_AUX equal EXPRESSION semicolon STATELIST_AUX {}
+STATELIST_AUX -> open_curly_bracket STATELIST close_curly_bracket STATELIST_AUX {}
+
+TERM -> float_constant TERM_AUX {term_float_termaux1_inh, term_constant_self_syn}
+TERM -> int_constant TERM_AUX {term_int_termaux1_inh, term_constant_self_syn}
+TERM -> string_constant TERM_AUX {term_string_termaux1_inh, term_constant_self_syn}
+TERM -> id LVALUE_AUX TERM_AUX {term_id_termaux1_inh, term_id_self_syn}
+TERM -> open_bracket NUMEXPRESSION close_bracket TERM_AUX {term_bracket_termaux1_inh, term_bracket_self_syn}
+TERM -> minus FACTOR TERM_AUX {term_minus_termaux1_inh, term_op_self_syn}
+TERM -> plus FACTOR TERM_AUX {term_plus_termaux1_inh, term_op_self_syn}
+
+TERM_AUX -> & {epsilon_self_syn}
+TERM_AUX -> mult UNARYEXPR TERM_AUX {termaux_mult_termaux1_inh, termaux_self_syn}
+TERM_AUX -> div UNARYEXPR TERM_AUX {termaux_div_termaux1_inh, termaux_self_syn}
+TERM_AUX -> mod UNARYEXPR TERM_AUX {termaux_mod_termaux1_inh, termaux_self_syn}
+
+UNARYEXPR -> float_constant {unaryexpr_float_self_node}
+UNARYEXPR -> int_constant {unaryexpr_int_self_node}
+UNARYEXPR -> string_constant {unaryexpr_string_self_node}
+UNARYEXPR -> open_bracket NUMEXPRESSION close_bracket {unaryexpr_bracket_self_node}
+UNARYEXPR -> id LVALUE_AUX {unaryexpr_id_self_node}
+UNARYEXPR -> plus FACTOR {unaryexpr_plus_self_node}
+UNARYEXPR -> minus FACTOR {unaryexpr_minus_self_node}
