@@ -20,21 +20,21 @@ FACTOR -> id LVALUE_AUX {factor_id_self_node}
 FACTOR -> open_bracket NUMEXPRESSION close_bracket {factor_bracket_self_node}
 
 LVALUE_AUX -> & {epsilon_self_syn}
-LVALUE_AUX -> open_square_bracket NUMEXPRESSION close_square_bracket LVALUE_AUX {}
+LVALUE_AUX -> open_square_bracket NUMEXPRESSION close_square_bracket LVALUE_AUX {lvalueaux_lvalueaux1_inh, lvalueaux_self_syn}
 
-NUMEXPRESSION -> float_constant TERM_AUX NUMEXPRESSION_AUX {factor_numexpr_aux_inh, factor_float_self_node}
-NUMEXPRESSION -> int_constant TERM_AUX NUMEXPRESSION_AUX {factor_numexpr_aux_inh, factor_int_self_node}
-NUMEXPRESSION -> string_constant TERM_AUX NUMEXPRESSION_AUX {factor_numexpr_aux_inh, factor_string_self_node}
-NUMEXPRESSION -> id LVALUE_AUX TERM_AUX NUMEXPRESSION_AUX {}
-NUMEXPRESSION -> open_bracket NUMEXPRESSION close_bracket TERM_AUX NUMEXPRESSION_AUX {}
-NUMEXPRESSION -> plus FACTOR TERM_AUX NUMEXPRESSION_AUX {}
-NUMEXPRESSION -> minus FACTOR TERM_AUX NUMEXPRESSION_AUX {}
+NUMEXPRESSION -> float_constant TERM_AUX NUMEXPRESSION_AUX {numexpression_float_termaux1_inh, numexpression_float_numexpressionaux1_inh, numexpression_self_syn}
+NUMEXPRESSION -> int_constant TERM_AUX NUMEXPRESSION_AUX {numexpression_int_termaux1_inh, numexpression_int_numexpressionaux1_inh, numexpression_self_syn}
+NUMEXPRESSION -> string_constant TERM_AUX NUMEXPRESSION_AUX {numexpression_string_termaux1_inh, numexpression_string_numexpressionaux1_inh, numexpression_self_syn}
+NUMEXPRESSION -> id LVALUE_AUX TERM_AUX NUMEXPRESSION_AUX {numexpression_id_termaux1_inh, numexpression_id_numexpressionaux1_inh, numexpression_id_self_syn}
+NUMEXPRESSION -> open_bracket NUMEXPRESSION close_bracket TERM_AUX NUMEXPRESSION_AUX {numexpression_bracket_termaux1_inh, numexpression_bracket_numexpressionaux1_inh, numexpression_bracket_self_syn}
+NUMEXPRESSION -> plus FACTOR TERM_AUX NUMEXPRESSION_AUX {numexpression_plus_termaux1_inh, numexpression_operation_numexpression1_inh, numexpression_operation_self_syn}
+NUMEXPRESSION -> minus FACTOR TERM_AUX NUMEXPRESSION_AUX {numexpression_minus_termaux1_inh, numexpression_operation_numexpression1_inh, numexpression_operation_self_syn}
 
 NUMEXPRESSION_AUX -> & {epsilon_self_syn}
-NUMEXPRESSION_AUX -> minus TERM NUMEXPRESSION_AUX {}
-NUMEXPRESSION_AUX -> plus TERM NUMEXPRESSION_AUX {}
-NUMEXPRESSION_AUX -> mult TERM NUMEXPRESSION_AUX {}
-NUMEXPRESSION_AUX -> div TERM NUMEXPRESSION_AUX {}
+NUMEXPRESSION_AUX -> minus TERM NUMEXPRESSION_AUX {numexpraux_minus_numexpraux1_inh, numexpraux_self_syn}
+NUMEXPRESSION_AUX -> plus TERM NUMEXPRESSION_AUX {numexpraux_plus_numexpraux1_inh, numexpraux_self_syn}
+NUMEXPRESSION_AUX -> mult TERM NUMEXPRESSION_AUX {numexpraux_mult_numexpraux1_inh, numexpraux_self_syn}
+NUMEXPRESSION_AUX -> div TERM NUMEXPRESSION_AUX {numexpraux_div_numexpraux1_inh, numexpraux_self_syn}
 
 STATELIST -> id LVALUE_AUX equal EXPRESSION semicolon STATELIST_AUX {}
 STATELIST -> open_curly_bracket STATELIST close_curly_bracket STATELIST_AUX {}
