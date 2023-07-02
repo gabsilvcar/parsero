@@ -14,106 +14,6 @@ class Semantics:
         self.cfg = cfg
         self.tree = tree
 
-    def e_e1_inh(self, head: Node):
-        assert head.val == "E"
-        T = head.children[0]
-        E1 = head.children[1]
-        E1.struct.inh = T.struct.node
-
-    def e_self_node(self, head):
-        E1 = head.children[1]
-        head.struct.node = E1.struct.syn
-
-    def e1minus_e1_inh(self, head):
-        assert head.val == "E1"
-        self._e1_inh(head, "-")
-
-    def e1plus_e1_inh(self, head):
-        assert head.val == "E1"
-        self._e1_inh(head, "+")
-
-    def _e1_inh(self, head, sign):
-        E_child = head.children[2]
-        T_child = head.children[1]
-        E_child.struct.inh = Node(head.val, [sign, head.struct.inh, T_child.struct.node])
-
-    def e1epsilon_self_syn(self, head):
-        assert head.val == "E1"
-        assert head.children[0].val == "$"
-        assert head.struct is not None
-        assert head.struct.inh is not None
-
-        head.struct.syn = head.struct.inh
-
-    def e1_inh(self, head, sign):
-        assert head.val == "E1"
-        E_child = head.children[2]
-        T_child = head.children[1]
-        E_child.struct.inh = Node(head.val, [sign, head.struct.inh, T_child.struct.node])
-
-    def e1_self_syn(self, head):
-        E_child = head.children[2]
-
-        assert head.val == "E1"
-        assert E_child.struct.syn is not None
-
-        head.struct.syn = E_child.struct.syn
-
-    def tid_self_node(self, head: Node):
-        id_node = head.children[0]
-        id = id_node.val
-        id_val = id_node.entry
-        result = Leaf(id, id_val)
-        head.struct.node = result
-
-    def tnumber_self_node(self, head: Node):
-        id_node = head.children[0]
-        id = id_node.val
-        id_val = id_node.entry
-        result = Leaf(id, id_val)
-        head.struct.node = result
-
-    def tbracket_self_node(self, head: Node):
-        assert head.val == "T"
-        head.struct.node = head.children[0].struct.node
-
-    def program_self_node(self, head: Node):
-        assert head.val == "PROGRAM"
-        statement = head.children[0]
-        head.struct.node = statement.struct.syn
-
-    def statement_bracket_self_node(self, head: Node):
-        assert head.val == "STATEMENT"
-        statelist = head.children[1]
-        head.struct.node = Node(head.val, ['{', statelist.struct.syn, '}'])
-
-    def statement_self_node(self, head: Node):
-        assert head.val == "STATEMENT"
-        atribstat = head.children[0]
-        head.struct.node = Node(head.val, [atribstat.struct.syn, ';'])
-
-    def lvalue_self_node(self, head: Node):
-        assert head.val == "LVALUE"
-        lvalue_aux = head.children[1]
-        head.struct.node = Node(head.val, ['id', lvalue_aux.struct.syn])
-
-    def lvalueaux_bracket(self, head: Node):
-        pass
-
-    def atribstat_expression_inh(self, head: Node):
-        assert head.val == "ATRIBSTAT"
-        lvalue = head.children[0]
-        expression = head.children[2]
-        expression.struct.inh = Node(head.val, [lvalue.struct.node, '=', head.struct.inh])
-
-    def atribstat_self_syn(self, head: Node):
-        assert head.val == "ATRIBSTAT"
-
-        expression = head.children[2]
-        assert expression.struct.syn is not None
-
-        head.struct.syn = expression.struct.syn
-
     ##########################################
     # Epsilon
 
@@ -125,9 +25,188 @@ class Semantics:
 
     ##########################################
     # Program
+    def program_id_self_node(self, head: Node):
+        assert head.val == "PROGRAM"
+
+        lvalue_aux = head.children[1]
+        expression = head.children[3]
+        head.struct.node = Node(head.val, ['id', lvalue_aux.struct.syn, '=', expression.struct.syn, ';'])
+
+    def program_bracket_self_node(self, head: Node):
+        assert head.val == "PROGRAM"
+
+        statelist = head.children[1]
+        head.struct.node = Node(head.val, ['{', statelist.struct.syn, '}'])
+
+    def program_epsilon_node(self, head: Node):
+        assert head.val == "PROGRAM"
+        head.struct.node = None
 
     ##########################################
     # Expression
+    def expr_float_termaux1_inh(self, head: Node):
+        assert head.val == "EXPRESSION"
+        term_aux = head.children[1]
+        id_node = head.children[0]
+        id = id_node.val
+        id_val = id_node.entry
+        constant = Leaf(id, id_val)
+        term_aux.struct.inh = Node(head.val, [constant])
+
+    def expr_float_numexpraux1_inh(self, head: Node):
+        assert head.val == "EXPRESSION"
+        term_aux = head.children[1]
+        numexpression_aux = head.children[2]
+        numexpression_aux.struct.inh = term_aux.struct.syn
+
+    def expr_float_expraux1_inh(self, head: Node):
+        assert head.val == "EXPRESSION"
+        numexpression_aux = head.children[2]
+        expression_aux = head.children[3]
+        expression_aux.struct.inh = numexpression_aux.struct.syn
+
+    def expr_int_termaux1_inh(self, head: Node):
+        assert head.val == "EXPRESSION"
+        term_aux = head.children[1]
+        id_node = head.children[0]
+        id = id_node.val
+        id_val = id_node.entry
+        constant = Leaf(id, id_val)
+        term_aux.struct.inh = Node(head.val, [constant])
+
+    def expr_int_numexpraux1_inh(self, head: Node):
+        assert head.val == "EXPRESSION"
+        term_aux = head.children[1]
+        numexpression_aux = head.children[2]
+        numexpression_aux.struct.inh = term_aux.struct.syn
+
+    def expr_int_expraux1_inh(self, head: Node):
+        assert head.val == "EXPRESSION"
+        numexpression_aux = head.children[2]
+        expression_aux = head.children[3]
+        expression_aux.struct.inh = numexpression_aux.struct.syn
+
+    def expr_string_termaux1_inh(self, head: Node):
+        assert head.val == "EXPRESSION"
+        term_aux = head.children[1]
+        id_node = head.children[0]
+        id = id_node.val
+        id_val = id_node.entry
+        constant = Leaf(id, id_val)
+        term_aux.struct.inh = Node(head.val, [constant])
+
+    def expr_string_numexpraux1_inh(self, head: Node):
+        assert head.val == "EXPRESSION"
+        term_aux = head.children[1]
+        numexpression_aux = head.children[2]
+        numexpression_aux.struct.inh = term_aux.struct.syn
+
+    def expr_string_expraux1_inh(self, head: Node):
+        assert head.val == "EXPRESSION"
+        numexpression_aux = head.children[2]
+        expression_aux = head.children[3]
+        expression_aux.struct.inh = numexpression_aux.struct.syn
+
+    def expr_constant_self_syn(self, head: Node):
+        assert head.val == "EXPRESSION"
+
+        expression_aux_child = head.children[3]
+        assert expression_aux_child.struct.syn is not None
+
+        head.struct.syn = expression_aux_child.struct.syn
+
+    def expr_id_termaux1_inh(self, head: Node):
+        assert head.val == "EXPRESSION"
+
+        lvalue_aux = head.children[1]
+        term_aux = head.children[2]
+        term_aux.struct.inh = Node(head.val, ['id', lvalue_aux.struct.syn])
+
+    def expr_id_numexpraux1_inh(self, head: Node):
+        assert head.val == "EXPRESSION"
+
+        term_aux = head.children[2]
+        numexpression_aux = head.children[3]
+        numexpression_aux.struct.inh = term_aux.struct.syn
+
+    def expr_id_expraux1_inh(self, head: Node):
+        assert head.val == "EXPRESSION"
+
+        numexpression_aux = head.children[3]
+        expression_aux = head.children[4]
+        expression_aux.struct.inh = numexpression_aux.struct.syn
+
+    def expr_id_self_syn(self, head: Node):
+        assert head.val == "EXPRESSION"
+
+        expression_aux_child = head.children[4]
+        assert expression_aux_child.struct.syn is not None
+
+        head.struct.syn = expression_aux_child.struct.syn
+
+    def expr_bracket_termaux1_inh(self, head: Node):
+        assert head.val == "EXPRESSION"
+
+        numexpression = head.children[1]
+        termaux = head.children[3]
+        termaux.struct.inh = Node(head.val, ['(', numexpression.struct.syn, ')'])
+
+    def expr_bracket_numexpraux1_inh(self, head: Node):
+        assert head.val == "EXPRESSION"
+
+        term_aux = head.children[3]
+        numexpression_aux = head.children[4]
+        numexpression_aux.struct.inh = term_aux.struct.syn
+
+    def expr_bracket_expraux1_inh(self, head: Node):
+        assert head.val == "EXPRESSION"
+
+        numexpression_aux = head.children[4]
+        expression_aux = head.children[5]
+        expression_aux.struct.inh = numexpression_aux.struct.syn
+
+    def expr_bracket_self_syn(self, head: Node):
+        assert head.val == "EXPRESSION"
+
+        expression_aux_child = head.children[5]
+        assert expression_aux_child.struct.syn is not None
+
+        head.struct.syn = expression_aux_child.struct.syn
+
+    def expr_op_termaux1_inh(self, head: Node, operation):
+        factor = head.children[1]
+        term_aux = head.children[2]
+        term_aux.struct.inh = Node(head.val, [operation, factor.struct.node])
+
+    def expr_minus_termaux1_inh(self, head: Node):
+        assert head.val == "EXPRESSION"
+        self.expr_op_termaux1_inh(head, '-')
+
+    def expr_plus_termaux1_inh(self, head: Node):
+        assert head.val == "EXPRESSION"
+        self.expr_op_termaux1_inh(head, '+')
+
+    def expr_op_numexpraux1_inh(self, head: Node):
+        assert head.val == "EXPRESSION"
+
+        term_aux = head.children[2]
+        numexpression_aux = head.children[3]
+        numexpression_aux.struct.inh = term_aux.struct.syn
+
+    def expr_op_expraux1_inh(self, head: Node):
+        assert head.val == "EXPRESSION"
+
+        numexpression_aux = head.children[3]
+        expression_aux = head.children[4]
+        expression_aux.struct.inh = numexpression_aux.struct.syn
+
+    def expr_op_self_syn(self, head: Node):
+        assert head.val == "EXPRESSION"
+
+        expression_aux_child = head.children[4]
+        assert expression_aux_child.struct.syn is not None
+
+        head.struct.syn = expression_aux_child.struct.syn
 
     ##########################################
     # Expression_Aux
@@ -207,7 +286,7 @@ class Semantics:
         assert head.val == "NUMEXPRESSION"
         term_aux = head.children[1]
         numexpression = head.children[2]
-        numexpression.struct.inh = term_aux.struct.node
+        numexpression.struct.inh = term_aux.struct.syn
 
     def numexpression_int_termaux1_inh(self, head: Node):
         assert head.val == "NUMEXPRESSION"
@@ -222,7 +301,7 @@ class Semantics:
         assert head.val == "NUMEXPRESSION"
         term_aux = head.children[1]
         numexpression = head.children[2]
-        numexpression.struct.inh = term_aux.struct.node
+        numexpression.struct.inh = term_aux.struct.syn
 
     def numexpression_string_termaux1_inh(self, head: Node):
         assert head.val == "NUMEXPRESSION"
@@ -237,7 +316,7 @@ class Semantics:
         assert head.val == "NUMEXPRESSION"
         term_aux = head.children[1]
         numexpression = head.children[2]
-        numexpression.struct.inh = term_aux.struct.node
+        numexpression.struct.inh = term_aux.struct.syn
 
     def numexpression_self_syn(self, head: Node):
         assert head.val == "NUMEXPRESSION"
@@ -417,8 +496,7 @@ class Semantics:
         assert head.val == "TERM"
         numexpression = head.children[1]
         termaux = head.children[3]
-        termaux.struct.inh = Node(head.val,
-                                  ['(', numexpression.struct.syn, ')'])  # eu deveria adicionar algo depois do ')'?
+        termaux.struct.inh = Node(head.val, ['(', numexpression.struct.syn, ')']) # eu deveria adicionar algo depois do ')'?
 
     def term_op_self_syn(self, head: Node):
         assert head.val == "TERM"

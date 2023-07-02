@@ -1,14 +1,14 @@
-PROGRAM -> & {}
-PROGRAM -> id LVALUE_AUX equal EXPRESSION semicolon {}
-PROGRAM -> open_curly_bracket STATELIST close_curly_bracket {}
+PROGRAM -> & {program_epsilon_node}
+PROGRAM -> id LVALUE_AUX equal EXPRESSION semicolon {program_id_self_node}
+PROGRAM -> open_curly_bracket STATELIST close_curly_bracket {program_bracket_self_node}
 
-EXPRESSION -> float_constant TERM_AUX NUMEXPRESSION_AUX EXPRESSION_AUX {}
-EXPRESSION -> int_constant TERM_AUX NUMEXPRESSION_AUX EXPRESSION_AUX {}
-EXPRESSION -> string_constant TERM_AUX NUMEXPRESSION_AUX EXPRESSION_AUX {}
-EXPRESSION -> id LVALUE_AUX TERM_AUX NUMEXPRESSION_AUX EXPRESSION_AUX {}
-EXPRESSION -> open_bracket NUMEXPRESSION close_bracket TERM_AUX NUMEXPRESSION_AUX EXPRESSION_AUX {}
-EXPRESSION -> minus FACTOR TERM_AUX NUMEXPRESSION_AUX EXPRESSION_AUX {}
-EXPRESSION -> plus FACTOR TERM_AUX NUMEXPRESSION_AUX EXPRESSION_AUX {}
+EXPRESSION -> float_constant TERM_AUX NUMEXPRESSION_AUX EXPRESSION_AUX {expr_float_termaux1_inh, expr_float_numexpraux1_inh, expr_float_expraux1_inh, expr_constant_self_syn}
+EXPRESSION -> int_constant TERM_AUX NUMEXPRESSION_AUX EXPRESSION_AUX {expr_int_termaux1_inh, expr_int_numexpraux1_inh, expr_int_expraux1_inh, expr_constant_self_syn}
+EXPRESSION -> string_constant TERM_AUX NUMEXPRESSION_AUX EXPRESSION_AUX {expr_string_termaux1_inh, expr_string_numexpraux1_inh, expr_string_expraux1_inh, expr_constant_self_syn}
+EXPRESSION -> id LVALUE_AUX TERM_AUX NUMEXPRESSION_AUX EXPRESSION_AUX {expr_id_termaux1_inh, expr_id_numexpraux1_inh, expr_id_expraux1_inh, expr_id_self_syn}
+EXPRESSION -> open_bracket NUMEXPRESSION close_bracket TERM_AUX NUMEXPRESSION_AUX EXPRESSION_AUX {expr_bracket_termaux1_inh, expr_bracket_numexpraux1_inh, expr_bracket_expraux1_inh, expr_bracket_self_syn}
+EXPRESSION -> minus FACTOR TERM_AUX NUMEXPRESSION_AUX EXPRESSION_AUX {expr_minus_termaux1_inh, expr_op_numexpraux1_inh, expr_op_expraux1_inh, expr_op_self_syn}
+EXPRESSION -> plus FACTOR TERM_AUX NUMEXPRESSION_AUX EXPRESSION_AUX {expr_plus_termaux1_inh, expr_op_numexpraux1_inh, expr_op_expraux1_inh, expr_op_self_syn}
 
 EXPRESSION_AUX -> & {epsilon_self_syn}
 EXPRESSION_AUX -> comparator NUMEXPRESSION {expression_aux_comparator_self_node}
