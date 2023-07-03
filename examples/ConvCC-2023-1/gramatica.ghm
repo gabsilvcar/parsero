@@ -6,6 +6,8 @@ FUNCDEF -> def id open_bracket PARAMLIST close_bracket open_curly_bracket STATEL
 
 TYPE -> int | float | string
 PARAMLIST -> TYPE id comma PARAMLIST | TYPE id | &
+SIGN -> plus | minus
+OPERATOR -> plus | minus | mult | div | mod
 
 STATEMENT -> IF_STMT | STATEMENT_AUX
 STATEMENT_AUX -> VARDECL semicolon | ATRIBSTAT semicolon | PRINTSTAT semicolon | READSTAT semicolon | RETURNSTAT semicolon | FORSTAT | open_curly_bracket STATELIST close_curly_bracket | open_curly_bracket FUNCLIST close_curly_bracket | break semicolon | semicolon
@@ -38,12 +40,12 @@ EXPRESSION -> NUMEXPRESSION EXPRESSION_AUX
 EXPRESSION_AUX -> comparator NUMEXPRESSION | &
 
 NUMEXPRESSION -> TERM NUMEXPRESSION_AUX
-NUMEXPRESSION_AUX -> operator TERM NUMEXPRESSION_AUX | &
+NUMEXPRESSION_AUX -> OPERATOR TERM NUMEXPRESSION_AUX | &
 
 TERM -> UNARYEXPR TERM_AUX
 TERM_AUX -> symbol_aux UNARYEXPR TERM_AUX | &
 
-UNARYEXPR -> sign FACTOR | FACTOR
+UNARYEXPR -> SIGN FACTOR | FACTOR
 
 FACTOR ->  int_constant | float_constant | string_constant | null | LVALUE | open_bracket NUMEXPRESSION close_bracket
 

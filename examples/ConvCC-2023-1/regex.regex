@@ -40,6 +40,7 @@ comma: ,
 colon: :
 semicolon: ;
 backslash: \\
+sign: (\+|-)
 
 open_curly_bracket: \{
 close_curly_bracket: \}
@@ -55,7 +56,6 @@ inside_string: (\w|\d|symbols|acentuated)
 string_text: "inside_string*"
 id: letter(letter|digit|_)*
 
-number: (digit+)
-# int_constant:(sign?)(digit+)
+int_constant:(sign?)(digit+)
 float_constant:(sign?)(digit+)(decimal)(scientific_notation?)
 string_constant:string_text
