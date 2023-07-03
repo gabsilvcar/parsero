@@ -12,7 +12,7 @@ class SymbolTable:
 
     def insert(self, token):
         if token.attribute not in self.st.keys():
-            self.st[token.attribute] = [token.line, token.name]
+            self.st[token.attribute] = [token.line]
             return
 
         raise KeyError(f"Symbol {token.attribute} already exists in SymbolTable (line {token.line})")
@@ -38,17 +38,16 @@ class SymbolTable:
         return self.father
 
     def __str__(self):
-        headers = [ "symbol", "line", "type", "aux"]
+        headers = ["symbol", "line", "type"]
         data = []
 
         for symbol, info in self.st.items():
             symbol_line = info[0]
-            symbol_type = info[1]
-            symbol_aux = list()
+            symbol_type = None
             
-            if len(info) > 2:
-                symbol_aux = info[2:]
+            if len(info) > 1:
+                symbol_type = info[1]
 
-            data.append([symbol, symbol_line, symbol_type, symbol_aux])
+            data.append([symbol, symbol_line, symbol_type])
 
         return tabulate(data, headers=headers, tablefmt="fancy_grid")
