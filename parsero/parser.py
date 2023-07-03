@@ -45,8 +45,8 @@ class Parsero:
             error.filename = path
             raise error
 
-    def semantic_analysis(self, tree: SyntacticTree):
-        semantic = SemanticAnalyser(self.semantic_lib, self.cfg, tree)
+    def semantic_analysis(self, tree: SyntacticTree, symbol_table):
+        semantic = SemanticAnalyser(self.semantic_lib, self.cfg, symbol_table, tree)
         return semantic.parse()
 
     def check_ll1(self) -> bool:

@@ -11,8 +11,10 @@ def test():
         dec + "semantics/__init__.py",
     )
 
-    tree = parser.parse(dec + "/DEC.example")
-    parser.semantic_analysis(tree)
+    tree, st = parser.parse(dec + "/DEC.example")
+    print(tree)
+    parser.semantic_analysis(tree, st)
     # assert (tree.find("VARDECL") == "string")
 
-    print(tree)
+
+test()

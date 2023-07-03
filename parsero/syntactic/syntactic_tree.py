@@ -16,9 +16,10 @@ class Element:
 
 
 class Leaf(Element):
-    def __init__(self, val: str, entry: str):
+    def __init__(self, val: str, entry: str, scope: int):
         super().__init__(val)
         self.entry = entry
+        self.scope = scope
 
     def __str__(self, level=0):
         return "\t" * level + self.val + " : " + self.entry + "\n"

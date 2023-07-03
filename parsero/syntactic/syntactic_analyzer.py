@@ -148,7 +148,7 @@ def ll1_parse(tokens: list, table: dict, cfg: ContextFreeGrammar) -> tuple[Synta
             if symbol == current[0]:
                 if symbol != "$":
                     tree.find_node(current[1][0], current[1][1]).add_child(
-                        Leaf(symbol, token.attribute)
+                        Leaf(symbol, token.attribute, scope_counter)
                     )
                 break
 
@@ -180,7 +180,7 @@ def ll1_parse(tokens: list, table: dict, cfg: ContextFreeGrammar) -> tuple[Synta
 
             if stack[-1] == symbol:
                 tree.find_node(current[0], current[1][1] + 1).add_child(
-                    Leaf(symbol, token.attribute)
+                    Leaf(symbol, token.attribute, scope_counter)
                 )  # check later
                 stack.pop()
                 break
@@ -295,8 +295,8 @@ def ll1_parse(tokens: list, table: dict, cfg: ContextFreeGrammar) -> tuple[Synta
 
     symbol_tables[pop_id] = pop_symbol_table
 
-    for n in range(len(symbol_tables)):
-        print(symbol_tables[n].get_id(), symbol_tables[n].is_loop_scope(), symbol_tables[n].get_father())
-        print(symbol_tables[n])
+    #for n in range(len(symbol_tables)):
+    #    print(symbol_tables[n].get_id(), symbol_tables[n].is_loop_scope(), symbol_tables[n].get_father())
+    #    print(symbol_tables[n])
 
     return tree, symbol_tables

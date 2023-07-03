@@ -10,6 +10,8 @@ def test():
         "examples/simple_syntax_tree/semantics/__init__.py",
     )
 
-    tree = parser.parse(base + "/EXPA/EXPA.example")
-    # parser.semantic_analysis(tree)
+    tree, st = parser.parse(base + "/EXPA/EXPA.example")
+    parser.semantic_analysis(tree, st)
     print(tree)
+
+test()

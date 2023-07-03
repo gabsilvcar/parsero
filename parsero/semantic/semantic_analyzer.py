@@ -3,10 +3,11 @@ from parsero.syntactic import Leaf, Node, SyntacticTree
 
 
 class SemanticAnalyser:
-    def __init__(self, semantic_lib, cfg, tree):
+    def __init__(self, semantic_lib, cfg, symbol_table, tree):
         self.semantic_lib = semantic_lib
         self.semantic_handler = semantic_lib.Semantics(cfg, tree)
         self.cfg = cfg
+        self.symbol_table = symbol_table
         self.st_tree = tree
         self._prepare_node(tree)
 
@@ -22,6 +23,14 @@ class SemanticAnalyser:
     def _handle(self, head):
         rules = self._get_ordered_rules(head, self.cfg.get_rules(head.val, head.prod))
         for child in head.children:
+            if isinstance(child, Leaf):
+                scope = child.scope
+                if child.val == "id":
+                    self.symbol_table[scope].lookup(child.entry)
+                if child.val == "break":
+                    self.symbol_table[scope].is_loop_scope()
+                continue
+
             if not isinstance(child, Leaf):
                 if child.val == "E1":
                     print("aa")
