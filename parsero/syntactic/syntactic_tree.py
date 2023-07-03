@@ -48,7 +48,7 @@ class Node(Element):
 
     def __str__(self, level=0):
         ret = "\t" * level + repr(self.val) + " : " + ",".join(str(x) for x in self.prod) + "\n"
-        if self.struct:
+        if self.struct and (len(str(self.struct)) > 0):
             ret += "\t" * level + "\033[0;31m" + str(self.struct) + "\033[0m" + "\n"
         for child in self.children:
             ret += child.__str__(level + 1)

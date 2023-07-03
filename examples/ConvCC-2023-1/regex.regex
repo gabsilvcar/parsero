@@ -24,13 +24,15 @@ def:def
 digit: [0-9]
 letter: [a-zA-Z]
 symbols: (_| |!|\=|\&|@|#|$|\%|\&|\||\+|-|\&|\*|'|"|/|\\|\.|,|\[|\]|\(|\)|\{|\}|\<|\>|:|;|\?|\^|\~|\Σ|\→)
-sign: (\+|-)
+plus: \+
+minus: -
 decimal: (\.digit*)
 scientific_notation: (e(\+|-)?digit+)
-symbol_aux: (\*|/|\%)
+mult: \*
+div: /
+mod: \%
 
 comparator: (==|!=|\<|\>|\<=|\>=)
-operator: (\+|-|\*|/|\||\<\<|\>\>)
 increment: (\+\+|\-\-)
 atr: (=|\+=|\-=|\*=)
 dot: \.
@@ -53,6 +55,7 @@ inside_string: (\w|\d|symbols|acentuated)
 string_text: "inside_string*"
 id: letter(letter|digit|_)*
 
-int_constant:(sign?)(digit+)
+number: (digit+)
+# int_constant:(sign?)(digit+)
 float_constant:(sign?)(digit+)(decimal)(scientific_notation?)
 string_constant:string_text

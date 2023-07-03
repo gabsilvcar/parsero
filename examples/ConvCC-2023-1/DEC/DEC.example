@@ -1,5 +1,5 @@
 {
 string a;
-int b;
+int b[2][3];
 float a;
 }

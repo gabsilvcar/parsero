@@ -1,17 +1,17 @@
-PROGRAM -> STATEMENT
-PROGRAM -> &
+PROGRAM -> STATEMENT {}
+PROGRAM -> & {}
 
-TYPE -> int
-TYPE -> float
-TYPE -> string
+TYPE -> int {int_self_type}
+TYPE -> float {float_self_type}
+TYPE -> string {string_self_type}
 
-STATEMENT -> VARDECL semicolon
-STATEMENT -> open_curly_bracket STATELIST close_curly_bracket
+STATEMENT -> VARDECL semicolon {statement_self_type}
+STATEMENT -> open_curly_bracket STATELIST close_curly_bracket {}
 
-VARDECL -> TYPE id VARDECL1
-VARDECL1 -> open_square_bracket int_constant close_square_bracket VARDECL1
-VARDECL1 -> &
+VARDECL -> TYPE id VARDECL1 {vardcl_self_type, vardcl_vardecl1_inh}
+VARDECL1 -> open_square_bracket number close_square_bracket VARDECL1 {vardcl1_self_type, vardcl1_vardecl1_inh}
+VARDECL1 -> & {vardcl1epsilon_self_t}
 
-STATELIST -> STATEMENT STATELIST_AUX
-STATELIST_AUX -> STATELIST
-STATELIST_AUX -> &
+STATELIST -> STATEMENT STATELISTAUX {}
+STATELISTAUX -> STATELIST {}
+STATELISTAUX -> & {}
