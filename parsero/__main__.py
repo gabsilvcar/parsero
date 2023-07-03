@@ -26,7 +26,7 @@ def parsero_cli():
     while True:
         print("Forneça o arquivo para analisar")
         filename_word = askopenfilename(
-            filetypes=[("ConvCC-2023-1 Files", ".ccc")], initialdir="examples/ConvCC-2023-1/"
+            filetypes=[("ConvCC-2023-1 Files", ".lcc")], initialdir="examples/ConvCC-2023-1/"
         )
         print(parsero_obj.highlight(filename_word))
         print("Escolher outro arquivo?")
