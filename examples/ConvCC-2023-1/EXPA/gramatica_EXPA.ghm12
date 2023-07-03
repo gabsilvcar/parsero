@@ -2,39 +2,39 @@ PROGRAM -> & {programepsilon_self_node}
 PROGRAM -> id LVALUEAUX equal EXPRESSION semicolon {program_lvalueaux_inh, programid_self_node}
 PROGRAM -> open_curly_bracket STATELIST close_curly_bracket {programbracket_self_node}
 
-EXPRESSION -> float_constant TERMAUX NUMEXPRESSIONAUX EXPRESSIONAUX {exprfloat_termaux_inh, exprfloat_numexpressionaux_inh, exprfloat_expressionaux_inh, exprconst_self_syn}
-EXPRESSION -> int_constant TERMAUX NUMEXPRESSIONAUX EXPRESSIONAUX {exprint_termaux_inh, exprint_numexpressionaux_inh, exprint_expressionaux_inh, exprconst_self_syn}
-EXPRESSION -> string_constant TERMAUX NUMEXPRESSIONAUX EXPRESSIONAUX {exprstr_termaux_inh, exprstr_numexpressionaux_inh, exprstr_expressionaux_inh, exprconst_self_syn}
-EXPRESSION -> id LVALUEAUX TERMAUX NUMEXPRESSIONAUX EXPRESSIONAUX {exprid_lvalueaux_inh, exprid_termaux_inh, exprid_numexpressionaux_inh, exprid_expressionaux_inh, exprid_self_syn}
-EXPRESSION -> open_bracket NUMEXPRESSION close_bracket TERMAUX NUMEXPRESSIONAUX EXPRESSIONAUX {exprbracket_termaux_inh, exprbracket_numexpressionaux_inh, exprbracket_expressionaux_inh, exprbracket_self_syn}
-EXPRESSION -> minus FACTOR TERMAUX NUMEXPRESSIONAUX EXPRESSIONAUX {exprminus_termaux_inh, exprop_numexpressionaux_inh, exprop_expressionaux_inh, exprop_self_syn}
-EXPRESSION -> plus FACTOR TERMAUX NUMEXPRESSIONAUX EXPRESSIONAUX {exprplus_termaux_inh, exprop_numexpressionaux_inh, exprop_expressionaux_inh, exprop_self_syn}
+EXPRESSION -> float_constant TERMAUX NUMEXPRESSIONAUX EXPRESSIONAUX {float_termaux_inh, expr_numexpressionaux_inh, termaux_numexpressionaux_inh, exprconst_self_syn}
+EXPRESSION -> number TERMAUX NUMEXPRESSIONAUX EXPRESSIONAUX {int_termaux_inh, expr_numexpressionaux_inh, termaux_numexpressionaux_inh, exprconst_self_syn}
+EXPRESSION -> string_constant TERMAUX NUMEXPRESSIONAUX EXPRESSIONAUX {str_termaux_inh, expr_numexpressionaux_inh, termaux_numexpressionaux_inh, exprconst_self_syn}
+EXPRESSION -> id LVALUEAUX TERMAUX NUMEXPRESSIONAUX EXPRESSIONAUX {id_lvalueaux_inh, exprid_termaux_inh, termaux_numexpressionaux_inh, exprid_expressionaux_inh, exprid_self_syn}
+EXPRESSION -> open_bracket NUMEXPRESSION close_bracket TERMAUX NUMEXPRESSIONAUX EXPRESSIONAUX {bracket_termaux_inh, exprbracket_numexpressionaux_inh, exprbracket_expressionaux_inh, exprbracket_self_syn}
+EXPRESSION -> minus FACTOR TERMAUX NUMEXPRESSIONAUX EXPRESSIONAUX {minus_termaux_inh, termaux_numexpressionaux_inh, exprop_expressionaux_inh, exprop_self_syn}
+EXPRESSION -> plus FACTOR TERMAUX NUMEXPRESSIONAUX EXPRESSIONAUX {plus_termaux_inh, termaux_numexpressionaux_inh, exprop_expressionaux_inh, exprop_self_syn}
 
 EXPRESSIONAUX -> & {epsilon_self_syn}
 EXPRESSIONAUX -> comparator NUMEXPRESSION {expressionaux_self_node}
 
-FACTOR -> float_constant {factorfloat_self_node}
-FACTOR -> int_constant {factorint_self_node}
-FACTOR -> string_constant {factorstr_self_node}
+FACTOR -> float_constant {float_self_node}
+FACTOR -> number {int_self_node}
+FACTOR -> string_constant {string_self_node}
 FACTOR -> id LVALUEAUX {factorid_self_node}
 FACTOR -> open_bracket NUMEXPRESSION close_bracket {factorbracket_self_node}
 
 LVALUEAUX -> & {epsilon_self_syn}
 LVALUEAUX -> open_square_bracket NUMEXPRESSION close_square_bracket LVALUEAUX {lvalueaux_lvalueaux_inh, lvalueaux_self_syn}
 
-NUMEXPRESSION -> float_constant TERMAUX NUMEXPRESSIONAUX {numexprfloat_termaux_inh, numexprfloat_numexpressionaux_inh, numexpr_self_syn}
-NUMEXPRESSION -> int_constant TERMAUX NUMEXPRESSIONAUX {numexprint_termaux_inh, numexprint_numexpressionaux_inh, numexpr_self_syn}
-NUMEXPRESSION -> string_constant TERMAUX NUMEXPRESSIONAUX {numexprstr_termaux_inh, numexprstr_numexpressionaux_inh, numexpr_self_syn}
-NUMEXPRESSION -> id LVALUEAUX TERMAUX NUMEXPRESSIONAUX {numexprid_termaux_inh, numexprid_numexpressionaux_inh, numexprid_self_syn}
-NUMEXPRESSION -> open_bracket NUMEXPRESSION close_bracket TERMAUX NUMEXPRESSIONAUX {numexprbracket_termaux_inh, numexprbracket_numexpressionaux_inh, numexprbracket_self_syn}
-NUMEXPRESSION -> plus FACTOR TERMAUX NUMEXPRESSIONAUX {numexprplus_termaux_inh, numexprop_numexpressionaux_inh, numexprop_self_syn}
-NUMEXPRESSION -> minus FACTOR TERMAUX NUMEXPRESSIONAUX {numexprminus_termaux_inh, numexprop_numexpressionaux_inh, numexprop_self_syn}
+NUMEXPRESSION -> float_constant TERMAUX NUMEXPRESSIONAUX {float_termaux_inh, numexpr_numexpressionaux_inh, numexpr_self_syn}
+NUMEXPRESSION -> number TERMAUX NUMEXPRESSIONAUX {int_termaux_inh, numexpr_numexpressionaux_inh, numexpr_self_syn}
+NUMEXPRESSION -> string_constant TERMAUX NUMEXPRESSIONAUX {str_termaux_inh, numexpr_numexpressionaux_inh, numexpr_self_syn}
+NUMEXPRESSION -> id LVALUEAUX TERMAUX NUMEXPRESSIONAUX {numexprid_termaux_inh, termaux_numexpressionaux_inh, numexprid_self_syn}
+NUMEXPRESSION -> open_bracket NUMEXPRESSION close_bracket TERMAUX NUMEXPRESSIONAUX {bracket_termaux_inh, numexprbracket_numexpressionaux_inh, numexprbracket_self_syn}
+NUMEXPRESSION -> plus FACTOR TERMAUX NUMEXPRESSIONAUX {plus_termaux_inh, termaux_numexpressionaux_inh, numexprop_self_syn}
+NUMEXPRESSION -> minus FACTOR TERMAUX NUMEXPRESSIONAUX {minus_termaux_inh, termaux_numexpressionaux_inh, numexprop_self_syn}
 
 NUMEXPRESSIONAUX -> & {epsilon_self_syn}
 NUMEXPRESSIONAUX -> minus TERM NUMEXPRESSIONAUX {numexprauxminus_numexpressionaux_inh, numexpraux_self_syn}
 NUMEXPRESSIONAUX -> plus TERM NUMEXPRESSIONAUX {numexprauxplus_numexpressionaux_inh, numexpraux_self_syn}
-NUMEXPRESSIONAUX -> mult TERM NUMEXPRESSIONAUX {numexprauxmult_numexpressionaux_inh, numexpraux_self_syn}
-NUMEXPRESSIONAUX -> div TERM NUMEXPRESSIONAUX {numexprauxdiv_numexpressionaux_inh, numexpraux_self_syn}
+NUMEXPRESSIONAUX -> mult TERM NUMEXPRESSIONAUX {mult_numexpressionaux_inh, numexpraux_self_syn}
+NUMEXPRESSIONAUX -> div TERM NUMEXPRESSIONAUX {div_numexpressionaux_inh, numexpraux_self_syn}
 
 STATELIST -> id LVALUEAUX equal EXPRESSION semicolon STATELISTAUX {}
 STATELIST -> open_curly_bracket STATELIST close_curly_bracket STATELISTAUX {}
@@ -43,23 +43,23 @@ STATELISTAUX -> & {epsilon_self_syn}
 STATELISTAUX -> id LVALUEAUX equal EXPRESSION semicolon STATELISTAUX {}
 STATELISTAUX -> open_curly_bracket STATELIST close_curly_bracket STATELISTAUX {}
 
-TERM -> float_constant TERMAUX {termfloat_termaux_inh, termconstant_self_syn}
-TERM -> int_constant TERMAUX {termint_termaux_inh, termconstant_self_syn}
-TERM -> string_constant TERMAUX {termstring_termaux_inh, termconstant_self_syn}
-TERM -> id LVALUEAUX TERMAUX {termid_lvalueaux_inh, termid_termaux_inh, termid_self_syn}
-TERM -> open_bracket NUMEXPRESSION close_bracket TERMAUX {termbracket_termaux_inh, termbracket_self_syn}
-TERM -> minus FACTOR TERMAUX {termminus_termaux_inh, termop_self_syn}
-TERM -> plus FACTOR TERMAUX {termplus_termaux_inh, termop_self_syn}
+TERM -> float_constant TERMAUX {float_termaux_inh, termconstant_self_syn}
+TERM -> number TERMAUX {int_termaux_inh, termconstant_self_syn}
+TERM -> string_constant TERMAUX {str_termaux_inh, termconstant_self_syn}
+TERM -> id LVALUEAUX TERMAUX {id_lvalueaux_inh, termid_termaux_inh, term_self_syn}
+TERM -> open_bracket NUMEXPRESSION close_bracket TERMAUX {bracket_termaux_inh, termbracket_self_syn}
+TERM -> minus FACTOR TERMAUX {minus_termaux_inh, term_self_syn}
+TERM -> plus FACTOR TERMAUX {plus_termaux_inh, term_self_syn}
 
 TERMAUX -> & {epsilon_self_syn}
-TERMAUX -> mult UNARYEXPR TERMAUX {termauxmult_termaux_inh, termaux_self_syn}
-TERMAUX -> div UNARYEXPR TERMAUX {termauxdiv_termaux_inh, termaux_self_syn}
+TERMAUX -> mult UNARYEXPR TERMAUX {mult_numexpressionaux_inh, termaux_self_syn}
+TERMAUX -> div UNARYEXPR TERMAUX {div_numexpressionaux_inh, termaux_self_syn}
 TERMAUX -> mod UNARYEXPR TERMAUX {termauxmod_termaux_inh, termaux_self_syn}
 
-UNARYEXPR -> float_constant {unaryexprfloat_self_node}
-UNARYEXPR -> int_constant {unaryexprint_self_node}
-UNARYEXPR -> string_constant {unaryexprstring_self_node}
+UNARYEXPR -> float_constant {float_self_node}
+UNARYEXPR -> number {int_self_node}
+UNARYEXPR -> string_constant {string_self_node}
 UNARYEXPR -> open_bracket NUMEXPRESSION close_bracket {unaryexprbracket_self_node}
-UNARYEXPR -> id LVALUEAUX {unaryexprid_self_node}
+UNARYEXPR -> id LVALUEAUX {id_lvalueaux_inh, unaryexprid_self_node}
 UNARYEXPR -> plus FACTOR {unaryexprplus_self_node}
 UNARYEXPR -> minus FACTOR {unaryexprminus_self_node}
