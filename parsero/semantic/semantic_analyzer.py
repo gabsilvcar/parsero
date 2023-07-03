@@ -35,7 +35,15 @@ class SemanticAnalyser:
                                 raise KeyError(f"Symbol {child.entry} not defined in SymbolTable")    
                             scope = self.symbol_table[scope].get_father()
                 if child.val == "break":
-                    self.symbol_table[scope].is_loop_scope()
+                    while True:
+                        if self.symbol_table[scope].is_loop_scope():
+                            break
+
+                        if self.symbol_table[scope].get_father() is not None:
+                            scope = self.symbol_table[scope].get_father()
+                            continue
+
+                        raise Exception("Statement "break" used outside of a looping scope")
                 continue
 
             if not isinstance(child, Leaf):
