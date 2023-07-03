@@ -26,7 +26,14 @@ class SemanticAnalyser:
             if isinstance(child, Leaf):
                 scope = child.scope
                 if child.val == "id":
-                    self.symbol_table[scope].lookup(child.entry)
+                    while True:
+                        try:
+                            self.symbol_table[scope].lookup(child.entry)
+                            break
+                        except KeyError:
+                            if self.symbol_table[scope].get_father() is None:
+                                raise KeyError(f"Symbol {child.entry} not defined in SymbolTable")    
+                            scope = self.symbol_table[scope].get_father()
                 if child.val == "break":
                     self.symbol_table[scope].is_loop_scope()
                 continue

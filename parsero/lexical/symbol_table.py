@@ -15,7 +15,7 @@ class SymbolTable:
             self.st[token.attribute] = [token.line]
             return
 
-#        raise KeyError(f"Symbol {token.attribute} already exists in SymbolTable (line {token.line})")
+        raise KeyError(f"Symbol {token.attribute} already exists in SymbolTable (line {token.line})")
 
     def insert_additional_info(self, symbol, info):
         self.lookup(symbol).append(info)
