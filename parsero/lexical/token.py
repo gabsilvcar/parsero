@@ -6,6 +6,7 @@ class Token:
     name: str
     attribute: str = ""
     index: int = 0
+    line: int = 0
 
     def __hash__(self):
         pair = (self.name, self.attribute)

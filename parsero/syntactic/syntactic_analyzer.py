@@ -4,6 +4,7 @@ from parsero import regex
 from parsero.cfg.contextfree_grammar import ContextFreeGrammar
 from parsero.common.errors import SyntacticError
 from parsero.lexical.token import Token
+from parsero.lexical.symbol_table import SymbolTable
 from parsero.syntactic.syntactic_tree import Leaf, Node, SyntacticTree
 
 IS_BLANK = regex.compiles("(( )|\n|\t|↳|↲)*")
@@ -116,11 +117,24 @@ def create_table(cfg: ContextFreeGrammar) -> dict:
     return table
 
 
-def ll1_parse(tokens: list, table: dict, cfg: ContextFreeGrammar) -> SyntacticTree:
+def ll1_parse(tokens: list, table: dict, cfg: ContextFreeGrammar) -> tuple[SyntacticTree, dict]:
     stack = ["$", [cfg.initial_symbol, [None, -1]]]  # None represents the origin and 0 the level
     stacktrace = []
     stack_text = "Pilha: {} \nDesempilhado: {} Símbolo: {}"
     tree: SyntacticTree = None
+    
+    # create dict with all symbol tables and fills the global scope
+    symbol_tables = dict()
+    scope_counter = 0
+    loop_scope = False
+    symbol_table_stack = list()
+    symbol_table_stack.append(SymbolTable(scope_counter, loop_scope))
+
+    # auxiliar variables to keep track of identifier info
+    aux_type = None
+    func_parameter_stack = list()
+    prev_symbol = None
+    
     for token in tokens:
         if token.name == "comment":
             continue
@@ -170,4 +184,119 @@ def ll1_parse(tokens: list, table: dict, cfg: ContextFreeGrammar) -> SyntacticTr
                 )  # check later
                 stack.pop()
                 break
-    return tree
+        
+        # if you reach this part of the token loop,
+        # there's no syntactic errors, we can put
+        # things in the symbol table
+
+        # this simply means the next scope can accept break
+        if symbol in ["for", "while"]:
+            loop_scope = True
+            continue
+
+        # open_curly_bracket means new scope, so we create a new symbol table
+        # and put it in the stack, pointing to its father scope
+        if symbol == "open_curly_bracket":
+            scope_counter += 1
+            new_symbol_table = SymbolTable(scope_counter, loop_scope)
+            loop_scope = False
+            
+            # if this is bigger than zero, the next symbol table is from a function
+            # so we're including their parameters on the table
+            if len(func_parameter_stack) > 0:
+                for param_type, param_token in func_parameter_stack:
+                    new_symbol_table.insert(param_token)
+                    new_symbol_table.insert_additional_info(param_token.attribute, param_type)
+
+            # should always be true, but better be safe
+            if (len(symbol_table_stack) > 0):
+                father_id = symbol_table_stack[-1].get_id()
+                new_symbol_table.set_father(father_id)
+
+            symbol_table_stack.append(new_symbol_table)
+            
+            # cleaning values
+            func_parameter_stack = list()
+            aux_type = None
+            prev_symbol = None
+            continue
+
+        # close_curly_bracket means the scope is done, so we remove it from the stack
+        # and put it in the dict using its id as key
+        if symbol == "close_curly_bracket":
+            pop_symbol_table = symbol_table_stack.pop()
+            pop_id = pop_symbol_table.get_id()
+
+            symbol_tables[pop_id] = pop_symbol_table
+            continue
+
+        # if we enter this condition, we're going to be declaring
+        # a variable, and thus we're saving its type to fill the symbol table later
+        if symbol in ["float", "int", "string", "def"] and aux_type == None:
+            aux_type = symbol
+            continue
+
+        # if we enter this condition, it means we're working with a
+        # variable type declaration
+        if aux_type in ["float", "int", "string"]:
+            # if we have an id, we must put it at the symbol table with its type
+            if symbol == "id":
+                prev_symbol = token.attribute
+                symbol_table_stack[-1].insert(token)
+                symbol_table_stack[-1].insert_additional_info(prev_symbol, aux_type)
+                continue
+
+            # if its a const, it's just extra info for our id
+            if symbol == "const" and prev_symbol is not None:
+                symbol_table_stack[-1].insert_additional_info(prev_symbol, symbol)
+                aux_type = None
+                prev_symbol = None
+                continue
+
+            # if the symbol is a semicolon, we're done here
+            if symbol == "semicolon":
+                aux_type = None
+                prev_symbol = None
+                continue
+
+        if aux_type in ["def"]:
+            # if we have an id, we must put it at the symbol table with its type
+            if symbol == "id" and len(func_parameter_stack) == 0:
+                prev_symbol = token.attribute
+                symbol_table_stack[-1].insert(token)
+                symbol_table_stack[-1].insert_additional_info(prev_symbol, aux_type)
+                continue
+
+            # if we have a type, now we're handling parameters, so we must save them
+            # to put them at the symbol table of the function later
+            if symbol in ["float", "int", "string"]:
+                func_parameter_stack.append(list())
+                func_parameter_stack[-1].append(token.name)
+                continue
+
+            # if we have an id, then it's the id after the type above
+            if symbol == "id":
+                func_parameter_stack[-1].append(token)
+                continue
+
+            # those are just the bracket in function def, ignore them
+            if symbol in ["open_bracket", "close_bracket", "comma"]:
+                continue
+
+        # if we reach this part of the loop, we're not dealing with identifiers anymore
+        # so forget everything we've done thus far
+        aux_type = None
+        prev_symbol = None
+
+    # after processing tokens, we must put the global scope
+    # in the dict too
+    pop_symbol_table = symbol_table_stack.pop()
+    pop_id = pop_symbol_table.get_id()
+
+    symbol_tables[pop_id] = pop_symbol_table
+
+    for n in range(len(symbol_tables)):
+        print(symbol_tables[n].get_id(), symbol_tables[n].is_loop_scope(), symbol_tables[n].get_father())
+        print(symbol_tables[n])
+
+    return tree, symbol_tables

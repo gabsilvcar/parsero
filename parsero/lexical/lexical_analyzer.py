@@ -97,7 +97,7 @@ class LexicalAnalyzer:
         """
 
         iterator = enumerate(string)
-        line = 1
+        line = 0
         col = 1
 
         for i, char in iterator:
@@ -109,12 +109,12 @@ class LexicalAnalyzer:
             if lexeme > keyword:
                 consume(len(lexeme) - 1, iterator)
                 tag = self.machine.states[state_index].tag
-                yield Token(tag, lexeme, i)
+                yield Token(tag, lexeme, i, line)
                 continue
 
             if keyword:
                 consume(len(keyword) - 1, iterator)
-                yield Token(keyword, keyword, i)
+                yield Token(keyword, keyword, i, line)
                 continue
 
             # it is a bit slow to ignore blank chars this far, but
@@ -122,6 +122,8 @@ class LexicalAnalyzer:
             # so we cannot ignore spaces before checking
             # the regular definitions
             if char in BLANK:
+                if char == "\n":
+                    line += 1
                 continue
 
             # it should stop before
