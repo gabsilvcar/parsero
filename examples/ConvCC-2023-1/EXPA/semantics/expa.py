@@ -58,7 +58,8 @@ class Semantics:
         head.struct.type = "string"
 
     def factorint_self_type(self, head):
-        head.struct.type = "int"
+        head.struct.type = "integer"
+
     def typeheritage_self_type(self, head):
         head.struct.type = head.children[0].struct.type
 
@@ -68,6 +69,7 @@ class Semantics:
     def enforcetype_self_type(self, head):
         # TODO pretty message for error
         assert (self.scope[head.struct.id] == head.children[2].struct.type) or (head.children[2].struct.type == "null")
+        pass
 
     def factorfloat_self_type(self, head):
         head.struct.type = "float"
@@ -81,3 +83,9 @@ class Semantics:
     # TODO matrix access
     def getid_self_id(self, head):
         head.struct.id = head.children[0].entry
+
+    def termtype_self_type(self, head):
+        assert head.struct.type == head.children[1].struct.type
+
+    def typeheritage_termaux_type(self, head):
+        head.children[1].struct.type = head.children[0].struct.type

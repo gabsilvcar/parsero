@@ -24,7 +24,6 @@ class SemanticAnalyser:
         rules = self._get_ordered_rules(head, self.cfg.get_rules(head.val, head.prod))
         for child in head.children:
             if not isinstance(child, Leaf):
-                print(child.val.lower())
                 for rule in reversed(rules[child.val.lower()]):
                     self._execute_rule(rule, head)
 

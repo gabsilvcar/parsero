@@ -36,7 +36,7 @@ STATELISTAUX -> STATELIST {}
 STATELISTAUX -> & {}
 
 SIGN -> plus | minus
-OPERATOR -> mult | div | mod
+OPERATOR ->  mult | div | mod
 
 UNARYEXPR -> SIGN FACTOR {unarytypeheritage_self_type}
 UNARYEXPR -> FACTOR {typeheritage_self_type}
@@ -46,13 +46,17 @@ FACTOR -> float_constant {factorfloat_self_type}
 FACTOR -> string_constant {factorstring_self_type}
 FACTOR -> null {factornull_self_type}
 FACTOR -> LVALUE {}
-FACTOR -> open_bracket NUMEXPRESSION close_bracket {}
+FACTOR -> open_bracket NUMEXPRESSION close_bracket {typeheritage_self_type}
 
 
-TERM -> UNARYEXPR TERM_AUX {typeheritage_self_type}
+TERM -> UNARYEXPR TERMAUX {typeheritage_self_type, typeheritage_termaux_type}
 #TODO check if they are the same
-TERM_AUX -> OPERATOR UNARYEXPR TERM_AUX {}
-TERM_AUX -> &
+TERMAUX -> SIGN UNARYEXPR TERMAUX {termtype_self_type}
+TERMAUX -> &
+TERMAUX -> TERMAUX1 {typeheritage_self_type}
+TERMAUX1 -> OPERATOR UNARYEXPR TERMAUX1 {}
+TERMAUX1 -> &
+
 ATRIBSTAT -> LVALUE equal ATRIBSTATAUX semicolon {idheritage_self_id, enforcetype_self_type}
 ATRIBSTATAUX -> EXPRESSION {typeheritage_self_type}
 
