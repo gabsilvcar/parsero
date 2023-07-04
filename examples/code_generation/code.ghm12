@@ -1,0 +1,5 @@
+S -> id equal E semicolon
+E -> E plus E
+E -> minus E
+E -> open_bracket E close_bracket
+E -> id

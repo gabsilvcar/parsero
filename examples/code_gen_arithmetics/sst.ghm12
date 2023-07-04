@@ -1,0 +1,9 @@
+E -> T E1 {e_e1_inh, e_self_syncode}
+
+E1 -> minus T E1 {e1minus_e1_inh, e1_self_syncode}
+E1 -> plus T E1 {e1plus_e1_inh, e1_self_syncode}
+E1 -> & {e1epsilon_self_syncode}
+
+T -> number {t_self_addr, t_self_code}
+T -> id {t_self_addr, t_self_code}
+T -> open_bracket E close_bracket {}

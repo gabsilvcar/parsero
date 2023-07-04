@@ -12,6 +12,7 @@ class SemanticAnalyser:
 
     def parse(self):
         self._handle(self.st_tree)
+        return self.semantic_handler.code
 
     def _prepare_node(self, node):
         node.struct = self.semantic_lib.Struct()
@@ -23,8 +24,6 @@ class SemanticAnalyser:
         rules = self._get_ordered_rules(head, self.cfg.get_rules(head.val, head.prod))
         for child in head.children:
             if not isinstance(child, Leaf):
-                if child.val == "E1":
-                    print("aa")
                 for rule in reversed(rules[child.val.lower()]):
                     self._execute_rule(rule, head)
 
@@ -43,7 +42,6 @@ class SemanticAnalyser:
             if "self" in parts[1]:
                 mapped_rules["self"][0].insert(0, rule)  # Self operations are always last
             else:
-                print(rule)
                 mapped_rules[parts[1]][not "inh" in parts[2]].append(rule)
 
         final = dict()
@@ -54,5 +52,4 @@ class SemanticAnalyser:
 
     def _execute_rule(self, rule, target):
         to_exec = "self.semantic_handler.{}(target)".format(rule)
-        print(to_exec)
         eval(to_exec)

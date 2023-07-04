@@ -2,7 +2,7 @@ from parsero import Parsero
 
 
 def test():
-    base = "examples/simple_syntax_tree/"
+    base = "examples/code_gen_arithmetics/"
     path = base + "sst"
     parser = Parsero(
         path + ".regex",
