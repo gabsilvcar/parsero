@@ -148,6 +148,7 @@ def ll1_parse(tokens: list, table: dict, cfg: ContextFreeGrammar) -> SyntacticTr
                 msg = f"Failed to parse token {token}. \nCurrent Stack: {stack}"
                 start = token.index
                 end = start + len(token.attribute)
+                print(tree)
                 raise SyntacticError.from_data("", msg, index=start, index_end=end)
 
             next_symbols = table[(current[0], symbol)]

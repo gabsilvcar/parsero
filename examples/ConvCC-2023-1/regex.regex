@@ -15,6 +15,7 @@ int:int
 float:float
 string:string
 def:def
+null:null
 
 # Expressões auxiliares
 # estas expressões fazem parte das

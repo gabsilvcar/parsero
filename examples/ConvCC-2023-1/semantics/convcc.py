@@ -20,7 +20,6 @@ class Semantics:
     def __init__(self, cfg: ContextFreeGrammar, tree: SyntacticTree):
         self.cfg = cfg
         self.tree = tree
-        self.code = ""
 
     def int_self_type(self, head):
         head.struct.type = "integer"

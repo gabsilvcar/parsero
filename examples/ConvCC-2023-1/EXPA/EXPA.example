@@ -1,1 +1,7 @@
-a = b + 9;
+{
+string a;
+a = "teste";
+a = null;
+int b[2][3];
+float a;
+}
