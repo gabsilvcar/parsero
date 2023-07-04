@@ -43,7 +43,7 @@ class SemanticAnalyser:
                             scope = self.symbol_table[scope].get_father()
                             continue
 
-                        raise Exception("Statement "break" used outside of a looping scope")
+                        raise Exception("Statement break used outside of a looping scope")
                 continue
 
             if not isinstance(child, Leaf):
