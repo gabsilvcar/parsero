@@ -26,7 +26,6 @@ class SemanticAnalyser:
             if not isinstance(child, Leaf):
                 for rule in reversed(rules[child.val.lower()]):
                     self._execute_rule(rule, head)
-
                 self._handle(child)
 
         for rule in reversed(rules["self"]):
@@ -52,4 +51,5 @@ class SemanticAnalyser:
 
     def _execute_rule(self, rule, target):
         to_exec = "self.semantic_handler.{}(target)".format(rule)
+        print(rule)
         eval(to_exec)

@@ -4,7 +4,7 @@ a = "teste";
 a = null;
 int b[2][3];
 int c;
-c = 1 + 2 * 3;
+c = 1 + 2 + 3;
 
 float a;
 }
