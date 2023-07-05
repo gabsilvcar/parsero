@@ -153,8 +153,6 @@ def ll1_parse(tokens: list, table: dict, cfg: ContextFreeGrammar) -> SyntacticTr
 
             next_symbols = table[(current[0], symbol)]
             if tree:
-                if current[1][1] == 2:
-                    pass
                 tree.find_node(current[1][0], current[1][1]).add_node(
                     Node(current[0], next_symbols)
                 )

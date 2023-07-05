@@ -6,7 +6,7 @@ TYPE -> float {float_self_type}
 TYPE -> string {string_self_type}
 
 STATEMENT -> VARDECL semicolon {statement_self_type}
-STATEMENT -> open_curly_bracket STATELIST close_curly_bracket {}
+STATEMENT -> open_curly_bracket STATELIST close_curly_bracket {scope_self_inh, scope_statelist_inh}
 STATEMENT -> ATRIBSTAT {}
 
 VARDECL -> TYPE id VARDECL1 {vardcl_self_type, vardcl_vardecl1_inh}
@@ -23,9 +23,6 @@ PROGRAM -> & {}
 TYPE -> int {int_self_type}
 TYPE -> float {float_self_type}
 TYPE -> string {string_self_type}
-
-STATEMENT -> VARDECL semicolon {statement_self_type}
-STATEMENT -> open_curly_bracket STATELIST close_curly_bracket {scope_self_inh, scope_statelist_inh}
 
 STATELIST -> STATEMENT STATELISTAUX {}
 STATELISTAUX -> STATELIST {}
