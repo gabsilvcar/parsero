@@ -21,7 +21,7 @@ class Leaf(Element):
         self.entry = entry
 
     def __str__(self, level=0):
-        return "   " * level + self.val + " : " + self.entry + "\n"
+        return "    " * level + self.val + " : " + self.entry + "\n"
 
 
 class Node(Element):
@@ -47,12 +47,12 @@ class Node(Element):
         return self
 
     def __str__(self, level=0):
-        ret = "   " * level + repr(self.val) + " : " + ",".join(str(x) for x in self.prod) + "\n"
+        ret = "    " * level + repr(self.val) + " : " + ",".join(str(x) for x in self.prod) + "\n"
         if self.struct and (len(str(self.struct)) > 0):
-            ret += "   " * level + "\033[0;31m" + str(self.struct).replace("\n", "") + "\033[0m" + "\n"
+            ret += "    " * level + "\033[0;31m" + str(self.struct).replace("\n", "") + "\033[0m" + "\n"
         for child in self.children:
             ret += child.__str__(level + 1)
-        return ret
+        return ret.replace(" - ", "\n" + level * "    ")
 
     def find(self, head: str, desired_level=None, current_level=0):
         if self.val == head and (not desired_level or desired_level == current_level):
@@ -79,7 +79,7 @@ class SyntacticTree(Node):
         return super().add_child(child)
 
     def __str__(self):
-        result = "   " + repr(self.val) + " : " + ",".join(str(x) for x in self.prod) + "\n"
+        result = "" + repr(self.val) + " : " + ",".join(str(x) for x in self.prod) + "\n"
         if self.struct:
             result += "\033[0;31m" + str(self.struct).replace("\n", "") + "\033[0m"
         for i in range(0, len(self.children)):

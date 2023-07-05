@@ -26,7 +26,7 @@ class Struct:
             response.append("node = {}".format(self.node))
         if self.inhnode:
             response.append("inhnode = {}".format(self.inhnode))
-        return ', '.join(response)
+        return ' - '.join(response)
 
 
 class Semantics:
