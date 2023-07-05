@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from termcolor import colored, cprint
 
+from parsero.lexical import Token
+
 
 class Element:
     def __init__(self, val):
@@ -16,23 +18,25 @@ class Element:
 
 
 class Leaf(Element):
-    def __init__(self, val: str, entry: str):
+    def __init__(self, val: str, entry: str, token: Token | None = None):
         super().__init__(val)
         self.entry = entry
+        self.token = token
 
     def __str__(self, level=0):
         return "   " * level + self.val + " : " + self.entry + "\n"
 
 
 class Node(Element):
-    def __init__(self, val: str, prod, elements: list[Element] = None):
+    def __init__(self, val: str, prod, elements: list[Element] | None = None, token: Token | None = None):
         super().__init__(val)
-        if elements:
+        if elements is not None:
             self.children = elements
         else:
             self.children = []
         self.prod = prod
         self.parent = None
+        self.token = token
 
     def add_child(self, child: Element) -> Element:
         self.children.append(child)
