@@ -1,5 +1,11 @@
 from parsero.cfg import ContextFreeGrammar
+from parsero.semantic.semantic_analyzer import SemanticError
 from parsero.syntactic import Leaf, Node, SyntacticTree
+
+
+class IncompatibleTypes(SemanticError):
+    def __init__(self, lhs_type: str, rhs_type: str, tree: SyntacticTree):
+        super().__init__(f"Tipos incompatíveis: {lhs_type} e {rhs_type}", tree)
 
 
 class Struct:
@@ -79,10 +85,11 @@ class Semantics:
     def unarytypeheritage_self_type(self, head):
         head.struct.type = head.children[1].struct.type
 
-    def enforcetype_self_type(self, head):
-        # TODO pretty message for error
-        assert (self.scope[head.struct.id] == head.children[2].struct.type) or (head.children[2].struct.type == "null")
-        pass
+    def enforcetype_self_type(self, head: SyntacticTree):
+        lhs = self.scope[head.struct.id]
+        rhs = head.children[2].struct.type
+        if lhs != rhs and rhs != "null":
+            raise IncompatibleTypes(lhs, rhs, head)
 
     def factorfloat_self_type(self, head):
         head.struct.type = "float"
@@ -98,7 +105,10 @@ class Semantics:
         head.struct.id = head.children[0].entry
 
     def termtype_self_type(self, head):
-        assert head.struct.inh == head.children[1].struct.type
+        lhs = head.struct.inh
+        rhs = head.children[1].struct.type
+        if lhs != rhs and rhs != "null":
+            raise IncompatibleTypes(lhs, rhs, head)
 
     def termtype_self_inh(self, head):
         assert head.struct.inh is not None
@@ -138,8 +148,8 @@ class Semantics:
         self._node_maker(head, SIGN.children[0].entry)
 
     def termauxnode_termaux1_inhnode(self, head):
-        SIGN = head.children[0]
-        self._node_maker(head, SIGN.children[0].entry)
+        OPERATOR = head.children[0]
+        self._node_maker(head, OPERATOR.children[0].entry)
 
     def _node_maker(self, head, sign):
         UNARYEXPR = head.children[2]

@@ -2,6 +2,12 @@ from parsero.cfg import ContextFreeGrammar
 from parsero.syntactic import Leaf, Node, SyntacticTree
 
 
+class SemanticError(Exception):
+    def __init__(self, message: str, tree: SyntacticTree):
+        super().__init__(message)
+        self.tree = tree
+
+
 class SemanticAnalyser:
     def __init__(self, semantic_lib, cfg, tree):
         self.semantic_lib = semantic_lib
