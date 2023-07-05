@@ -41,25 +41,25 @@ FACTOR -> null {factornull_self_type, unaryexpr_self_node}
 # TODO unaryexpr_self_node
 FACTOR -> open_bracket NUMEXPRESSION close_bracket {typeheritage_self_type}
 # TODO
-FACTOR -> LVALUE {}
+FACTOR -> LVALUE {nodefromscope_self_node, statement_self_type}
 
 TERM -> UNARYEXPR TERMAUX {typeheritage_termaux_inh, termnode_termaux_inhnode, typeheritage_self_type, termnode_self_node}
 TERMAUX -> OPERATOR UNARYEXPR TERMAUX {termtype_self_inh, termtype_self_type, typeauxheritage_termaux_inh, termauxnode_termaux_inhnode, termauxnode_self_syn}
 TERMAUX -> & {termauxepsilon_self_syn}
 TERMAUX -> TERMAUX1 {typeheritage_self_type, nodeheritage_termaux1_inhnode, typeheritage_termaux1_inh, nodeheritage_self_syn}
 TERMAUX1 -> SIGN UNARYEXPR TERMAUX1 {termtype_self_inh, termtype_self_type, typeauxheritage_termaux1_inh, termauxnode_termaux1_inhnode, termauxnode_self_syn}
-TERMAUX1 -> & {termauxepsilon_self_syn}
+TERMAUX1 -> & {termauxepsilon_self_syn, termtype2_self_inh}
 
-ATRIBSTAT -> LVALUE equal ATRIBSTATAUX semicolon {idheritage_self_id, enforcetype_self_type}
-ATRIBSTATAUX -> EXPRESSION {typeheritage_self_type}
+ATRIBSTAT -> LVALUE equal ATRIBSTATAUX semicolon {idheritage_self_id, enforcetype_self_type, nodetoscope_self_node}
+ATRIBSTATAUX -> EXPRESSION {typeheritage_self_type, nodeheritage_self_syn}
 
-EXPRESSION -> NUMEXPRESSION EXPRESSION_AUX {typeheritage_self_type}
+EXPRESSION -> NUMEXPRESSION EXPRESSION_AUX {typeheritage_self_type, nodeheritage_self_syn}
 EXPRESSION_AUX -> comparator NUMEXPRESSION | &
 
-NUMEXPRESSION -> TERM NUMEXPRESSION_AUX {typeheritage_self_type}
+NUMEXPRESSION -> TERM NUMEXPRESSION_AUX {typeheritage_self_type, nodeheritage_self_syn}
 NUMEXPRESSION_AUX -> &
 # NUMEXPRESSION_AUX -> OPERATOR TERM NUMEXPRESSION_AUX Ambiguous
 
-LVALUE -> id LVALUE_AUX {getid_self_id}
+LVALUE -> id LVALUE_AUX {getid_self_id, gettype_self_type}
 LVALUE_AUX -> open_square_bracket NUMEXPRESSION close_square_bracket LVALUE_AUX
 LVALUE_AUX -> &

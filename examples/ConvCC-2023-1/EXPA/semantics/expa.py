@@ -7,6 +7,10 @@ class IncompatibleTypes(SemanticError):
     def __init__(self, lhs_type: str, rhs_type: str, tree: SyntacticTree):
         super().__init__(f"Tipos incompatíveis: {lhs_type} e {rhs_type}", tree)
 
+class ScopeEntry:
+    def __init__(self):
+        self.type = None
+        self.node = None
 
 class Struct:
     def __init__(self):
@@ -59,6 +63,11 @@ class Semantics:
             if symbol in scope:
                 return scope[symbol]
 
+    def _get_entry_from_scope(self, symbol):
+        if not symbol in self._get_current_scope():
+            self._get_current_scope()[symbol] = ScopeEntry()
+        return self._get_current_scope()[symbol]
+
     def int_self_type(self, head):
         head.struct.type = "integer"
 
@@ -73,7 +82,7 @@ class Semantics:
 
     def vardcl_self_type(self, head):
         head.struct.type = head.children[2].struct.type
-        self._get_current_scope()[head.children[1].entry] = head.struct.type
+        self._get_entry_from_scope(head.children[1].entry).type = head.struct.type
 
     def vardcl_vardecl1_inh(self, head):
         head.children[2].struct.inh = head.children[0].struct.type
@@ -97,14 +106,19 @@ class Semantics:
         head.struct.type = "integer"
 
     def typeheritage_self_type(self, head):
+        assert head.children[0].struct.type is not None
         head.struct.type = head.children[0].struct.type
+
+    def termtype2_self_inh(self, head):
+        head.struct.type = head.struct.inh
 
     def unarytypeheritage_self_type(self, head):
         head.struct.type = head.children[1].struct.type
 
     def enforcetype_self_type(self, head: SyntacticTree):
-        lhs = self._get_from_scope(head.struct.id)
+        lhs = self._get_from_scope(head.struct.id).type
         rhs = head.children[2].struct.type
+        head.struct.type = rhs
         if lhs != rhs and rhs != "null":
             raise IncompatibleTypes(lhs, rhs, head)
 
@@ -124,6 +138,7 @@ class Semantics:
     def termtype_self_type(self, head):
         lhs = head.struct.inh
         rhs = head.children[1].struct.type
+        head.struct.type = rhs
         if lhs != rhs and rhs != "null":
             raise IncompatibleTypes(lhs, rhs, head)
 
@@ -198,3 +213,12 @@ class Semantics:
 
     def scope_statelist_inh(self, head):
         self._push_scope()
+
+    def nodefromscope_self_node(self, head):
+        head.struct.node = self._get_from_scope(head.children[0].struct.id).node
+
+    def nodetoscope_self_node(self, head):
+        self._get_entry_from_scope(head.children[0].struct.id).node = head.children[2].struct.syn
+
+    def gettype_self_type(self, head):
+        head.struct.type = self._get_entry_from_scope(head.struct.id).type
