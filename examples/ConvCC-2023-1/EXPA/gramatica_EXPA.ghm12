@@ -54,8 +54,8 @@ TERM -> UNARYEXPR TERMAUX {typeheritage_termaux_inh, termnode_termaux_inhnode, t
 #TODO check if they are the same
 TERMAUX -> SIGN UNARYEXPR TERMAUX {termtype_self_inh, termtype_self_type, typeauxheritage_termaux_inh, termauxnode_termaux_inhnode, termauxnode_self_syn}
 TERMAUX -> & {termauxepsilon_self_syn}
-TERMAUX -> TERMAUX1 {termauxepsilon_self_syn, typeheritage_self_type}
-TERMAUX1 -> OPERATOR UNARYEXPR TERMAUX1 {}
+TERMAUX -> TERMAUX1 {typeheritage_self_type, nodeheritage_termaux1_inhnode, typeheritage_termaux1_inh, nodeheritage_self_syn}
+TERMAUX1 -> OPERATOR UNARYEXPR TERMAUX1 {termtype_self_inh, termtype_self_type, typeauxheritage_termaux1_inh, termauxnode_termaux1_inhnode, termauxnode_self_syn}
 TERMAUX1 -> & {termauxepsilon_self_syn}
 
 ATRIBSTAT -> LVALUE equal ATRIBSTATAUX semicolon {idheritage_self_id, enforcetype_self_type}

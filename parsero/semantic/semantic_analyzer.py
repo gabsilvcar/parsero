@@ -51,5 +51,4 @@ class SemanticAnalyser:
 
     def _execute_rule(self, rule, target):
         to_exec = "self.semantic_handler.{}(target)".format(rule)
-        print(rule)
         eval(to_exec)

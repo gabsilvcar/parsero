@@ -20,12 +20,12 @@ class Struct:
         if self.inh:
             response.append("Inherited = {}".format(self.inh))
         #
-        # if self.syn:
-        #     response.append("syn = {}".format(self.syn))
-        # if self.node:
-        #     response.append("node = {}".format(self.node))
-        # if self.inhnode:
-        #     response.append("inhnode = {}".format(self.inhnode))
+        if self.syn:
+            response.append("syn = {}".format(self.syn))
+        if self.node:
+            response.append("node = {}".format(self.node))
+        if self.inhnode:
+            response.append("inhnode = {}".format(self.inhnode))
         return ', '.join(response)
 
 
@@ -99,9 +99,8 @@ class Semantics:
 
     def termtype_self_type(self, head):
         assert head.struct.inh == head.children[1].struct.type
+
     def termtype_self_inh(self, head):
-        print(head.parent)
-        print(self.tree)
         assert head.struct.inh is not None
         head.children[2].struct.inh = head.struct.inh
 
@@ -109,6 +108,9 @@ class Semantics:
         head.children[1].struct.inh = head.children[0].struct.type
 
     def typeauxheritage_termaux_inh(self, head):
+        head.children[2].struct.inh = head.struct.inh
+
+    def typeauxheritage_termaux1_inh(self, head):
         head.children[2].struct.inh = head.struct.inh
 
     def unaryexpr_self_node(self, head):
@@ -135,6 +137,10 @@ class Semantics:
         SIGN = head.children[0]
         self._node_maker(head, SIGN.children[0].entry)
 
+    def termauxnode_termaux1_inhnode(self, head):
+        SIGN = head.children[0]
+        self._node_maker(head, SIGN.children[0].entry)
+
     def _node_maker(self, head, sign):
         UNARYEXPR = head.children[2]
         TERMAUX = head.children[1]
@@ -150,3 +156,12 @@ class Semantics:
     def termauxepsilon_self_syn(self, head):
         assert head.struct.inhnode is not None
         head.struct.syn = head.struct.inhnode
+
+    def nodeheritage_termaux1_inhnode(self, head):
+        head.children[0].struct.inhnode = head.struct.inhnode
+
+    def nodeheritage_self_syn(self, head):
+        head.struct.syn = head.children[0].struct.syn
+
+    def typeheritage_termaux1_inh(self, head):
+        head.children[0].struct.inh = head.struct.inh
