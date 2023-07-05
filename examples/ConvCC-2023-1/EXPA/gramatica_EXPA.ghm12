@@ -25,11 +25,7 @@ TYPE -> float {float_self_type}
 TYPE -> string {string_self_type}
 
 STATEMENT -> VARDECL semicolon {statement_self_type}
-STATEMENT -> open_curly_bracket STATELIST close_curly_bracket {}
-
-VARDECL -> TYPE id VARDECL1 {vardcl_self_type, vardcl_vardecl1_inh}
-VARDECL1 -> open_square_bracket int_constant close_square_bracket VARDECL1 {vardcl1_self_type, vardcl1_vardecl1_inh}
-VARDECL1 -> & {vardcl1epsilon_self_t}
+STATEMENT -> open_curly_bracket STATELIST close_curly_bracket {scope_self_inh, scope_statelist_inh}
 
 STATELIST -> STATEMENT STATELISTAUX {}
 STATELISTAUX -> STATELIST {}
@@ -51,7 +47,6 @@ FACTOR -> open_bracket NUMEXPRESSION close_bracket {typeheritage_self_type}
 FACTOR -> LVALUE {}
 
 TERM -> UNARYEXPR TERMAUX {typeheritage_termaux_inh, termnode_termaux_inhnode, typeheritage_self_type, termnode_self_node}
-#TODO check if they are the same
 TERMAUX -> SIGN UNARYEXPR TERMAUX {termtype_self_inh, termtype_self_type, typeauxheritage_termaux_inh, termauxnode_termaux_inhnode, termauxnode_self_syn}
 TERMAUX -> & {termauxepsilon_self_syn}
 TERMAUX -> TERMAUX1 {typeheritage_self_type, nodeheritage_termaux1_inhnode, typeheritage_termaux1_inh, nodeheritage_self_syn}

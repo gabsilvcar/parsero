@@ -34,7 +34,24 @@ class Semantics:
         self.cfg = cfg
         self.tree = tree
         self.code = ""
-        self.scope = dict()
+
+        self.scope_list = [dict()]
+
+
+    def _get_current_scope(self):
+        return self.scope_list[len(self.scope_list) - 1]
+
+    def _push_scope(self):
+        self.scope_list.append(dict())
+
+    def _pop_scope(self):
+        self.scope_list.pop()
+
+    # TODO throw error
+    def _get_from_scope(self, symbol):
+        for scope in self.scope_list:
+            if symbol in scope:
+                return scope[symbol]
 
     def int_self_type(self, head):
         head.struct.type = "integer"
@@ -50,7 +67,7 @@ class Semantics:
 
     def vardcl_self_type(self, head):
         head.struct.type = head.children[2].struct.type
-        self.scope[head.children[1].entry] = head.struct.type
+        self._get_current_scope()[head.children[1].entry] = head.struct.type
 
     def vardcl_vardecl1_inh(self, head):
         head.children[2].struct.inh = head.children[0].struct.type
@@ -81,7 +98,7 @@ class Semantics:
 
     def enforcetype_self_type(self, head):
         # TODO pretty message for error
-        assert (self.scope[head.struct.id] == head.children[2].struct.type) or (head.children[2].struct.type == "null")
+        assert (self._get_from_scope(head.struct.id) == head.children[2].struct.type) or (head.children[2].struct.type == "null")
         pass
 
     def factorfloat_self_type(self, head):
@@ -165,3 +182,9 @@ class Semantics:
 
     def typeheritage_termaux1_inh(self, head):
         head.children[0].struct.inh = head.struct.inh
+
+    def scope_self_inh(self, head):
+        self._pop_scope()
+
+    def scope_statelist_inh(self, head):
+        self._push_scope()
