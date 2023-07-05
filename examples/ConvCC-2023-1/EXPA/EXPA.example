@@ -1,12 +1,4 @@
 {
-string a;
-a = "teste";
-a = null;
-int b[2][3];
 int c;
-c = 1 + 2 * 3;
-{
-  int x;
-  a = "scope";
-}
+c = 1 * 2 + 3;
 }
