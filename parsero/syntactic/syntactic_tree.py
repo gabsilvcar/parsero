@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from termcolor import colored, cprint
 
+from parsero.lexical import Token
+
 
 class Element:
     def __init__(self, val):
@@ -16,23 +18,25 @@ class Element:
 
 
 class Leaf(Element):
-    def __init__(self, val: str, entry: str):
+    def __init__(self, val: str, entry: str, token: Token | None = None):
         super().__init__(val)
         self.entry = entry
+        self.token = token
 
     def __str__(self, level=0):
         return "    " * level + self.val + " : " + self.entry + "\n"
 
 
 class Node(Element):
-    def __init__(self, val: str, prod, elements: list[Element] = None):
+    def __init__(self, val: str, prod, elements: list[Element] | None = None, token: Token | None = None):
         super().__init__(val)
-        if elements:
+        if elements is not None:
             self.children = elements
         else:
             self.children = []
         self.prod = prod
         self.parent = None
+        self.token = token
 
     def add_child(self, child: Element) -> Element:
         self.children.append(child)
@@ -55,8 +59,9 @@ class Node(Element):
         return ret.replace(" - ", "\n" + level * "    ")
 
     def find(self, head: str, desired_level=None, current_level=0):
+        results = []
         if self.val == head and (not desired_level or desired_level == current_level):
-            return self
+            return [self]
         if len(self.children) == 0:
             return None
         for child in self.children:
@@ -65,7 +70,11 @@ class Node(Element):
             result = child.find(head, desired_level, current_level + 1)
             # if result and desired_level==current_level:
             if result:
-                return result
+                results += result
+
+        if (len(results) == 0):
+            return None
+        return results
 
 
 class SyntacticTree(Node):
@@ -86,9 +95,9 @@ class SyntacticTree(Node):
             result += str(self.children[i].__str__(1))
         return result
 
-    def find_node(self, head: str, desired_level=None, current_level=0) -> Node:
+    def find_nodes(self, head: str, desired_level=None, current_level=0) -> list(Node):
         if self.val == head and (not desired_level or desired_level == current_level):
-            return self.itself()  # Inheritance in python is fucking strange
+            return [self.itself()]  # Inheritance in python is fucking strange
         if len(self.children) == 0:
             return None
         for child in self.children:
@@ -98,6 +107,17 @@ class SyntacticTree(Node):
             if result:
                 return result
 
+    # Hack maluco caso haja dois nós no mesmo nível. Isto preencherá o primeiro disponível
+    def find_node(self, head: str, desired_level=None, current_level=0) -> Node:
+        nodes = self.find_nodes(head, desired_level, current_level)
+        if not nodes:
+            return None
+        if len(nodes) == 1:
+            return nodes[0]
+        for node in nodes:
+            if len(node.children) == len(node.prod):
+                continue
+            return node
 
 if __name__ == "__main__":
     st = SyntacticTree("Root", "r")

@@ -22,21 +22,35 @@ class Struct:
         self.syn = None
         self.node = None
 
+        self.addr = None
+        self.inhaddr = None
+        self.code = ""
+        self.syncode = ""
+
     def __str__(self):
         response = []
 
-        if self.type:
-            response.append("Type = {}".format(self.type))
-        if self.inh:
-            response.append("Inherited = {}".format(self.inh))
-        #
-        if self.syn:
-            response.append("syn = {}".format(self.syn))
-        if self.node:
-            response.append("node = {}".format(self.node))
-        if self.inhnode:
-            response.append("inhnode = {}".format(self.inhnode))
-        return ' - '.join(response)
+        # if self.type:
+        #     response.append("Type = {}".format(self.type))
+        # if self.inh:
+        #     response.append("Inherited = {}".format(self.inh))
+        # #
+        # if self.syn:
+        #     response.append("syn = {}".format(self.syn))
+        # if self.node:
+        #     response.append("node = {}".format(self.node))
+        # if self.inhnode:
+        #     response.append("inhnode = {}".format(self.inhnode))
+
+        if self.addr:
+            response.append("addr = {}".format(self.addr))
+        if self.inhaddr:
+            response.append("inhaddr = {}".format(self.inhaddr))
+        if self.code:
+            response.append("code = {}".format(self.code))
+        if self.syncode:
+            response.append("syncode = {}".format(self.syncode))
+        return ', '.join(response)
 
 
 class Semantics:
@@ -46,6 +60,15 @@ class Semantics:
         self.code = ""
 
         self.scope_list = [dict()]
+
+        self.memory = 0
+
+
+
+    def _get_addr(self) -> int:
+        addr = self.memory
+        self.memory += 1
+        return addr
 
 
     def _get_current_scope(self):
@@ -222,3 +245,118 @@ class Semantics:
 
     def gettype_self_type(self, head):
         head.struct.type = self._get_entry_from_scope(head.struct.id).type
+
+    def makecode_self_syncode(self, head):
+        TERMAUX = head.children[1]
+        assert TERMAUX.struct.syncode is not ""
+        assert TERMAUX.struct.addr is not None
+
+        head.struct.syncode = TERMAUX.struct.syncode
+        head.struct.addr = TERMAUX.struct.addr
+        self.code += head.struct.syncode
+
+    def makecode_termaux_inhcode(self, head):
+        UNARYEXPR = head.children[0]
+        TERMAUX = head.children[1]
+        assert UNARYEXPR.struct.addr is not None
+        assert UNARYEXPR.struct.code is not None
+
+        TERMAUX.struct.inhaddr = UNARYEXPR.struct.addr
+        TERMAUX.struct.code += UNARYEXPR.struct.code
+
+    def factorint_self_code(self, head):
+        addr = self._get_addr()
+        id_node = head.children[0]
+        id_val = id_node.entry
+        head.struct.code += "t{} = {}\n".format(str(addr), id_val)
+        head.struct.addr = addr
+
+    def factorfloat_self_code(self, head):
+        addr = self._get_addr()
+        id_node = head.children[0]
+        id_val = id_node.entry
+        head.struct.code += "t{} = {}\n".format(str(addr), id_val)
+        head.struct.addr = addr
+
+    def factorstring_self_code(self, head):
+        addr = self._get_addr()
+        id_node = head.children[0]
+        id_val = id_node.entry
+        head.struct.code += "t{} = {}\n".format(str(addr), id_val)
+        head.struct.addr = addr
+
+    def factornull_self_code(self, head):
+        addr = self._get_addr()
+        id_node = head.children[0]
+        id_val = id_node.entry
+        head.struct.code += "t{} = {}\n".format(str(addr), id_val)
+        head.struct.addr = addr
+
+    def factorparenthesis_self_code(self, head):
+        addr = self._get_addr()
+        id_node = head.children[0]
+        id_val = id_node.entry
+        head.struct.code += "t{} = {}\n".format(str(addr), id_val)
+        head.struct.addr = addr
+
+    def factorlvalue_self_code(self, head):
+        addr = self._get_addr()
+        id_node = head.children[0]
+        id_val = id_node.entry
+        head.struct.code += "t{} = {}\n".format(str(addr), id_val)
+        head.struct.addr = addr
+
+    def termauxcode_termaux_inhcode(self, head):
+        SIGN = head.children[0]
+        self.make_node_code(head, SIGN.children[0].entry)
+
+    def termauxcode_termaux1_inhcode(self, head):
+        SIGN = head.children[0]
+        self.make_node_code(head, SIGN.children[0].entry)
+
+    def make_node_code(self, head, sign):
+        UNARYEXPR = head.children[2]
+        TERMAUX = head.children[1]
+        assert head.struct.inhaddr is not ""
+        assert TERMAUX.struct.code is not ""
+        UNARYEXPR.struct.inhaddr = self._get_addr()
+        UNARYEXPR.struct.code += head.struct.code
+        UNARYEXPR.struct.code += TERMAUX.struct.code
+        UNARYEXPR.struct.code += "t{} = t{} {} t{}\n".format(str(UNARYEXPR.struct.inhaddr), str(head.struct.inhaddr), sign, TERMAUX.struct.addr)
+
+    def termauxcode_self_syncode(self, head):
+        UNARYEXPR = head.children[2]
+        assert UNARYEXPR.struct.syncode is not ""
+
+        head.struct.syncode = UNARYEXPR.struct.syncode
+        head.struct.addr = UNARYEXPR.struct.addr
+
+    def termauxepsilon_self_syncode(self, head):
+        assert head.struct.code is not ""
+        head.struct.syncode = head.struct.code
+        head.struct.addr = head.struct.inhaddr
+
+
+    def unarycode_self_code(self, head):
+        head.struct.code = head.children[0].struct.code
+        head.struct.addr = head.children[0].struct.addr
+
+    def codeheritage_self_syn(self, head):
+        head.struct.syncode = head.children[0].struct.syncode
+        head.struct.addr = head.children[0].struct.addr
+
+    def codeheritage_termaux1_code(self, head):
+        head.children[0].struct.code = head.struct.code
+        head.children[0].struct.inhaddr = head.struct.inhaddr
+
+
+    def codeheritage_self_syncode(self, head):
+        head.struct.syncode = head.children[0].struct.syncode
+        head.struct.addr = head.children[0].struct.addr
+
+    def atribcode_self_code(self, head):
+        id = head.children[0].struct.id
+
+        taddr = head.children[2].struct.addr
+        self.code += "{} = t{}\n".format(id, taddr)
+

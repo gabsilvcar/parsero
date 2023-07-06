@@ -9,4 +9,6 @@ c = 1  *  2 + 3;
   int x;
   a = "scope";
 }
+int z;
+z = c;
 }
