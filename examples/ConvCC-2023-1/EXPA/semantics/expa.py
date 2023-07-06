@@ -163,6 +163,7 @@ class Semantics:
         rhs = head.children[2].struct.type
         head.struct.type = rhs
         if lhs != rhs and rhs != "null":
+            print(self.tree)
             raise IncompatibleTypes(lhs, rhs, head)
 
     def factorfloat_self_type(self, head):
@@ -286,7 +287,6 @@ class Semantics:
 
     def nodetoscope_self_node(self, head):
         self._get_entry_from_scope(head.children[0].struct.id).node = head.children[2].struct.syn
-        self._get_entry_from_scope(head.children[0].struct.id).type = head.children[2].struct.type
 
     def copy_self_struct(self, head):
         head.struct = head.children[0].struct
