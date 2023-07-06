@@ -35,7 +35,6 @@ STATELISTAUX -> & {}
 SIGN -> plus | minus
 OPERATOR ->  mult | div | mod
 
-# UNARYEXPR -> SIGN FACTOR {unarytypeheritage_self_type} Unnecessary, I think
 UNARYEXPR -> FACTOR {typeheritage_self_type, getnode_self_node}
 
 FACTOR -> int_constant {factorint_self_type, unaryexpr_self_node}

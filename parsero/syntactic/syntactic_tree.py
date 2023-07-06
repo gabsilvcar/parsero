@@ -115,6 +115,8 @@ class SyntacticTree(Node):
         if len(nodes) == 1:
             return nodes[0]
         for node in nodes:
+            if (node.prod[0] == "&"):
+                continue
             if len(node.children) == len(node.prod):
                 continue
             return node

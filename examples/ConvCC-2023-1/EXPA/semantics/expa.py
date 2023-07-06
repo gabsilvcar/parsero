@@ -218,6 +218,10 @@ class Semantics:
         assert head.struct.inhnode is not None
         head.struct.syn = head.struct.inhnode
 
+    def termauxepsilon_self_type(self, head):
+        assert head.struct.inh is not None
+        head.struct.type = head.struct.inh
+
     def nodeheritage_termaux1_inhnode(self, head):
         head.children[0].struct.inhnode = head.struct.inhnode
 
