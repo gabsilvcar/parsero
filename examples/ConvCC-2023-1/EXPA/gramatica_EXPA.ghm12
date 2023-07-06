@@ -63,6 +63,6 @@ NUMEXPRESSION -> TERM NUMEXPRESSION_AUX {typeheritage_self_type, nodeheritage_se
 NUMEXPRESSION_AUX -> &
 # NUMEXPRESSION_AUX -> OPERATOR TERM NUMEXPRESSION_AUX Ambiguous
 
-LVALUE -> id LVALUE_AUX {getid_self_id, gettype_self_type}
+LVALUE -> id LVALUE_AUX {getid_self_id}
 LVALUE_AUX -> open_square_bracket NUMEXPRESSION close_square_bracket LVALUE_AUX
 LVALUE_AUX -> &

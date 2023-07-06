@@ -7,7 +7,7 @@ def test_ine5426():
 
     parser = Parsero(
         base + "regex.regex",
-        expa + "gramatica_EXPA.ghm12",
+        expa + "wip_expa_completo.ghm12",
         False,
         expa + "semantics/__init__.py",
     )
@@ -35,3 +35,4 @@ def test_ine5426_code_gen():
 
     print(tree)
     print(code)
+

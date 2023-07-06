@@ -35,7 +35,7 @@ STATEMENT -> PRINTSTAT semicolon {}
 STATEMENT -> READSTAT semicolon {}
 STATEMENT -> RETURNSTAT semicolon {}
 STATEMENT -> semicolon {}
-STATEMENT -> break semicolon {}
+STATEMENT -> break semicolon {break_self_inh}
 STATEMENT -> open_curly_bracket STATEMENT_AUX0 {}
 STATEMENT_AUX0 -> STATELIST close_curly_bracket {}
 STATEMENT_AUX0 -> FUNCLIST close_curly_bracket {}
@@ -73,7 +73,7 @@ READSTAT -> read LVALUE {}
 RETURNSTAT -> return {}
 
 # OK
-FORSTAT -> for open_bracket ATRIBSTAT semicolon EXPRESSION semicolon ATRIBSTAT close_bracket STATEMENT {}
+FORSTAT -> for open_bracket ATRIBSTAT semicolon EXPRESSION semicolon ATRIBSTAT close_bracket STATEMENT {scope_self_inh, scope_statement_for}
 
 # OK
 STATELIST -> STATEMENT STATELISTAUX {}

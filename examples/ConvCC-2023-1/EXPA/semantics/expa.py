@@ -246,7 +246,7 @@ class Semantics:
     def scope_statelist_inh(self, head):
         self._push_scope(False)
 
-    def scope_forstat_inh(self, head):
+    def scope_statement_for(self, head):
         self._push_scope(True)
 
     def break_self_inh(self, head):
