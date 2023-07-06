@@ -1,0 +1,63 @@
+PROGRAM -> STATEMENT {}
+PROGRAM -> & {}
+
+TYPE -> int {int_self_type}
+TYPE -> float {float_self_type}
+TYPE -> string {string_self_type}
+
+STATEMENT -> VARDECL semicolon {statement_self_type}
+STATEMENT -> open_curly_bracket STATELIST close_curly_bracket {scope_self_inh, scope_statelist_inh}
+STATEMENT -> ATRIBSTAT {}
+
+VARDECL -> TYPE id VARDECL1 {vardcl_self_type, vardcl_vardecl1_inh}
+VARDECL1 -> open_square_bracket int_constant close_square_bracket VARDECL1 {vardcl1_self_type, vardcl1_vardecl1_inh}
+VARDECL1 -> & {vardcl1epsilon_self_t}
+
+STATELIST -> STATEMENT STATELISTAUX {}
+STATELISTAUX -> STATELIST {}
+STATELISTAUX -> & {}
+
+PROGRAM -> STATEMENT {}
+PROGRAM -> & {}
+
+TYPE -> int {int_self_type}
+TYPE -> float {float_self_type}
+TYPE -> string {string_self_type}
+
+STATELIST -> STATEMENT STATELISTAUX {}
+STATELISTAUX -> STATELIST {}
+STATELISTAUX -> & {}
+
+SIGN -> plus | minus
+OPERATOR ->  mult | div | mod
+
+# UNARYEXPR -> SIGN FACTOR {unarytypeheritage_self_type} Unnecessary, I think
+UNARYEXPR -> FACTOR {typeheritage_self_type, getnode_self_node, unarycode_self_code}
+
+FACTOR -> int_constant {factorint_self_type, unaryexpr_self_node, factorint_self_code}
+FACTOR -> float_constant {factorfloat_self_type, unaryexpr_self_node, factorfloat_self_code}
+FACTOR -> string_constant {factorstring_self_type, unaryexpr_self_node, factorstring_self_code}
+FACTOR -> null {factornull_self_type, unaryexpr_self_node, factornull_self_code}
+FACTOR -> open_bracket NUMEXPRESSION close_bracket {typeheritage_self_type,  factorparenthesis_self_code}
+FACTOR -> LVALUE {nodefromscope_self_node, statement_self_type, factorlvalue_self_code}
+
+TERM -> UNARYEXPR TERMAUX {typeheritage_termaux_inh, termnode_termaux_inhnode, typeheritage_self_type, termnode_self_node, makecode_self_syncode, makecode_termaux_inhcode}
+TERMAUX -> OPERATOR UNARYEXPR TERMAUX {termtype_self_inh, termtype_self_type, typeauxheritage_termaux_inh, termauxnode_termaux_inhnode, termauxnode_self_syn, termauxcode_termaux_inhcode, termauxcode_self_syncode }
+TERMAUX -> & {termauxepsilon_self_syn}
+TERMAUX -> TERMAUX1 {typeheritage_self_type, nodeheritage_termaux1_inhnode, typeheritage_termaux1_inh, nodeheritage_self_syn, codeheritage_self_syn, codeheritage_termaux1_code}
+TERMAUX1 -> SIGN UNARYEXPR TERMAUX1 {termtype_self_inh, termtype_self_type, typeauxheritage_termaux1_inh, termauxnode_termaux1_inhnode, termauxnode_self_syn, termauxcode_termaux1_inhcode, termauxcode_self_syncode}
+TERMAUX1 -> & {termauxepsilon_self_syn, termtype2_self_inh, termauxepsilon_self_syncode}
+
+ATRIBSTAT -> LVALUE equal ATRIBSTATAUX semicolon {idheritage_self_id, enforcetype_self_type, nodetoscope_self_node, atribcode_self_code}
+ATRIBSTATAUX -> EXPRESSION {typeheritage_self_type, nodeheritage_self_syn, codeheritage_self_syncode}
+
+EXPRESSION -> NUMEXPRESSION EXPRESSION_AUX {typeheritage_self_type, nodeheritage_self_syn, codeheritage_self_syncode}
+EXPRESSION_AUX -> comparator NUMEXPRESSION | &
+
+NUMEXPRESSION -> TERM NUMEXPRESSION_AUX {typeheritage_self_type, nodeheritage_self_syn, codeheritage_self_syncode}
+NUMEXPRESSION_AUX -> &
+# NUMEXPRESSION_AUX -> OPERATOR TERM NUMEXPRESSION_AUX Ambiguous
+
+LVALUE -> id LVALUE_AUX {getid_self_id, gettype_self_type}
+LVALUE_AUX -> open_square_bracket NUMEXPRESSION close_square_bracket LVALUE_AUX
+LVALUE_AUX -> &
