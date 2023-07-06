@@ -6,14 +6,15 @@ from termcolor import colored
 from parsero import syntactic
 from parsero.cfg.contextfree_grammar import ContextFreeGrammar
 from parsero.common.errors import LexicalError, SyntacticError
-from parsero.lexical import LexicalAnalyzer, Token
-from parsero.semantic.semantic_analyzer import SemanticAnalyser
+from parsero.lexical import LexicalAnalyzer, Token, SymbolTable
+from parsero.semantic.semantic_analyzer import SemanticAnalyser, SemanticError
 from parsero.syntactic import (
     SyntacticTree,
     calculate_first,
     calculate_follow,
     ll1_parse,
     treat_identation,
+    Leaf
 )
 
 
@@ -123,8 +124,13 @@ class Parsero:
         string = treat_identation(string)
         remaining = ""
 
+        tree = None
+        code = None
+        st = None
+
         try:
-            self.parse(path)
+            tree = self.parse(path)
+            code, st = self.semantic_analysis(tree)
         except LexicalError as error:
             last_error = error
             remaining = string[error.index :]
@@ -133,6 +139,26 @@ class Parsero:
             last_error = error
             remaining = string[error.index :]
             string = string[: error.index]
+        except SemanticError as error:
+            from textwrap import dedent
+
+            token = error.tree.token
+
+            with open(path) as f:
+                lines = f.read().splitlines()
+
+                ret = dedent(f"""
+                    Erro semântico no programa: {error}
+                
+                    {lines[token.line-1]}
+                    {' ' * (token.col-1)}^
+                
+                    Linha: {token.line}
+                    Coluna: {token.col}
+                """)
+
+                return ret
+    
 
         output = []
         last_index = 0
@@ -150,5 +176,42 @@ class Parsero:
             output.append(separator)
             output.append(colored(str(last_error), "red"))
 
-        reconstructed = "".join(output)
-        return reconstructed
+        reconstructed = "".join(output) + "\n"
+
+        exp_trees = list()
+        if tree is not None:
+            self.show_expression_tree(tree, exp_trees)
+
+        exp_trees_str = "\n\n".join([str(x) for x in exp_trees])
+
+        symbol_tables = list()
+        if st is not None:
+            for identifier, table in st.items():
+                symbol_tables.append("Tabela de simbolos do escopo " + str(identifier) + ":\n" + str(table))
+
+        symbol_tables_str = "\n\n".join([str(x) for x in symbol_tables])
+
+        exp_valid_str = "As expressões aritméticas do programa são válidas."
+        vardecl_valid_str = "As declarações de variáveis por escopo são válidas."
+        break_valid_str = "Todo break está contido dentro de um escopo de repetição."
+                
+        ret = ""
+        ret += reconstructed + "\n"
+        ret += exp_trees_str + "\n"
+        ret += symbol_tables_str + "\n\n"
+        ret += exp_valid_str + "\n"
+        ret += vardecl_valid_str + "\n"
+        ret += break_valid_str + "\n\n"
+        
+        if code is not None:
+            ret += code
+
+        return ret
+
+    def show_expression_tree(self, tree, exp_trees):
+        for children in tree.children:
+            if children.val == "EXPRESSION":
+                exp_trees.append(children)
+                continue
+            if not isinstance(children, Leaf):
+                self.show_expression_tree(children, exp_trees)

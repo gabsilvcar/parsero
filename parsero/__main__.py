@@ -21,8 +21,9 @@ def welcome_message():
 
 def parsero_cli():
     filename_regex = "examples/ConvCC-2023-1/regex.regex"
-    filename_ghm = "examples/ConvCC-2023-1/gramatica.ghm"
-    parsero_obj = Parsero(filename_regex, filename_ghm, True)
+    filename_ghm = "examples/ConvCC-2023-1/EXPA/wip_expa_completo.ghm12"
+    filename_semantic_lib = "examples/ConvCC-2023-1/EXPA/semantics/expa.py"
+    parsero_obj = Parsero(filename_regex, filename_ghm, False, filename_semantic_lib)
     while True:
         print("Forneça o arquivo para analisar")
         filename_word = askopenfilename(
