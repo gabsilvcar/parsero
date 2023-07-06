@@ -8,6 +8,8 @@ TYPE -> string {string_self_type}
 STATEMENT -> VARDECL semicolon {statement_self_type}
 STATEMENT -> open_curly_bracket STATELIST close_curly_bracket {scope_self_inh, scope_statelist_inh}
 STATEMENT -> ATRIBSTAT {}
+STATEMENT -> FORSTAT {}
+STATEMENT -> break semicolon {break_self_inh}
 
 VARDECL -> TYPE id VARDECL1 {vardcl_self_type, vardcl_vardecl1_inh}
 VARDECL1 -> open_square_bracket int_constant close_square_bracket VARDECL1 {vardcl1_self_type, vardcl1_vardecl1_inh}
@@ -19,6 +21,8 @@ STATELISTAUX -> & {}
 
 PROGRAM -> STATEMENT {}
 PROGRAM -> & {}
+
+FORSTAT -> for open_bracket ATRIBSTAT semicolon EXPRESSION semicolon ATRIBSTAT close_bracket STATEMENT {scope_self_inh, scope_forstat_inh}
 
 TYPE -> int {int_self_type}
 TYPE -> float {float_self_type}

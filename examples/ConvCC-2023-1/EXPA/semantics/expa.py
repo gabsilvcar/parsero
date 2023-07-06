@@ -6,6 +6,11 @@ from parsero.syntactic import Leaf, Node, SyntacticTree
 class IncompatibleTypes(SemanticError):
     def __init__(self, lhs_type: str, rhs_type: str, tree: SyntacticTree):
         super().__init__(f"Tipos incompatíveis: {lhs_type} e {rhs_type}", tree)
+        
+class BreakOutsideLoopScope(SemanticError):
+    def __init__(self, lhs_type: str, rhs_type: str, tree: SyntacticTree):
+        super().__init__(f"Break fora de escopo de loop", tree)
+
 
 class ScopeEntry:
     def __init__(self):
@@ -44,18 +49,29 @@ class Semantics:
         self.cfg = cfg
         self.tree = tree
         self.code = ""
+        self.scope_counter = 0
+        self.loop_scope_counter = 0
 
         self.scope_list = [dict()]
-
+        self.scope_keeper = dict()
+        self.scope_keeper[0] = self._get_current_scope()
 
     def _get_current_scope(self):
         return self.scope_list[len(self.scope_list) - 1]
 
-    def _push_scope(self):
+    def _push_scope(self, is_loop_scope):
+        self.scope_counter += 1
         self.scope_list.append(dict())
+        self.scope_keeper[self.scope_counter] = self._get_current_scope()
+
+        if is_loop_scope or self.loop_scope_counter > 0:
+            self.loop_scope_counter += 1
 
     def _pop_scope(self):
         self.scope_list.pop()
+
+        if self.loop_scope_counter > 0:
+            self.loop_scope_counter -= 1
 
     # TODO throw error
     def _get_from_scope(self, symbol):
@@ -67,6 +83,9 @@ class Semantics:
         if not symbol in self._get_current_scope():
             self._get_current_scope()[symbol] = ScopeEntry()
         return self._get_current_scope()[symbol]
+
+    def _check_break_forscope(self):
+        return self.loop_scope_counter > 0
 
     def int_self_type(self, head):
         head.struct.type = "integer"
@@ -212,7 +231,14 @@ class Semantics:
         self._pop_scope()
 
     def scope_statelist_inh(self, head):
-        self._push_scope()
+        self._push_scope(False)
+
+    def scope_forstat_inh(self, head):
+        self._push_scope(True)
+
+    def break_self_inh(self, head):
+        if not self._check_break_forscope():
+            raise BreakOutsideLoopScope("", "", head)
 
     def nodefromscope_self_node(self, head):
         head.struct.node = self._get_from_scope(head.children[0].struct.id).node

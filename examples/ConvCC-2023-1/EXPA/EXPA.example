@@ -8,7 +8,8 @@ c = 1  *  2 + 3;
 {
   int x;
   a = "scope";
+  for (i = 1; i <= 2; i = i + 1) {
+  	break;
+  }
 }
-int z;
-z = c;
 }

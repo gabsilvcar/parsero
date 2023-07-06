@@ -1,0 +1,111 @@
+# OK
+PROGRAM -> STATEMENT {}
+PROGRAM -> FUNCLIST {}
+PROGRAM -> & {}
+
+# OK
+FUNCLIST -> def id open_bracket PARAMLIST close_bracket open_curly_bracket STATELIST close_curly_bracket FUNCLIST0 {}
+FUNCLIST0 -> & | def id open_bracket PARAMLIST close_bracket open_curly_bracket STATELIST close_curly_bracket FUNCLIST0 {}
+
+# OK
+FUNCDEF -> def id open_bracket PARAMLIST close_bracket open_curly_bracket STATELIST close_curly_bracket {}
+
+# OK
+TYPE -> int {int_self_type}
+TYPE -> float {float_self_type}
+TYPE -> string {string_self_type}
+
+# OK
+PARAMLIST -> & | float PARAMLIST0 | int PARAMLIST0 | string PARAMLIST0 {}
+PARAMLIST0 -> id PARAMLIST1 {}
+PARAMLIST1 -> & | comma PARAMLIST {}
+
+# OK
+SIGN -> plus | minus
+OPERATOR ->  mult | div | mod
+
+# OK?
+STATEMENT -> VARDECL semicolon {statement_self_type}
+STATEMENT -> open_curly_bracket STATELIST close_curly_bracket {scope_self_inh, scope_statelist_inh}
+STATEMENT -> IF_STMT | ATRIBSTAT semicolon | FORSTAT | VARDECL semicolon | PRINTSTAT semicolon | READSTAT semicolon | RETURNSTAT semicolon | semicolon | break semicolon {}
+STATEMENT -> open_curly_bracket STATEMENT_AUX0 {}
+STATEMENT_AUX0 -> STATELIST close_curly_bracket {}
+STATEMENT_AUX0 -> FUNCLIST close_curly_bracket {}
+
+
+# OK
+IF_STMT -> if open_bracket EXPRESSION close_bracket SIMPLE_IF_STATE_AUX IF_STMT0 {}
+IF_STMT0 -> & | else IF_STMT1 {}
+IF_STMT1 -> STATEMENT {}
+IF_SIMPLE -> if open_bracket EXPRESSION close_bracket SIMPLE_IF_STATE_AUX {}
+SIMPLE_IF_STATE_AUX -> open_curly_bracket STATELIST close_curly_bracket {}
+
+# OK
+VARDECL -> TYPE id VARDECL1 {vardcl_self_type, vardcl_vardecl1_inh}
+VARDECL1 -> open_square_bracket int_constant close_square_bracket VARDECL1 {vardcl1_self_type, vardcl1_vardecl1_inh}
+VARDECL1 -> & {vardcl1epsilon_self_t}
+
+# NOT OK
+ATRIBSTAT -> LVALUE equal ATRIBSTATAUX {idheritage_self_id, enforcetype_self_type}
+ATRIBSTATAUX -> EXPRESSION {typeheritage_self_type}
+ATRIBSTATAUX -> ALLOCEXPRESSION {}
+
+# OK
+FUNCCALL -> id open_bracket PARAMLISTCALL close_bracket {}
+
+# OK
+PARAMLISTCALL -> & | id PARAMLISTCALL0 {}
+PARAMLISTCALL0 -> & | comma PARAMLISTCALL {}
+
+# OK
+PRINTSTAT -> print EXPRESSION {}
+READSTAT -> read LVALUE {}
+RETURNSTAT -> return {}
+
+# OK
+FORSTAT -> for open_bracket ATRIBSTAT semicolon EXPRESSION semicolon ATRIBSTAT close_bracket STATEMENT {}
+
+# OK
+STATELIST -> STATEMENT STATELISTAUX {}
+STATELISTAUX -> STATELIST {}
+STATELISTAUX -> & {}
+
+# OK
+ALLOCEXPRESSION -> new TYPE open_square_bracket NUMEXPRESSION close_square_bracket ALLOCEXPRESSION_AUX {}
+ALLOCEXPRESSION_AUX -> open_square_bracket NUMEXPRESSION close_square_bracket | & {}
+
+# OK
+EXPRESSION -> NUMEXPRESSION EXPRESSION_AUX {typeheritage_self_type} {}
+EXPRESSION_AUX -> comparator NUMEXPRESSION | & {}
+
+# OK, precisa descomentar abaixo prob
+NUMEXPRESSION -> TERM NUMEXPRESSION_AUX {typeheritage_self_type} {}
+NUMEXPRESSION_AUX -> & {}
+# NUMEXPRESSION_AUX -> OPERATOR TERM NUMEXPRESSION_AUX Ambiguous
+
+# OK
+TERM -> UNARYEXPR TERMAUX {typeheritage_termaux_inh, termnode_termaux_inhnode, typeheritage_self_type, termnode_self_node}
+TERMAUX -> OPERATOR UNARYEXPR TERMAUX {termtype_self_inh, termtype_self_type, typeauxheritage_termaux_inh, termauxnode_termaux_inhnode, termauxnode_self_syn}
+TERMAUX -> & {termauxepsilon_self_syn}
+TERMAUX -> TERMAUX1 {typeheritage_self_type, nodeheritage_termaux1_inhnode, typeheritage_termaux1_inh, nodeheritage_self_syn}
+TERMAUX1 -> SIGN UNARYEXPR TERMAUX1 {termtype_self_inh, termtype_self_type, typeauxheritage_termaux1_inh, termauxnode_termaux1_inhnode, termauxnode_self_syn}
+TERMAUX1 -> & {termauxepsilon_self_syn}
+
+# OK
+# UNARYEXPR -> SIGN FACTOR {unarytypeheritage_self_type} Unnecessary, I think
+UNARYEXPR -> FACTOR {typeheritage_self_type, getnode_self_node}
+
+# OK
+FACTOR -> int_constant {factorint_self_type, unaryexpr_self_node}
+FACTOR -> float_constant {factorfloat_self_type, unaryexpr_self_node}
+FACTOR -> string_constant {factorstring_self_type, unaryexpr_self_node}
+FACTOR -> null {factornull_self_type, unaryexpr_self_node}
+# TODO unaryexpr_self_node
+FACTOR -> open_bracket NUMEXPRESSION close_bracket {typeheritage_self_type}
+# TODO
+FACTOR -> LVALUE {}
+
+# OK
+LVALUE -> id LVALUE_AUX {getid_self_id}
+LVALUE_AUX -> open_square_bracket NUMEXPRESSION close_square_bracket LVALUE_AUX {}
+LVALUE_AUX -> & {}
