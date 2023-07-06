@@ -22,6 +22,9 @@ class BreakOutsideLoopScope(SemanticError):
     def __init__(self, lhs_type: str, rhs_type: str, tree: SyntacticTree):
         super().__init__(f"Break fora de escopo de loop", tree)
 
+class InvalidSymbol(SemanticError):
+    def __init__(self, symbol: str, tree: SyntacticTree):
+        super().__init__(f"Simbolo {symbol} nao encontrado na tabela de simbolos", tree)
 
 class ScopeEntry:
     def __init__(self):
@@ -87,18 +90,20 @@ class Semantics:
             self.loop_scope_counter -= 1
 
     # TODO throw error
-    def _get_from_scope(self, symbol):
+    def _get_from_scope(self, symbol, tree):
         for scope in self.scope_list:
             if symbol in scope:
                 return scope[symbol]
 
-    def _get_entry_from_scope(self, symbol):
-        scope_entry = self._get_from_scope(symbol)
-        if not scope_entry:
+        raise InvalidSymbol(symbol, tree)
+
+    def _get_entry_from_scope(self, symbol, tree):
+        try:
+            scope_entry = self._get_from_scope(symbol, tree)
+            return scope_entry
+        except:
             self._get_current_scope()[symbol] = ScopeEntry()
             return self._get_current_scope()[symbol]
-        else:
-            return scope_entry
 
     def _check_break_forscope(self):
         return self.loop_scope_counter > 0
@@ -117,7 +122,7 @@ class Semantics:
 
     def vardcl_self_type(self, head):
         head.struct.type = head.children[2].struct.type
-        self._get_entry_from_scope(head.children[1].entry).type = head.struct.type
+        self._get_entry_from_scope(head.children[1].entry, head).type = head.struct.type
     def alloc_self_type(self, head):
         head.struct.type = head.children[2].struct.type
 
@@ -159,7 +164,7 @@ class Semantics:
         head.struct.type = head.children[1].struct.type
 
     def enforcetype_self_type(self, head: SyntacticTree):
-        lhs = self._get_from_scope(head.struct.id).type
+        lhs = self._get_from_scope(head.struct.id, head).type
         rhs = head.children[2].struct.type
         head.struct.type = rhs
         if lhs != rhs and rhs != "null":
@@ -178,8 +183,8 @@ class Semantics:
     # TODO matrix access
     def getid_self_id(self, head):
         head.struct.id = head.children[0].entry
-        head.struct.node = self._get_from_scope(head.struct.id).node
-        head.struct.type = self._get_from_scope(head.struct.id).type
+        head.struct.node = self._get_from_scope(head.struct.id, head).node
+        head.struct.type = self._get_from_scope(head.struct.id, head).type
 
     def termtype_self_type(self, head):
         lhs = head.struct.inh
@@ -282,11 +287,11 @@ class Semantics:
             raise BreakOutsideLoopScope("", "", head)
 
     def nodefromscope_self_node(self, head):
-        head.struct.node = self._get_from_scope(head.children[0].struct.id).node
-        head.struct.type = self._get_from_scope(head.children[0].struct.id).type
+        head.struct.node = self._get_from_scope(head.children[0].struct.id, head).node
+        head.struct.type = self._get_from_scope(head.children[0].struct.id, head).type
 
     def nodetoscope_self_node(self, head):
-        self._get_entry_from_scope(head.children[0].struct.id).node = head.children[2].struct.syn
+        self._get_entry_from_scope(head.children[0].struct.id, head).node = head.children[2].struct.syn
 
     def copy_self_struct(self, head):
         head.struct = head.children[0].struct

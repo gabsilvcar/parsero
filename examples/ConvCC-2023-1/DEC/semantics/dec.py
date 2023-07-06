@@ -21,6 +21,7 @@ class Semantics:
         self.cfg = cfg
         self.tree = tree
         self.code = ""
+        self.scope_keeper = dict()
 
     def int_self_type(self, head):
         head.struct.type = "integer"

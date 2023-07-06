@@ -26,7 +26,7 @@ OPERATOR ->  mult | div | mod
 
 # OK?
 STATEMENT -> VARDECL semicolon {statement_self_type}
-STATEMENT -> open_curly_bracket STATELIST close_curly_bracket {scope_self_inh, scope_statelist_inh}
+#STATEMENT -> open_curly_bracket STATELIST close_curly_bracket {scope_self_inh, scope_statelist_inh}
 STATEMENT -> IF_STMT {}
 STATEMENT -> ATRIBSTAT semicolon {}
 STATEMENT -> FORSTAT {}
@@ -36,8 +36,9 @@ STATEMENT -> READSTAT semicolon {}
 STATEMENT -> RETURNSTAT semicolon {}
 STATEMENT -> semicolon {}
 STATEMENT -> break semicolon {break_self_inh}
+STATEMENT -> FUNCCALL semicolon {}
 STATEMENT -> open_curly_bracket STATEMENT_AUX0 {}
-STATEMENT_AUX0 -> STATELIST close_curly_bracket {}
+STATEMENT_AUX0 -> STATELIST close_curly_bracket {scope_self_inh, scope_statelist_inh}
 STATEMENT_AUX0 -> FUNCLIST close_curly_bracket {}
 
 
@@ -53,13 +54,13 @@ VARDECL -> TYPE id VARDECL1 {vardcl_self_type, vardcl_vardecl1_inh}
 VARDECL1 -> open_square_bracket int_constant close_square_bracket VARDECL1 {vardcl1_self_type, vardcl1_vardecl1_inh}
 VARDECL1 -> & {vardcl1epsilon_self_t}
 
-# NOT OK
+# OK
 ATRIBSTAT -> LVALUE equal ATRIBSTATAUX {idheritage_self_id, enforcetype_self_type, nodetoscope_self_node}
 ATRIBSTATAUX -> EXPRESSION {typeheritage_self_type, nodeheritage_self_syn}
 ATRIBSTATAUX -> ALLOCEXPRESSION {typeheritage_self_type}
 
 # OK
-FUNCCALL -> id open_bracket PARAMLISTCALL close_bracket {}
+FUNCCALL -> call id open_bracket PARAMLISTCALL close_bracket {}
 
 # OK
 PARAMLISTCALL -> & {}

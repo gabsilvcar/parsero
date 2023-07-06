@@ -24,6 +24,10 @@ class SemanticAnalyser:
         return self.semantic_handler.code, self.symbol_tables
 
     def _generate_symbol_tables(self):
+        if len(self.semantic_handler.scope_keeper) == 0:
+            self.symbol_tables = None
+            return
+
         for identifier, symbol_table in self.semantic_handler.scope_keeper.items():
             st = SymbolTable()
             for symbol, entry in symbol_table.items():
