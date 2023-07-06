@@ -3,10 +3,21 @@ from parsero.semantic.semantic_analyzer import SemanticError
 from parsero.syntactic import Leaf, Node, SyntacticTree
 
 
+class ValueNotDefined(SemanticError):
+    def __init__(self, token: Leaf | Node, tree: SyntacticTree):
+        super().__init__(f"Valor não definido em {tree.val} na produção {token.val}", tree)
+
+
+class HeritageNotDefined(SemanticError):
+    def __init__(self, heritage_type: str, tree: SyntacticTree):
+        super().__init__(f"Nenhum valor herdado do tipo {heritage_type} em {tree.val} na produção {' '.join(tree.prod)}", tree)
+
+
 class IncompatibleTypes(SemanticError):
     def __init__(self, lhs_type: str, rhs_type: str, tree: SyntacticTree):
         super().__init__(f"Tipos incompatíveis: {lhs_type} e {rhs_type}", tree)
-        
+
+
 class BreakOutsideLoopScope(SemanticError):
     def __init__(self, lhs_type: str, rhs_type: str, tree: SyntacticTree):
         super().__init__(f"Break fora de escopo de loop", tree)
@@ -16,6 +27,7 @@ class ScopeEntry:
     def __init__(self):
         self.type = None
         self.node = None
+
 
 class Struct:
     def __init__(self):
@@ -108,8 +120,10 @@ class Semantics:
         head.children[2].struct.inh = head.children[0].struct.type
 
     def vardcl1_self_type(self, head):
-        assert head.children[1].val is not None
-        assert head.children[3].struct.type is not None
+        if head.children[1].entry is None:
+            raise ValueNotDefined(head.children[1], head)
+        if head.children[3].struct.type is None:
+            raise ValueNotDefined(head.children[3], head)
 
         head.struct.type = [head.children[1].entry, head.children[3].struct.type]
 
@@ -129,7 +143,7 @@ class Semantics:
         if head.children[0].struct.type is None:
             print(self.tree)
             print(head)
-        assert head.children[0].struct.type is not None
+            raise ValueNotDefined(head.children[0], head)
         head.struct.type = head.children[0].struct.type
 
     def termtype2_self_inh(self, head):
@@ -168,7 +182,8 @@ class Semantics:
             raise IncompatibleTypes(lhs, rhs, head)
 
     def termtype_self_inh(self, head):
-        assert head.struct.inh is not None
+        if head.struct.inh is None:
+            raise HeritageNotDefined('inh', head)
         head.children[2].struct.inh = head.struct.inh
 
     def typeheritage_termaux_inh(self, head):
@@ -191,7 +206,8 @@ class Semantics:
         head.struct.node = head.children[0].struct.node
 
     def termnode_self_node(self, head):
-        assert head.children[1].struct.syn is not None
+        if head.children[1].struct.syn is None:
+            raise ValueNotDefined(head.children[1], head)
         head.struct.syn = head.children[1].struct.syn
 
     def termnode_termaux_inhnode(self, head):
@@ -200,7 +216,7 @@ class Semantics:
         if UNARYEXPR.struct.node is None:
             print(self.tree)
             print(head)
-        assert UNARYEXPR.struct.node is not None
+            raise ValueNotDefined(UNARYEXPR, head)
         TERMAUX.struct.inhnode = UNARYEXPR.struct.node
 
     def termauxnode_termaux_inhnode(self, head):
@@ -214,21 +230,26 @@ class Semantics:
     def _node_maker(self, head, sign):
         UNARYEXPR = head.children[2]
         TERMAUX = head.children[1]
-        assert head.struct.inhnode is not None
-        assert TERMAUX.struct.node is not None
+        if head.struct.inhnode is None:
+            raise HeritageNotDefined('inhnode', head)
+        if TERMAUX.struct.node is None:
+            raise ValueNotDefined(TERMAUX, head)
         UNARYEXPR.struct.inhnode = Node(head.val, [sign, head.struct.inhnode, TERMAUX.struct.node])
 
     def termauxnode_self_syn(self, head):
         UNARYEXPR = head.children[2]
-        assert UNARYEXPR.struct.syn is not None
+        if UNARYEXPR.struct.syn is None:
+            raise ValueNotDefined(UNARYEXPR, head)
         head.struct.syn = UNARYEXPR.struct.syn
 
     def termauxepsilon_self_syn(self, head):
-        assert head.struct.inhnode is not None
+        if head.struct.inhnode is None:
+            raise HeritageNotDefined('inhnode', head)
         head.struct.syn = head.struct.inhnode
 
     def termauxepsilon_self_type(self, head):
-        assert head.struct.inh is not None
+        if head.struct.inh is None:
+            raise HeritageNotDefined('inh', head)
         head.struct.type = head.struct.inh
 
     def nodeheritage_termaux1_inhnode(self, head):
