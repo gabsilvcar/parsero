@@ -34,7 +34,8 @@ class Struct:
             response.append("Type = {}".format(self.type))
         if self.inh:
             response.append("Inherited = {}".format(self.inh))
-        #
+        if self.id:
+            response.append("Id = {}".format(self.id))
         if self.syn:
             response.append("syn = {}".format(self.syn))
         if self.node:
@@ -125,6 +126,9 @@ class Semantics:
         head.struct.type = "integer"
 
     def typeheritage_self_type(self, head):
+        if head.children[0].struct.type is None:
+            print(self.tree)
+            print(head)
         assert head.children[0].struct.type is not None
         head.struct.type = head.children[0].struct.type
 
@@ -153,6 +157,8 @@ class Semantics:
     # TODO matrix access
     def getid_self_id(self, head):
         head.struct.id = head.children[0].entry
+        head.struct.node = self._get_from_scope(head.struct.id).node
+        head.struct.type = self._get_from_scope(head.struct.id).type
 
     def termtype_self_type(self, head):
         lhs = head.struct.inh
@@ -191,6 +197,9 @@ class Semantics:
     def termnode_termaux_inhnode(self, head):
         UNARYEXPR = head.children[0]
         TERMAUX = head.children[1]
+        if UNARYEXPR.struct.node is None:
+            print(self.tree)
+            print(head)
         assert UNARYEXPR.struct.node is not None
         TERMAUX.struct.inhnode = UNARYEXPR.struct.node
 
@@ -246,9 +255,10 @@ class Semantics:
 
     def nodefromscope_self_node(self, head):
         head.struct.node = self._get_from_scope(head.children[0].struct.id).node
+        head.struct.type = self._get_from_scope(head.children[0].struct.id).type
 
     def nodetoscope_self_node(self, head):
         self._get_entry_from_scope(head.children[0].struct.id).node = head.children[2].struct.syn
 
-    def gettype_self_type(self, head):
-        head.struct.type = self._get_entry_from_scope(head.struct.id).type
+    def copy_self_struct(self, head):
+        head.struct = head.children[0].struct

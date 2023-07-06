@@ -4,11 +4,11 @@ PROGRAM -> FUNCLIST {}
 PROGRAM -> & {}
 
 # OK
-FUNCLIST -> def id open_bracket PARAMLIST close_bracket open_curly_bracket STATELIST close_curly_bracket FUNCLIST0 {}
-FUNCLIST0 -> & | def id open_bracket PARAMLIST close_bracket open_curly_bracket STATELIST close_curly_bracket FUNCLIST0 {}
+FUNCLIST -> def id open_bracket PARAMLIST close_bracket open_curly_bracket STATELIST close_curly_bracket FUNCLIST0
+FUNCLIST0 -> & | def id open_bracket PARAMLIST close_bracket open_curly_bracket STATELIST close_curly_bracket FUNCLIST0
 
 # OK
-FUNCDEF -> def id open_bracket PARAMLIST close_bracket open_curly_bracket STATELIST close_curly_bracket {}
+FUNCDEF -> def id open_bracket PARAMLIST close_bracket open_curly_bracket STATELIST close_curly_bracket
 
 # OK
 TYPE -> int {int_self_type}
@@ -16,9 +16,9 @@ TYPE -> float {float_self_type}
 TYPE -> string {string_self_type}
 
 # OK
-PARAMLIST -> & | float PARAMLIST0 | int PARAMLIST0 | string PARAMLIST0 {}
-PARAMLIST0 -> id PARAMLIST1 {}
-PARAMLIST1 -> & | comma PARAMLIST {}
+PARAMLIST -> & | float PARAMLIST0 | int PARAMLIST0 | string PARAMLIST0
+PARAMLIST0 -> id PARAMLIST1
+PARAMLIST1 -> & | comma PARAMLIST
 
 # OK
 SIGN -> plus | minus
@@ -27,7 +27,15 @@ OPERATOR ->  mult | div | mod
 # OK?
 STATEMENT -> VARDECL semicolon {statement_self_type}
 STATEMENT -> open_curly_bracket STATELIST close_curly_bracket {scope_self_inh, scope_statelist_inh}
-STATEMENT -> IF_STMT | ATRIBSTAT semicolon | FORSTAT | VARDECL semicolon | PRINTSTAT semicolon | READSTAT semicolon | RETURNSTAT semicolon | semicolon | break semicolon {}
+STATEMENT -> IF_STMT {}
+STATEMENT -> ATRIBSTAT semicolon {}
+STATEMENT -> FORSTAT {}
+STATEMENT -> VARDECL semicolon {}
+STATEMENT -> PRINTSTAT semicolon {}
+STATEMENT -> READSTAT semicolon {}
+STATEMENT -> RETURNSTAT semicolon {}
+STATEMENT -> semicolon {}
+STATEMENT -> break semicolon {}
 STATEMENT -> open_curly_bracket STATEMENT_AUX0 {}
 STATEMENT_AUX0 -> STATELIST close_curly_bracket {}
 STATEMENT_AUX0 -> FUNCLIST close_curly_bracket {}
@@ -35,7 +43,7 @@ STATEMENT_AUX0 -> FUNCLIST close_curly_bracket {}
 
 # OK
 IF_STMT -> if open_bracket EXPRESSION close_bracket SIMPLE_IF_STATE_AUX IF_STMT0 {}
-IF_STMT0 -> & | else IF_STMT1 {}
+IF_STMT0 -> & | else IF_STMT1
 IF_STMT1 -> STATEMENT {}
 IF_SIMPLE -> if open_bracket EXPRESSION close_bracket SIMPLE_IF_STATE_AUX {}
 SIMPLE_IF_STATE_AUX -> open_curly_bracket STATELIST close_curly_bracket {}
@@ -46,16 +54,18 @@ VARDECL1 -> open_square_bracket int_constant close_square_bracket VARDECL1 {vard
 VARDECL1 -> & {vardcl1epsilon_self_t}
 
 # NOT OK
-ATRIBSTAT -> LVALUE equal ATRIBSTATAUX {idheritage_self_id, enforcetype_self_type}
-ATRIBSTATAUX -> EXPRESSION {typeheritage_self_type}
+ATRIBSTAT -> LVALUE equal ATRIBSTATAUX {idheritage_self_id, enforcetype_self_type, nodetoscope_self_node}
+ATRIBSTATAUX -> EXPRESSION {typeheritage_self_type, nodeheritage_self_syn}
 ATRIBSTATAUX -> ALLOCEXPRESSION {}
 
 # OK
 FUNCCALL -> id open_bracket PARAMLISTCALL close_bracket {}
 
 # OK
-PARAMLISTCALL -> & | id PARAMLISTCALL0 {}
-PARAMLISTCALL0 -> & | comma PARAMLISTCALL {}
+PARAMLISTCALL -> & {}
+PARAMLISTCALL -> id PARAMLISTCALL0 {}
+PARAMLISTCALL0 -> &  {}
+PARAMLISTCALL0 -> comma PARAMLISTCALL {}
 
 # OK
 PRINTSTAT -> print EXPRESSION {}
@@ -72,14 +82,15 @@ STATELISTAUX -> & {}
 
 # OK
 ALLOCEXPRESSION -> new TYPE open_square_bracket NUMEXPRESSION close_square_bracket ALLOCEXPRESSION_AUX {}
-ALLOCEXPRESSION_AUX -> open_square_bracket NUMEXPRESSION close_square_bracket | & {}
+ALLOCEXPRESSION_AUX -> open_square_bracket NUMEXPRESSION close_square_bracket | &
 
 # OK
-EXPRESSION -> NUMEXPRESSION EXPRESSION_AUX {typeheritage_self_type} {}
-EXPRESSION_AUX -> comparator NUMEXPRESSION | & {}
+EXPRESSION -> NUMEXPRESSION EXPRESSION_AUX {typeheritage_self_type, nodeheritage_self_syn}
+EXPRESSION_AUX -> comparator NUMEXPRESSION {}
+EXPRESSION_AUX -> & {}
 
 # OK, precisa descomentar abaixo prob
-NUMEXPRESSION -> TERM NUMEXPRESSION_AUX {typeheritage_self_type} {}
+NUMEXPRESSION -> TERM NUMEXPRESSION_AUX {typeheritage_self_type, nodeheritage_self_syn}
 NUMEXPRESSION_AUX -> & {}
 # NUMEXPRESSION_AUX -> OPERATOR TERM NUMEXPRESSION_AUX Ambiguous
 
@@ -89,7 +100,7 @@ TERMAUX -> OPERATOR UNARYEXPR TERMAUX {termtype_self_inh, termtype_self_type, ty
 TERMAUX -> & {termauxepsilon_self_syn}
 TERMAUX -> TERMAUX1 {typeheritage_self_type, nodeheritage_termaux1_inhnode, typeheritage_termaux1_inh, nodeheritage_self_syn}
 TERMAUX1 -> SIGN UNARYEXPR TERMAUX1 {termtype_self_inh, termtype_self_type, typeauxheritage_termaux1_inh, termauxnode_termaux1_inhnode, termauxnode_self_syn}
-TERMAUX1 -> & {termauxepsilon_self_syn}
+TERMAUX1 -> & {termauxepsilon_self_syn, termauxepsilon_self_type}
 
 # OK
 # UNARYEXPR -> SIGN FACTOR {unarytypeheritage_self_type} Unnecessary, I think
@@ -103,7 +114,7 @@ FACTOR -> null {factornull_self_type, unaryexpr_self_node}
 # TODO unaryexpr_self_node
 FACTOR -> open_bracket NUMEXPRESSION close_bracket {typeheritage_self_type}
 # TODO
-FACTOR -> LVALUE {}
+FACTOR -> LVALUE {copy_self_struct}
 
 # OK
 LVALUE -> id LVALUE_AUX {getid_self_id}
