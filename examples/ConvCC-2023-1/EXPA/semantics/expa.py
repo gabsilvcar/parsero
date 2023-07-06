@@ -93,9 +93,12 @@ class Semantics:
                 return scope[symbol]
 
     def _get_entry_from_scope(self, symbol):
-        if not symbol in self._get_current_scope():
+        scope_entry = self._get_from_scope(symbol)
+        if not scope_entry:
             self._get_current_scope()[symbol] = ScopeEntry()
-        return self._get_current_scope()[symbol]
+            return self._get_current_scope()[symbol]
+        else:
+            return scope_entry
 
     def _check_break_forscope(self):
         return self.loop_scope_counter > 0
@@ -280,6 +283,7 @@ class Semantics:
 
     def nodetoscope_self_node(self, head):
         self._get_entry_from_scope(head.children[0].struct.id).node = head.children[2].struct.syn
+        self._get_entry_from_scope(head.children[0].struct.id).type = head.children[2].struct.type
 
     def copy_self_struct(self, head):
         head.struct = head.children[0].struct
