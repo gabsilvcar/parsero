@@ -1,4 +1,7 @@
 {
+int m[2];
+m = new int[2];
+
 string a;
 a = "teste";
 a = null;

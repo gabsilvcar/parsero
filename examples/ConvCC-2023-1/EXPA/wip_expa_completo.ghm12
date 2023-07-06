@@ -56,7 +56,7 @@ VARDECL1 -> & {vardcl1epsilon_self_t}
 # NOT OK
 ATRIBSTAT -> LVALUE equal ATRIBSTATAUX {idheritage_self_id, enforcetype_self_type, nodetoscope_self_node}
 ATRIBSTATAUX -> EXPRESSION {typeheritage_self_type, nodeheritage_self_syn}
-ATRIBSTATAUX -> ALLOCEXPRESSION {}
+ATRIBSTATAUX -> ALLOCEXPRESSION {typeheritage_self_type}
 
 # OK
 FUNCCALL -> id open_bracket PARAMLISTCALL close_bracket {}
@@ -81,8 +81,7 @@ STATELISTAUX -> STATELIST {}
 STATELISTAUX -> & {}
 
 # OK
-ALLOCEXPRESSION -> new TYPE open_square_bracket NUMEXPRESSION close_square_bracket ALLOCEXPRESSION_AUX {}
-ALLOCEXPRESSION_AUX -> open_square_bracket NUMEXPRESSION close_square_bracket | &
+ALLOCEXPRESSION -> new TYPE VARDECL1 {alloc_self_type, alloc_vardecl1_inh}
 
 # OK
 EXPRESSION -> NUMEXPRESSION EXPRESSION_AUX {typeheritage_self_type, nodeheritage_self_syn}

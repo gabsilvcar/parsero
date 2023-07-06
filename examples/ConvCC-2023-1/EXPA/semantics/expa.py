@@ -118,6 +118,11 @@ class Semantics:
     def vardcl_self_type(self, head):
         head.struct.type = head.children[2].struct.type
         self._get_entry_from_scope(head.children[1].entry).type = head.struct.type
+    def alloc_self_type(self, head):
+        head.struct.type = head.children[2].struct.type
+
+    def alloc_vardecl1_inh(self,  head):
+        head.children[2].struct.inh = head.children[1].struct.type
 
     def vardcl_vardecl1_inh(self, head):
         head.children[2].struct.inh = head.children[0].struct.type
@@ -144,8 +149,6 @@ class Semantics:
 
     def typeheritage_self_type(self, head):
         if head.children[0].struct.type is None:
-            print(self.tree)
-            print(head)
             raise ValueNotDefined(head.children[0], head)
         head.struct.type = head.children[0].struct.type
 
