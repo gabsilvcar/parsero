@@ -22,8 +22,7 @@ def run_cli():
     while True:
         print(
 """
-Escolha a gramatica desejada para o Parsero
-    
+Escolha a gramatica desejada para o Parsero  
 (1) Gramatica EXPA (declaracoes e expressoes aritmeticas)
 (2) Gramatica DEC (apenas declaracoes)
 (3) Gramatica para Geracao de Codigo Intermediario
@@ -32,6 +31,10 @@ Escolha a gramatica desejada para o Parsero
     
         param = []
         choice = str(input())
+        if choice not in ["0", "1", "2", "3"]:
+            print("Escolha invalida. Escolha entre 0-3")
+            continue
+
         if choice == "0":
             break
         elif choice == "1":
@@ -40,8 +43,6 @@ Escolha a gramatica desejada para o Parsero
             param = dec_param
         elif choice == "3":
             param = gci_param
-        else:
-            print("Escolha invalida. Escolha entre 0-3\n\n")
     
         parsero_cli(param)
 
