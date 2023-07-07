@@ -56,12 +56,15 @@ class Semantics:
         self.scope_keeper = dict()
         self.label_counter = 0
 
+        self.while_keeper = []
+
     def _get_label(self):
         self.label_counter += 1
         return self.label_counter
+
     def _get_addr(self, item=None) -> int:
         self.memory_size += 1
-        if item : self.memory[item] = self.memory_size
+        if item: self.memory[item] = self.memory_size
         return self.memory_size
 
     def _get_current_scope(self):
@@ -311,8 +314,9 @@ class Semantics:
         UNARYEXPR.struct.inhaddr = self._get_addr()
         UNARYEXPR.struct.code += head.struct.code
         UNARYEXPR.struct.code += TERMAUX.struct.code
-        UNARYEXPR.struct.code += "{} = {} {} {}\n".format(self._treat_addr(UNARYEXPR.struct.inhaddr), self._treat_addr(head.struct.inhaddr),
-                                                             sign, self._treat_addr(TERMAUX.struct.addr))
+        UNARYEXPR.struct.code += "{} = {} {} {}\n".format(self._treat_addr(UNARYEXPR.struct.inhaddr),
+                                                          self._treat_addr(head.struct.inhaddr),
+                                                          sign, self._treat_addr(TERMAUX.struct.addr))
 
     def termauxcode_self_syncode(self, head):
         UNARYEXPR = head.children[2]
@@ -352,6 +356,7 @@ class Semantics:
             return "t" + tmp
         else:
             return tmp
+
     def if_simpleif_code(self, head):
         label = "L" + str(self._get_label())
         self.code += "if False {} goto {}\n".format(self._treat_addr(head.children[2].struct.addr), label)
@@ -359,3 +364,18 @@ class Semantics:
 
     def if_self_code(self, head):
         self.code += "{}:\n".format(head.struct.label)
+
+    def while_statement_code(self, head):
+        label = "L" + str(self._get_label())
+        self.code += "{}:\n".format(label)
+        head.struct.label = label
+        scapelabel = "L" + str(self._get_label())
+        head.struct.scapelabel = scapelabel
+        self.while_keeper.append(scapelabel)
+
+    def while_self_code(self, head):
+        self.code += "goto {}\n".format(head.struct.label)
+        self.code += "{}:\n".format(head.struct.scapelabel)
+
+    def break_self_inh(self, head):
+        self.code += "goto {}\n".format(self.while_keeper.pop())

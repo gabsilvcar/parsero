@@ -5,16 +5,20 @@ TYPE -> int {}
 TYPE -> float {}
 TYPE -> string {}
 
+STATEMENT -> break semicolon {break_self_inh}
 STATEMENT -> VARDECL semicolon {}
 STATEMENT -> open_curly_bracket STATELIST close_curly_bracket {}
 STATEMENT -> ATRIBSTAT {}
 STATEMENT -> IF_STMT {}
+STATEMENT -> WHILESTAT {}
 
 IF_STMT -> if open_bracket EXPRESSION close_bracket SIMPLEIF IF_STMT0 {if_simpleif_code, if_self_code}
 IF_STMT0 -> & | else IF_STMT1
 IF_STMT1 -> STATEMENT {}
 IF_SIMPLE -> if open_bracket EXPRESSION close_bracket SIMPLEIF {}
 SIMPLEIF -> open_curly_bracket STATELIST close_curly_bracket {}
+
+WHILESTAT ->  while open_bracket EXPRESSION close_bracket STATEMENT {while_statement_code,while_self_code}
 
 
 VARDECL -> TYPE id VARDECL1 {}

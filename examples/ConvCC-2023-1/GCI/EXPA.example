@@ -1,10 +1,11 @@
 {
-int a;
-int b;
-a = 5;
-
-if (a < 2) {
-   a = 1;
+int i;
+i = 0;
+while (i) {
+    i = i + 1;
+    if (i == 5) {
+        break;
+    }
 }
-b = 20;
+i = 100;
 }
