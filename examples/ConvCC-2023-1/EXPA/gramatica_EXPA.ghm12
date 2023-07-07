@@ -29,7 +29,7 @@ PARAMLIST1 -> comma PARAMLIST {paramcollector_paramlist_paraminh, paramcollector
 SIGN -> plus | minus
 OPERATOR ->  mult | div | mod
 
-# OK?
+# OK
 STATEMENT -> VARDECL semicolon {statement_self_type}
 #STATEMENT -> open_curly_bracket STATELIST close_curly_bracket {scope_self_inh, scope_statelist_inh}
 STATEMENT -> IF_STMT {}
@@ -120,9 +120,7 @@ FACTOR -> int_constant {factorint_self_type, unaryexpr_self_node}
 FACTOR -> float_constant {factorfloat_self_type, unaryexpr_self_node}
 FACTOR -> string_constant {factorstring_self_type, unaryexpr_self_node}
 FACTOR -> null {factornull_self_type, unaryexpr_self_node}
-# TODO unaryexpr_self_node
 FACTOR -> open_bracket NUMEXPRESSION close_bracket {typeheritage_self_type}
-# TODO
 FACTOR -> LVALUE {copy_self_struct}
 
 # OK
