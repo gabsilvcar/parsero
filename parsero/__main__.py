@@ -22,9 +22,12 @@ def run_cli():
         print(
 """
 Escolha a gramatica desejada para o Parsero  
-(1) Gramatica EXPA (declaracoes e expressoes aritmeticas)
-(2) Gramatica DEC (apenas declaracoes)
-(3) Gramatica para Geracao de Codigo Intermediario
+(1) Gramatica EXPA (DEC + Expressões aritméticas - completo)
+            (arq. de exemplo: exemplo 1-3.lcc, gramatica_expa.lcc)
+(2) Gramatica DEC (Apenas declarações)
+            (arq. de exemplo: exemplo_dec.lcc)
+(3) Gramatica Geradora de Código Intermediário
+            (arq. de exemplo: exemplo_gci.lcc)
 (0) Sair
 """)
     
