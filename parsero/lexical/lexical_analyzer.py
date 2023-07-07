@@ -37,8 +37,10 @@ class LexicalAnalyzer:
         sym_table = SymbolTable()
         tokens = self.tokenize_string(string)
 
-        for word in self.keywords:
-            sym_table.insert(word, word)
+        # add all tokens into the symbols table
+        # as this subject does not consider that, taking it off
+        # for word in self.keywords:
+        #     sym_table.insert(word, word)
 
         for token in tokens:
             if token.name == "id":
@@ -95,7 +97,7 @@ class LexicalAnalyzer:
         """
 
         iterator = enumerate(string)
-        line = 1
+        line = 0
         col = 1
 
         for i, char in iterator:
@@ -107,12 +109,14 @@ class LexicalAnalyzer:
             if lexeme > keyword:
                 consume(len(lexeme) - 1, iterator)
                 tag = self.machine.states[state_index].tag
-                yield Token(tag, lexeme, i)
+                yield Token(tag, lexeme, i, line=line, col=col)
+                col += len(lexeme)
                 continue
 
             if keyword:
                 consume(len(keyword) - 1, iterator)
-                yield Token(keyword, keyword, i)
+                yield Token(keyword, keyword, i, line=line, col=col)
+                col += len(lexeme)
                 continue
 
             # it is a bit slow to ignore blank chars this far, but
@@ -120,6 +124,11 @@ class LexicalAnalyzer:
             # so we cannot ignore spaces before checking
             # the regular definitions
             if char in BLANK:
+                if char == "\n":
+                    line += 1
+                    col = 1
+                else:
+                    col += 1
                 continue
 
             # it should stop before

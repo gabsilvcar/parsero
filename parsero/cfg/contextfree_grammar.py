@@ -7,13 +7,13 @@ from parsero.common.errors import SyntacticError
 
 
 class ContextFreeGrammar:
-    def __init__(self, path_to_file):
+    def __init__(self, path_to_file, semantic_path=None):
         all_symbols = set()
         non_terminal_symbols = set()
         productions = list()
         initial_symbol = ""
         self.path_to_file = path_to_file
-
+        self.semantic_path = semantic_path
         with open(path_to_file, "r") as file:
             while line := file.readline():
                 line = line.strip()
@@ -28,6 +28,12 @@ class ContextFreeGrammar:
                 production_head = production_pieces[0].strip()
                 non_terminal_symbols.add(production_head)
 
+                if "{" in production_pieces[1]:
+                    semantic_pieces = production_pieces[1].split("{", 1)
+                    production_pieces[1] = semantic_pieces[0]
+                    semantic_pieces = semantic_pieces[1][:-1]
+                else:
+                    semantic_pieces = None
                 if initial_symbol == "":
                     initial_symbol = production_head
 
@@ -42,15 +48,23 @@ class ContextFreeGrammar:
                         all_symbols.add(symbol)
 
                     production_rule.append(production)
+                entry: tuple = next((tup for tup in productions if tup[0] == production_head), None)
 
-                productions.append((production_head, production_rule))
+                # Allows declaration of same production head multiple times
+                if entry:
+                    lentry = list(entry)
+                    lentry[1] += production_rule
+                    lentry[2].append(semantic_pieces)
+                    productions[productions.index(entry)] = lentry
+                else:
+                    productions.append((production_head, production_rule, [semantic_pieces]))
 
         terminal_symbols = all_symbols - non_terminal_symbols
 
         self.non_terminal_symbols = non_terminal_symbols
         self.terminal_symbols = terminal_symbols
         self.initial_symbol = initial_symbol
-        self.production_rules = self.__create_production_rule(productions)
+        self.__create_production_rule(productions)
         self.original_symbol = dict()
 
         self.__sort_productions()
@@ -61,11 +75,22 @@ class ContextFreeGrammar:
         """
 
         production_rules = defaultdict(list)
+        semantic_rules = defaultdict(lambda: defaultdict(list))
 
-        for symbol, production in productions:
+        for symbol, production, semantic_rule in productions:
             production_rules[symbol] = production
+            if semantic_rule[0]:
+                for i in range(0, len(production)):
+                    semantic_rules[symbol][",".join(str(x) for x in production[i])] = semantic_rule[i]
+        self.production_rules = production_rules
+        self.semantic_rules = semantic_rules
 
-        return production_rules
+    def get_rules(self, head, prod: list):
+        rules = self.semantic_rules[head][",".join(str(x) for x in prod)]
+        if len(rules) > 0:
+            return rules.replace(" ", "").split(",")
+        else:
+            return []
 
     def __sort_productions(self):
         for productions in self.production_rules.values():

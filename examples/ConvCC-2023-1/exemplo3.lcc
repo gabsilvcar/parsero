@@ -1,0 +1,107 @@
+def triangle_area(int b, int h)
+{
+    if (b < 1)
+    {
+        return;
+    }
+
+    if (h < 1)
+    {
+        return;
+    }
+
+    int result;
+    result = b * h;
+    result = result / 2;
+
+    return;
+}
+
+def form_triangle(int l1, int l2, int l3)
+{
+    int sum1;
+    sum1 = l2 + l3;
+
+    if (l1 > sum1)
+    {
+        return;
+    }
+
+    int sum2;
+    sum2 = l1 + l3;
+    if (l2 > sum2)
+    {
+        return;
+    }
+
+    int sum3;
+    sum3 = l1 + l2;
+    if (l3 > sum3)
+    {
+        return;
+    }
+
+    return;
+}
+
+def calc_circle_circumference(float radius)
+{
+    if (radius <= 0.0)
+    {
+        return;
+    }
+
+    float circunference;
+    circunference = 2.0 * 3.14 * radius;
+
+    return;
+}
+
+def calc_circle_area(float radius)
+{
+    if (radius <= 0.0)
+    {
+        return;
+    }
+
+    float area;
+    area = 3.14 * radius * radius;
+    return;
+}
+
+def calc_square_area(int side)
+{
+    if (side < 1)
+    {
+        return;
+    }
+
+    int area;
+    area = side * side;
+    return;
+}
+
+def example()
+{
+    int x;
+    int y;
+    int z;
+
+    x = 20;
+    y = 15;
+
+    call triangle_area(x, y);
+
+    x = 30;
+    y = 25;
+    z = 36;
+
+    call form_triangle(x, y, z);
+
+    float radius;
+    radius = 9.0;
+
+    call calc_circle_circumference(radius);
+
+    call calc_circle_area(radius);
+}

@@ -1,0 +1,99 @@
+PROGRAM -> STATEMENT {}
+PROGRAM -> FUNCLIST {}
+PROGRAM -> & {}
+
+TYPE -> int {}
+TYPE -> float {}
+TYPE -> string {}
+
+STATEMENT -> break semicolon {break_self_inh}
+STATEMENT -> VARDECL semicolon {}
+STATEMENT -> open_curly_bracket STATELIST close_curly_bracket {}
+STATEMENT -> ATRIBSTAT {}
+STATEMENT -> IF_STMT {}
+STATEMENT -> WHILESTAT {}
+STATEMENT -> return semicolon {}
+STATEMENT -> FUNCCALL semicolon {}
+
+IF_STMT -> if open_bracket EXPRESSION close_bracket SIMPLEIF IF_STMT0 {if_simpleif_code, if_self_code}
+IF_STMT0 -> & | else IF_STMT1
+IF_STMT1 -> STATEMENT {}
+IF_SIMPLE -> if open_bracket EXPRESSION close_bracket SIMPLEIF {}
+SIMPLEIF -> open_curly_bracket STATELIST close_curly_bracket {}
+
+WHILESTAT ->  while open_bracket EXPRESSION close_bracket STATEMENT {while_statement_code,while_self_code}
+
+
+VARDECL -> TYPE id VARDECL1 {}
+VARDECL1 -> open_square_bracket int_constant close_square_bracket VARDECL1 {}
+VARDECL1 -> & {}
+
+STATELIST -> STATEMENT STATELISTAUX {}
+STATELISTAUX -> STATELIST {}
+STATELISTAUX -> & {}
+
+PROGRAM -> STATEMENT {}
+PROGRAM -> & {}
+
+TYPE -> int {}
+TYPE -> float {}
+TYPE -> string {}
+
+STATELIST -> STATEMENT STATELISTAUX {}
+STATELISTAUX -> STATELIST {}
+STATELISTAUX -> & {}
+
+SIGN -> plus | minus
+OPERATOR ->  mult | div | mod | comparator
+
+UNARYEXPR -> FACTOR {unarycode_self_code}
+
+FACTOR -> int_constant {factorint_self_code}
+FACTOR -> float_constant {factorfloat_self_code}
+FACTOR -> string_constant {factorstring_self_code}
+FACTOR -> null {factornull_self_code}
+FACTOR -> open_bracket NUMEXPRESSION close_bracket {actorparenthesis_self_code}
+FACTOR -> LVALUE {factorlvalue_self_code}
+
+TERM -> UNARYEXPR TERMAUX {makecode_self_syncode, makecode_termaux_inhcode}
+TERMAUX -> OPERATOR UNARYEXPR TERMAUX {termauxcode_termaux_inhcode, termauxcode_self_syncode }
+TERMAUX -> & {}
+TERMAUX -> TERMAUX1 {codeheritage_self_syn, codeheritage_termaux1_code}
+TERMAUX1 -> SIGN UNARYEXPR TERMAUX1 {termauxcode_termaux1_inhcode, termauxcode_self_syncode}
+TERMAUX1 -> & {termauxepsilon_self_syncode}
+
+ATRIBSTAT -> LVALUE equal ATRIBSTATAUX semicolon {atribcode_self_code, idheritage_self_id}
+ATRIBSTATAUX -> EXPRESSION {codeheritage_self_syncode}
+
+EXPRESSION -> NUMEXPRESSION  {codeheritage_self_syncode}
+
+NUMEXPRESSION -> TERM NUMEXPRESSION_AUX {codeheritage_self_syncode}
+NUMEXPRESSION_AUX -> &
+
+
+# NUMEXPRESSION_AUX -> OPERATOR TERM NUMEXPRESSION_AUX Ambiguous
+
+LVALUE -> id LVALUE_AUX {getid_self_id}
+LVALUE_AUX -> open_square_bracket NUMEXPRESSION close_square_bracket LVALUE_AUX
+LVALUE_AUX -> &
+
+FUNCLIST -> def id open_bracket PARAMLIST close_bracket open_curly_bracket STATELIST close_curly_bracket FUNCLIST0 {paramlist_funclist0_code, paramlist_statelist_code}
+FUNCLIST0 -> def id open_bracket PARAMLIST close_bracket open_curly_bracket STATELIST close_curly_bracket FUNCLIST0 {paramlist_funclist0_code, paramlist_statelist_code}
+FUNCLIST0 -> & {}
+
+
+PARAMLIST -> float PARAMLIST0 {paramcollector_paramlist0_paraminh, paramcollector_self_paramsyn}
+PARAMLIST -> int PARAMLIST0 {paramcollector_paramlist0_paraminh, paramcollector_self_paramsyn}
+PARAMLIST -> string PARAMLIST0 {}
+PARAMLIST -> & {paramcollectorepsilon_self_paramsyn}
+
+PARAMLIST0 -> id PARAMLIST1 {paramcollector_paramlist1_paraminh, paramcollector_self_paramsyn}
+PARAMLIST1 -> & {paramcollectorepsilon_self_paramsyn}
+PARAMLIST1 -> comma PARAMLIST {paramcollector_paramlist_paraminh, paramcollector_self_paramsyn}
+
+FUNCCALL -> call id open_bracket PARAMLISTCALL close_bracket {funccall_self_code}
+
+PARAMLISTCALL -> id PARAMLISTCALL0 {paramcollector_paramlistcall0_paraminh, paramcollector_self_paramsyn}
+PARAMLISTCALL -> & {paramcollectorepsilon_self_paramsyn}
+PARAMLISTCALL0 -> comma PARAMLISTCALL {paramcollector_paramlistcall_paraminh, paramcollector_self_paramsyn}
+PARAMLISTCALL0 -> &  {paramcollectorepsilon_self_paramsyn}

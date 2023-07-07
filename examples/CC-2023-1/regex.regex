@@ -1,0 +1,58 @@
+# Isso é um comentário
+
+# Se o nome é igual a definição
+# então essa é uma palavra reservada
+if:if
+else:else
+while:while
+for:for
+return:return
+break:break
+read:read
+new:new
+print:print
+int:int
+float:float
+string:string
+int_constant:int_constant
+float_constant:float_constant
+string_constant:string_constant
+def:def
+
+# Expressões auxiliares
+# estas expressões fazem parte das
+# definições regulares de outras expressões
+# portanto não serão criados autômatos finitos
+# para elas
+digit: [0-9]
+letter: [a-zA-Z]
+symbols: (_| |!|\=|\&|@|#|$|\%|\&|\||\+|-|\&|\*|'|"|/|\\|\.|,|\[|\]|\(|\)|\{|\}|\<|\>|:|;|\?|\^|\~|\Σ|\→)
+sign: (\+|-)
+decimal: (\.digit*)
+scientific_notation: (e(\+|-)?digit+)
+
+comparator: (==|!=|\<|\>|\<=|\>=)
+operator: (\+|-|\*|/|\||\<\<|\>\>)
+increment: (\+\+|\-\-)
+atr: (=|\+=|\-=|\*=)
+dot: \.
+comma: ,
+colon: :
+semicolon: ;
+backslash: \\
+
+open_curly_bracket: \{
+close_curly_bracket: \}
+open_bracket: \(
+close_bracket: \)
+open_square_bracket: \[
+close_square_bracket: \]
+
+equal: =
+
+symbols_string: (_| |!|\=|\&|@|#|$|\%|\&|\||\+|-|\&|\*|'|"|/|\\|\.|,|\[|\]|\(|\)|\{|\}|\<|\>|:|;|\?|\^|\~|\Σ|\→)
+acentuated: (á|à|â|ã|é|ê|í|ó|ô|ú|ü|ç|Á|À|Â|É|Ê|Í|Ó|Ô|Ú|Ü|Ç)
+inside_string: (\w|\d|symbols_string|acentuated)
+string_text: "inside_string*"
+number: (sign?)(digit+)(decimal?)(scientific_notation?)
+id: letter(letter|digit|_)*

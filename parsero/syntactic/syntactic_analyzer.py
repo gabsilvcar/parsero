@@ -4,6 +4,7 @@ from parsero import regex
 from parsero.cfg.contextfree_grammar import ContextFreeGrammar
 from parsero.common.errors import SyntacticError
 from parsero.lexical.token import Token
+from parsero.syntactic.syntactic_tree import Leaf, Node, SyntacticTree
 
 IS_BLANK = regex.compiles("(( )|\n|\t|↳|↲)*")
 
@@ -115,11 +116,11 @@ def create_table(cfg: ContextFreeGrammar) -> dict:
     return table
 
 
-def ll1_parse(tokens: list, table: dict, cfg: ContextFreeGrammar) -> bool:
-    stack = ["$", cfg.initial_symbol]
+def ll1_parse(tokens: list[Token], table: dict, cfg: ContextFreeGrammar) -> SyntacticTree:
+    stack = ["$", [cfg.initial_symbol, [None, -1]]]  # None represents the origin and 0 the level
     stacktrace = []
     stack_text = "Pilha: {} \nDesempilhado: {} Símbolo: {}"
-
+    tree: SyntacticTree = None
     for token in tokens:
         if token.name == "comment":
             continue
@@ -128,30 +129,44 @@ def ll1_parse(tokens: list, table: dict, cfg: ContextFreeGrammar) -> bool:
         while True:
             before_pop = str(stack)
             current = stack.pop()
-            stacktrace.append(stack_text.format(before_pop, current, symbol))
+            stacktrace.append(stack_text.format(before_pop[0], current[0], symbol))
 
-            if symbol == current:
+            if symbol == current[0]:
+                if symbol != "$":
+                    tree.find_node(current[1][0], current[1][1]).add_child(
+                        Leaf(symbol, token.attribute, token)
+                    )
                 break
 
-            if not (current, symbol) in table:
+            if not (current[0], symbol) in table:
                 # Blank values can't cause error
                 blank_symbol = IS_BLANK.evaluate(token.attribute)
-                if (current != "$") and blank_symbol:
-                    stack.append(current)
+                if (current[0] != "$") and blank_symbol:
+                    stack.append(current[0])
                     break
 
                 msg = f"Failed to parse token {token}. \nCurrent Stack: {stack}"
                 start = token.index
                 end = start + len(token.attribute)
+                print(tree)
                 raise SyntacticError.from_data("", msg, index=start, index_end=end)
 
-            next_symbols = table[(current, symbol)]
+            next_symbols = table[(current[0], symbol)]
+            if tree:
+                tree.find_node(current[1][0], current[1][1]).add_node(
+                    Node(current[0], next_symbols, token=token)
+                )
+                pass
+            else:
+                tree = SyntacticTree(current[0], next_symbols)
             for next_symbol in reversed(next_symbols):
                 if next_symbol != "&":
-                    stack.append(next_symbol)
+                    stack.append([next_symbol, [current[0], current[1][1] + 1]])
 
             if stack[-1] == symbol:
+                tree.find_node(current[0], current[1][1] + 1).add_child(
+                    Leaf(symbol, token.attribute, token)
+                )  # check later
                 stack.pop()
                 break
-
-    return stacktrace
+    return tree

@@ -1,0 +1,104 @@
+def pow(int n, int e)
+{
+    int output;
+    output = 1;
+    int i;
+
+    for (i = 0; i < e; i = i + 1)
+    {
+        output = output * n;
+    }
+
+    print output;
+
+    return;
+}
+
+def calculate_delta(float a, float b, float c)
+{
+    float delta;
+
+    float delta;
+    float delta_2;
+
+    delta = b * b;
+    delta_2 = 4.0 * a * c;
+    delta = delta - delta_2;
+
+    if (delta < 0)
+    {
+        print "Sem raiz";
+    }
+
+    if (delta == 0)
+    {
+        print "Uma raiz real";
+    }
+
+    if (delta > 0)
+    {
+        print "Duas raizes distintas";
+    }
+
+    return;
+}
+
+def bhaskara(float a, float b, float c)
+{
+    float x1;
+    float x2;
+
+    if (a == 0)
+    {
+        print "a deve ser diferente de 0";
+        return;
+    }
+
+    float delta;
+    float delta_2;
+
+    delta = b * b;
+    delta_2 = 4.0 * a * c;
+    delta = delta - delta_2;
+
+    if (delta < 0)
+    {
+        return;
+    }
+
+    if (delta == 0)
+    {
+        b = b * -1.0;
+        float divider;
+        divider = 2.0 * a;
+        x1 = b / divider;
+
+        print "x = ";
+        print x1;
+
+        return;
+    }
+
+    if (delta > 0)
+    {
+        print "delta maior que zero";
+
+        return;
+    }
+
+    return;
+}
+
+def termial(int teste)
+{
+    int result;
+    if (teste == 0) {
+        result = 0;
+        return;
+    }
+    int x;
+    int aux;
+    aux = teste - 1;
+    result = result + 2;
+    return;
+}

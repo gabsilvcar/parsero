@@ -1,0 +1,9 @@
+letter: [a-zA-Z]
+id: letter(letter|digit|\_)*
+
+minus: -
+plus: \+
+open_bracket: \(
+close_bracket: \)
+digit: [0-9]
+number: (digit+)

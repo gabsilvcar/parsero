@@ -1,0 +1,21 @@
+{
+int m[2];
+m = new int[2];
+
+string a;
+a = "teste";
+a = null;
+int b[2][3];
+int c;
+c = 1  *  2 + 3;
+{
+  int x;
+  a = "scope";
+  int i;
+  for (i = 1; i <= 2; i = i + 1) {
+  	if (i == 5) {
+    break;
+    }
+  }
+}
+}

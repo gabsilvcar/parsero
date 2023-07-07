@@ -1,0 +1,9 @@
+E -> T E1 {e_e1_inh, e_self_node}
+
+E1 -> minus T E1 {e1minus_e1_inh, e1_self_syn}
+E1 -> plus T E1 {e1plus_e1_inh, e1_self_syn}
+E1 -> & {e1epsilon_self_syn}
+
+T -> number {tnumber_self_node}
+T -> id {tid_self_node}
+T -> open_bracket E close_bracket {tbracket_self_node}
