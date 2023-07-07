@@ -60,6 +60,10 @@ class Struct:
             response.append("node = {}".format(self.node))
         if self.inhnode:
             response.append("inhnode = {}".format(self.inhnode))
+        if self.paramsyn:
+            response.append("paramsyn = {}".format(self.paramsyn))
+        if self.paraminh:
+            response.append("paraminh = {}".format(self.paraminh))
         return ' - '.join(response)
 
 
@@ -97,7 +101,6 @@ class Semantics:
         for scope in self.scope_list:
             if symbol in scope:
                 return scope[symbol]
-
         raise InvalidSymbol(symbol, tree)
 
     def _get_entry_from_scope(self, symbol, tree):
@@ -112,7 +115,7 @@ class Semantics:
         return self.loop_scope_counter > 0
 
     def int_self_type(self, head):
-        head.struct.type = "integer"
+        head.struct.type = "int"
 
     def float_self_type(self, head):
         head.struct.type = "float"
@@ -154,7 +157,7 @@ class Semantics:
         head.struct.type = "string"
 
     def factorint_self_type(self, head):
-        head.struct.type = "integer"
+        head.struct.type = "int"
 
     def typeheritage_self_type(self, head):
         if head.children[0].struct.type is None:
@@ -274,12 +277,9 @@ class Semantics:
     def typeheritage_termaux1_inh(self, head):
         head.children[0].struct.inh = head.struct.inh
 
-    def paramlist_statelist_code(self, head):
-        label = head.children[1].entry
-        self.code += "{}:\n".format(label)
-
     def paramcollector_paramlist1_paraminh(self, head):
-        head.children[1].struct.paraminh.append(head.children[0].entry)
+        assert head.struct.type is not None
+        head.children[1].struct.paraminh.append([head.children[0].entry, head.struct.type])
         if head.struct.paraminh:
             head.children[1].struct.paraminh += head.struct.paraminh
 
@@ -292,6 +292,8 @@ class Semantics:
             head.children[1].struct.paraminh += head.struct.paraminh
     def paramcollector_paramlist0_paraminh(self, head):
         head.children[1].struct.paraminh = head.struct.paraminh
+        head.children[1].struct.type = head.children[0].entry
+
 
     def paramcollector_paramlistcall_paraminh(self, head):
         head.children[1].struct.paraminh = head.struct.paraminh
@@ -330,3 +332,11 @@ class Semantics:
 
     def copy_self_struct(self, head):
         head.struct = head.children[0].struct
+
+    def self_statelist_scope(self, head):
+        print(self.tree)
+        for entry in head.children[3].struct.paramsyn:
+            id = entry[0]
+            type = entry[1]
+            self._get_entry_from_scope(id, head).type = type
+            self._get_entry_from_scope(id, head).node = Node("inherited_at_execution_time", [])

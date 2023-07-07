@@ -8,7 +8,7 @@ FUNCLIST -> FUNCDEF FUNCLIST0
 FUNCLIST0 -> & | FUNCDEF FUNCLIST0
 
 # OK
-FUNCDEF -> def id open_bracket PARAMLIST close_bracket open_curly_bracket STATELIST close_curly_bracket {scope_self_inh, scope_paramlist_scope}
+FUNCDEF -> def id open_bracket PARAMLIST close_bracket open_curly_bracket STATELIST close_curly_bracket {scope_self_inh, scope_paramlist_scope, self_statelist_scope}
 
 # OK
 TYPE -> int {int_self_type}
