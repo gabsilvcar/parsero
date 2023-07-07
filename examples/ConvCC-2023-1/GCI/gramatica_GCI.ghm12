@@ -1,4 +1,5 @@
 PROGRAM -> STATEMENT {}
+PROGRAM -> FUNCLIST {}
 PROGRAM -> & {}
 
 TYPE -> int {}
@@ -11,6 +12,8 @@ STATEMENT -> open_curly_bracket STATELIST close_curly_bracket {}
 STATEMENT -> ATRIBSTAT {}
 STATEMENT -> IF_STMT {}
 STATEMENT -> WHILESTAT {}
+STATEMENT -> return semicolon {}
+STATEMENT -> FUNCCALL semicolon {}
 
 IF_STMT -> if open_bracket EXPRESSION close_bracket SIMPLEIF IF_STMT0 {if_simpleif_code, if_self_code}
 IF_STMT0 -> & | else IF_STMT1
@@ -73,3 +76,24 @@ NUMEXPRESSION_AUX -> &
 LVALUE -> id LVALUE_AUX {getid_self_id}
 LVALUE_AUX -> open_square_bracket NUMEXPRESSION close_square_bracket LVALUE_AUX
 LVALUE_AUX -> &
+
+FUNCLIST -> def id open_bracket PARAMLIST close_bracket open_curly_bracket STATELIST close_curly_bracket FUNCLIST0 {paramlist_funclist0_code, paramlist_statelist_code}
+FUNCLIST0 -> def id open_bracket PARAMLIST close_bracket open_curly_bracket STATELIST close_curly_bracket FUNCLIST0 {paramlist_funclist0_code, paramlist_statelist_code}
+FUNCLIST0 -> & {}
+
+
+PARAMLIST -> float PARAMLIST0 {paramcollector_paramlist0_paraminh, paramcollector_self_paramsyn}
+PARAMLIST -> int PARAMLIST0 {paramcollector_paramlist0_paraminh, paramcollector_self_paramsyn}
+PARAMLIST -> string PARAMLIST0 {}
+PARAMLIST -> & {paramcollectorepsilon_self_paramsyn}
+
+PARAMLIST0 -> id PARAMLIST1 {paramcollector_paramlist1_paraminh, paramcollector_self_paramsyn}
+PARAMLIST1 -> & {paramcollectorepsilon_self_paramsyn}
+PARAMLIST1 -> comma PARAMLIST {paramcollector_paramlist_paraminh, paramcollector_self_paramsyn}
+
+FUNCCALL -> call id open_bracket PARAMLISTCALL close_bracket {funccall_self_code}
+
+PARAMLISTCALL -> id PARAMLISTCALL0 {paramcollector_paramlistcall0_paraminh, paramcollector_self_paramsyn}
+PARAMLISTCALL -> & {paramcollectorepsilon_self_paramsyn}
+PARAMLISTCALL0 -> comma PARAMLISTCALL {paramcollector_paramlistcall_paraminh, paramcollector_self_paramsyn}
+PARAMLISTCALL0 -> &  {paramcollectorepsilon_self_paramsyn}

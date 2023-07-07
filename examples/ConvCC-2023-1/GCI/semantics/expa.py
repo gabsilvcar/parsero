@@ -29,17 +29,24 @@ class Struct:
         self.code = ""
         self.syncode = ""
 
+        self.paramsyn = []
+        self.paraminh = []
+
     def __str__(self):
         response = []
+        if self.paramsyn:
+            response.append("paramsyn = {}".format(self.paramsyn))
+        if self.paraminh:
+            response.append("paraminh = {}".format(self.paraminh))
 
-        if self.addr:
-            response.append("addr = {}".format(self.addr))
-        if self.inhaddr:
-            response.append("inhaddr = {}".format(self.inhaddr))
-        if self.code:
-            response.append("code = {}".format(self.code))
-        if self.syncode:
-            response.append("syncode = {}".format(self.syncode))
+        # if self.addr:
+        #     response.append("addr = {}".format(self.addr))
+        # if self.inhaddr:
+        #     response.append("inhaddr = {}".format(self.inhaddr))
+        # if self.code:
+        #     response.append("code = {}".format(self.code))
+        # if self.syncode:
+        #     response.append("syncode = {}".format(self.syncode))
         return ', '.join(response)
 
 
@@ -57,6 +64,7 @@ class Semantics:
         self.label_counter = 0
 
         self.while_keeper = []
+        self.headers = dict()
 
     def _get_label(self):
         self.label_counter += 1
@@ -379,3 +387,44 @@ class Semantics:
 
     def break_self_inh(self, head):
         self.code += "goto {}\n".format(self.while_keeper.pop())
+
+    def paramlist_funclist0_code(self, head):
+        func = head.children[1].entry
+        self.headers[func] = []
+
+        for param in head.children[3].struct.paramsyn:
+            self.headers[func].append(param)
+
+    def paramlist_statelist_code(self, head):
+        label = head.children[1].entry
+        self.code += "{}:\n".format(label)
+
+    def paramcollector_paramlist1_paraminh(self, head):
+        head.children[1].struct.paraminh.append(head.children[0].entry)
+        if head.struct.paraminh:
+            head.children[1].struct.paraminh += head.struct.paraminh
+
+    def paramcollector_paramlist_paraminh(self, head):
+        head.children[1].struct.paraminh = head.struct.paraminh
+
+    def paramcollector_paramlistcall0_paraminh(self, head):
+        head.children[1].struct.paraminh.append(head.children[0].entry)
+        if head.struct.paraminh:
+            head.children[1].struct.paraminh += head.struct.paraminh
+    def paramcollector_paramlist0_paraminh(self, head):
+        head.children[1].struct.paraminh = head.struct.paraminh
+
+    def paramcollector_paramlistcall_paraminh(self, head):
+        head.children[1].struct.paraminh = head.struct.paraminh
+
+    def paramcollector_self_paramsyn(self, head):
+        head.struct.paramsyn = head.children[1].struct.paramsyn
+
+    def paramcollectorepsilon_self_paramsyn(self, head):
+        head.struct.paramsyn = head.struct.paraminh
+
+    def funccall_self_code(self, head):
+        func = head.children[1].entry
+        self.code += "goto {}\n".format(func)
+        for i in range(0, len(head.children[3].struct.paramsyn)):
+            self.code += "{} = {}\n".format(head.children[3].struct.paramsyn[i], self.headers[func][i])

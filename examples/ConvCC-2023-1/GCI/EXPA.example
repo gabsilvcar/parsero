@@ -1,11 +1,20 @@
+def foo(int target, int target2)
 {
-int i;
-i = 0;
-while (i) {
-    i = i + 1;
-    if (i == 5) {
-        break;
-    }
+    target = target + 10;
+    return;
 }
-i = 100;
+
+def main()
+{
+    int i;
+    int b;
+    i = 0;
+    call foo(i, b);
+    while (i) {
+        i = i + 1;
+        if (i == 5) {
+            break;
+        }
+    }
+    i = 100;
 }
