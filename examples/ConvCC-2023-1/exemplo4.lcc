@@ -6,7 +6,6 @@ b = 4;
 {
 def teste(int A, int B) {
 int z;
-z = A + B;
 }
 }
 if (a > b) {

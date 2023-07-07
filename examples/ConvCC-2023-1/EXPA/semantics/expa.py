@@ -42,6 +42,9 @@ class Struct:
         self.syn = None
         self.node = None
 
+        self.paramsyn = []
+        self.paraminh = []
+
     def __str__(self):
         response = []
 
@@ -270,6 +273,34 @@ class Semantics:
 
     def typeheritage_termaux1_inh(self, head):
         head.children[0].struct.inh = head.struct.inh
+
+    def paramlist_statelist_code(self, head):
+        label = head.children[1].entry
+        self.code += "{}:\n".format(label)
+
+    def paramcollector_paramlist1_paraminh(self, head):
+        head.children[1].struct.paraminh.append(head.children[0].entry)
+        if head.struct.paraminh:
+            head.children[1].struct.paraminh += head.struct.paraminh
+
+    def paramcollector_paramlist_paraminh(self, head):
+        head.children[1].struct.paraminh = head.struct.paraminh
+
+    def paramcollector_paramlistcall0_paraminh(self, head):
+        head.children[1].struct.paraminh.append(head.children[0].entry)
+        if head.struct.paraminh:
+            head.children[1].struct.paraminh += head.struct.paraminh
+    def paramcollector_paramlist0_paraminh(self, head):
+        head.children[1].struct.paraminh = head.struct.paraminh
+
+    def paramcollector_paramlistcall_paraminh(self, head):
+        head.children[1].struct.paraminh = head.struct.paraminh
+
+    def paramcollector_self_paramsyn(self, head):
+        head.struct.paramsyn = head.children[1].struct.paramsyn
+
+    def paramcollectorepsilon_self_paramsyn(self, head):
+        head.struct.paramsyn = head.struct.paraminh
 
     def scope_self_inh(self, head):
         self._pop_scope()

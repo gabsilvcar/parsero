@@ -209,6 +209,7 @@ class Parsero:
         if code is not None:
             ret += code
 
+        print(tree)
         return ret
 
     def show_expression_tree(self, tree, exp_trees):

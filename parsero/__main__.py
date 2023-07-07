@@ -19,7 +19,6 @@ def welcome_message():
     )
 
 def run_cli():
-    while True:
         print(
 """
 Escolha a gramatica desejada para o Parsero  
@@ -31,12 +30,13 @@ Escolha a gramatica desejada para o Parsero
     
         param = []
         choice = str(input())
-        if choice not in ["0", "1", "2", "3"]:
+        while choice not in ["0", "1", "2", "3"]:
             print("Escolha invalida. Escolha entre 0-3")
-            continue
+            run_cli()
+            return
 
         if choice == "0":
-            break
+            return
         elif choice == "1":
             param = expa_param
         elif choice == "2":

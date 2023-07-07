@@ -16,11 +16,14 @@ TYPE -> float {float_self_type}
 TYPE -> string {string_self_type}
 
 # OK
-PARAMLIST -> float id PARAMLIST0 {}
-PARAMLIST -> int id PARAMLIST0 {}
-PARAMLIST -> string id PARAMLIST0 {}
-PARAMLIST -> & 
-PARAMLIST0 -> & | comma PARAMLIST
+PARAMLIST -> float PARAMLIST0 {paramcollector_paramlist0_paraminh, paramcollector_self_paramsyn}
+PARAMLIST -> int PARAMLIST0 {paramcollector_paramlist0_paraminh, paramcollector_self_paramsyn}
+PARAMLIST -> string PARAMLIST0 {}
+PARAMLIST -> & {paramcollectorepsilon_self_paramsyn}
+
+PARAMLIST0 -> id PARAMLIST1 {paramcollector_paramlist1_paraminh, paramcollector_self_paramsyn}
+PARAMLIST1 -> & {paramcollectorepsilon_self_paramsyn}
+PARAMLIST1 -> comma PARAMLIST {paramcollector_paramlist_paraminh, paramcollector_self_paramsyn}
 
 # OK
 SIGN -> plus | minus
@@ -64,6 +67,10 @@ ATRIBSTATAUX -> ALLOCEXPRESSION {typeheritage_self_type}
 # OK
 FUNCCALL -> call id open_bracket PARAMLISTCALL close_bracket {}
 
+PARAMLISTCALL -> id PARAMLISTCALL0 {paramcollector_paramlistcall0_paraminh, paramcollector_self_paramsyn}
+PARAMLISTCALL -> & {paramcollectorepsilon_self_paramsyn}
+PARAMLISTCALL0 -> comma PARAMLISTCALL {paramcollector_paramlistcall_paraminh, paramcollector_self_paramsyn}
+PARAMLISTCALL0 -> &  {paramcollectorepsilon_self_paramsyn}
 # OK
 PARAMLISTCALL -> & {}
 PARAMLISTCALL -> id PARAMLISTCALL0 {}
