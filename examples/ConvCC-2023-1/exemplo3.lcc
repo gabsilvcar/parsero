@@ -1,18 +1,20 @@
 def triangle_area(int b, int h)
 {
-	if (b < 1)
-	{
-		return;
-	}
+    if (b < 1)
+    {
+        return;
+    }
 
-	if (h < 1)
-	{
-		return;
-	}
+    if (h < 1)
+    {
+        return;
+    }
 
-    result = b * h / 2;
+    int result;
+    result = b * h;
+    result = result / 2;
 
-	return;
+    return;
 }
 
 def form_triangle(int l1, int l2, int l3)
@@ -71,8 +73,8 @@ def calc_square_area(int side)
 {
     if (side < 1)
     {
-		return;
-	}
+        return;
+    }
 
     int area;
     area = side * side;
@@ -88,18 +90,18 @@ def example()
     x = 20;
     y = 15;
 
-    x = triangle_area(x, y);
+    call triangle_area(x, y);
 
     x = 30;
     y = 25;
     z = 36;
 
-    x = form_triangle(x, y, z);
+    call form_triangle(x, y, z);
 
     float radius;
-    radius = 9;
+    radius = 9.0;
 
-    x = calc_circle_circumference(radius);
+    call calc_circle_circumference(radius);
 
-    x = calc_circle_area(radius);
+    call calc_circle_area(radius);
 }

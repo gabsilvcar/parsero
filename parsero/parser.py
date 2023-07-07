@@ -190,7 +190,8 @@ class Parsero:
         symbol_tables = list()
         if st is not None:
             for identifier, table in st.items():
-                symbol_tables.append("Tabela de simbolos do escopo " + str(identifier) + ":\n" + str(table))
+                if len(table.st) > 0:
+                    symbol_tables.append("Tabela de simbolos do escopo " + str(identifier) + ":\n" + str(table))
 
         symbol_tables_str = "\n\n".join([str(x) for x in symbol_tables])
 
@@ -209,7 +210,6 @@ class Parsero:
         if code is not None:
             ret += code
 
-        print(tree)
         return ret
 
     def show_expression_tree(self, tree, exp_trees):

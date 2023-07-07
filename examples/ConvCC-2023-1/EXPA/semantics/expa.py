@@ -98,14 +98,14 @@ class Semantics:
 
     # TODO throw error
     def _get_from_scope(self, symbol, tree):
-        for scope in self.scope_list:
+        for scope in reversed(self.scope_list):
             if symbol in scope:
                 return scope[symbol]
         raise InvalidSymbol(symbol, tree)
 
     def _get_entry_from_scope(self, symbol, tree):
         try:
-            scope_entry = self._get_from_scope(symbol, tree)
+            scope_entry = self._get_current_scope()[symbol]
             return scope_entry
         except:
             self._get_current_scope()[symbol] = ScopeEntry()
@@ -160,7 +160,7 @@ class Semantics:
         head.struct.type = "int"
 
     def typeheritage_self_type(self, head):
-        if head.children[0].struct.type is None:
+        if head.children[0].struct is None or head.children[0].struct.type is None:
             raise ValueNotDefined(head.children[0], head)
         head.struct.type = head.children[0].struct.type
 
@@ -328,13 +328,12 @@ class Semantics:
         head.struct.type = self._get_from_scope(head.children[0].struct.id, head).type
 
     def nodetoscope_self_node(self, head):
-        self._get_entry_from_scope(head.children[0].struct.id, head).node = head.children[2].struct.syn
+        self._get_from_scope(head.children[0].struct.id, head).node = head.children[2].struct.syn
 
     def copy_self_struct(self, head):
         head.struct = head.children[0].struct
 
     def self_statelist_scope(self, head):
-        print(self.tree)
         for entry in head.children[3].struct.paramsyn:
             id = entry[0]
             type = entry[1]

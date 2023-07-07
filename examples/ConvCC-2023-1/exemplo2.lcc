@@ -18,7 +18,12 @@ def calculate_delta(float a, float b, float c)
 {
     float delta;
 
-    delta = (b * b) - (4 * a * c);
+    float delta;
+    float delta_2;
+
+    delta = b * b;
+    delta_2 = 4.0 * a * c;
+    delta = delta - delta_2;
 
     if (delta < 0)
     {
@@ -50,8 +55,11 @@ def bhaskara(float a, float b, float c)
     }
 
     float delta;
+    float delta_2;
 
-    delta = (b * b) - (4 * a * c);
+    delta = b * b;
+    delta_2 = 4.0 * a * c;
+    delta = delta - delta_2;
 
     if (delta < 0)
     {
@@ -60,8 +68,10 @@ def bhaskara(float a, float b, float c)
 
     if (delta == 0)
     {
-        b = b * -1;
-        x1 = b / (2 * a);
+        b = b * -1.0;
+        float divider;
+        divider = 2.0 * a;
+        x1 = b / divider;
 
         print "x = ";
         print x1;
@@ -71,19 +81,7 @@ def bhaskara(float a, float b, float c)
 
     if (delta > 0)
     {
-        float sqrt_delta;
-        sqrt_delta = pow(delta, half);
-
-        b = b * -1;
-        divider = 2 * a;
-
-        x1 = (b + sqrt_delta) / divider;
-        x2 = (b - sqrt_delta) / divider;
-
-        print "x1 = ";
-        print x1;
-        print "\n x2 = ";
-        print x2;
+        print "delta maior que zero";
 
         return;
     }
@@ -101,7 +99,6 @@ def termial(int teste)
     int x;
     int aux;
     aux = teste - 1;
-    x = termial(aux);
-    result = result + x;
+    result = result + 2;
     return;
 }

@@ -67,7 +67,7 @@ def boolean_select() -> bool:
     return selected.lower() == "s" or selected.lower() == "y"
 
 expa_param = ["examples/ConvCC-2023-1/regex.regex", 
-              "examples/ConvCC-2023-1/EXPA/wip_expa_completo.ghm12", 
+              "examples/ConvCC-2023-1/EXPA/gramatica_EXPA.ghm12", 
               "examples/ConvCC-2023-1/EXPA/semantics/__init__.py"]
 
 dec_param = ["examples/ConvCC-2023-1/regex.regex",
