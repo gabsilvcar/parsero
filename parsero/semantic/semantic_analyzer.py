@@ -1,6 +1,6 @@
 from parsero.cfg import ContextFreeGrammar
 from parsero.syntactic import Leaf, Node, SyntacticTree
-
+from parsero.lexical import SymbolTable
 
 class SemanticError(Exception):
     def __init__(self, message: str, tree: SyntacticTree):
@@ -14,11 +14,25 @@ class SemanticAnalyser:
         self.semantic_handler = semantic_lib.Semantics(cfg, tree)
         self.cfg = cfg
         self.st_tree = tree
+        self.symbol_tables = dict()
         self._prepare_node(tree)
 
     def parse(self):
         self._handle(self.st_tree)
-        return self.semantic_handler.code
+        self._generate_symbol_tables()
+        return self.semantic_handler.code, self.symbol_tables
+
+    def _generate_symbol_tables(self):
+        if len(self.semantic_handler.scope_keeper) == 0:
+            self.symbol_tables = None
+            return
+
+        for identifier, symbol_table in self.semantic_handler.scope_keeper.items():
+            st = SymbolTable()
+            for symbol, entry in symbol_table.items():
+                st.insert(symbol, entry.type)
+
+            self.symbol_tables[identifier] = st
 
     def _prepare_node(self, node):
         node.struct = self.semantic_lib.Struct()
@@ -57,5 +71,4 @@ class SemanticAnalyser:
 
     def _execute_rule(self, rule, target):
         to_exec = "self.semantic_handler.{}(target)".format(rule)
-        print(to_exec)
         eval(to_exec)

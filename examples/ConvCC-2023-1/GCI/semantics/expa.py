@@ -7,10 +7,12 @@ class IncompatibleTypes(SemanticError):
     def __init__(self, lhs_type: str, rhs_type: str, tree: SyntacticTree):
         super().__init__(f"Tipos incompatíveis: {lhs_type} e {rhs_type}", tree)
 
+
 class ScopeEntry:
     def __init__(self):
         self.type = None
         self.node = None
+
 
 class Struct:
     def __init__(self):
@@ -27,29 +29,24 @@ class Struct:
         self.code = ""
         self.syncode = ""
 
+        self.paramsyn = []
+        self.paraminh = []
+
     def __str__(self):
         response = []
+        if self.paramsyn:
+            response.append("paramsyn = {}".format(self.paramsyn))
+        if self.paraminh:
+            response.append("paraminh = {}".format(self.paraminh))
 
-        # if self.type:
-        #     response.append("Type = {}".format(self.type))
-        # if self.inh:
-        #     response.append("Inherited = {}".format(self.inh))
-        # #
-        # if self.syn:
-        #     response.append("syn = {}".format(self.syn))
-        # if self.node:
-        #     response.append("node = {}".format(self.node))
-        # if self.inhnode:
-        #     response.append("inhnode = {}".format(self.inhnode))
-
-        if self.addr:
-            response.append("addr = {}".format(self.addr))
-        if self.inhaddr:
-            response.append("inhaddr = {}".format(self.inhaddr))
-        if self.code:
-            response.append("code = {}".format(self.code))
-        if self.syncode:
-            response.append("syncode = {}".format(self.syncode))
+        # if self.addr:
+        #     response.append("addr = {}".format(self.addr))
+        # if self.inhaddr:
+        #     response.append("inhaddr = {}".format(self.inhaddr))
+        # if self.code:
+        #     response.append("code = {}".format(self.code))
+        # if self.syncode:
+        #     response.append("syncode = {}".format(self.syncode))
         return ', '.join(response)
 
 
@@ -61,15 +58,22 @@ class Semantics:
 
         self.scope_list = [dict()]
 
-        self.memory = 0
+        self.memory = dict()
+        self.memory_size = 0
+        self.scope_keeper = dict()
+        self.label_counter = 0
 
+        self.while_keeper = []
+        self.headers = dict()
 
+    def _get_label(self):
+        self.label_counter += 1
+        return self.label_counter
 
-    def _get_addr(self) -> int:
-        addr = self.memory
-        self.memory += 1
-        return addr
-
+    def _get_addr(self, item=None) -> int:
+        self.memory_size += 1
+        if item: self.memory[item] = self.memory_size
+        return self.memory_size
 
     def _get_current_scope(self):
         return self.scope_list[len(self.scope_list) - 1]
@@ -129,7 +133,6 @@ class Semantics:
         head.struct.type = "integer"
 
     def typeheritage_self_type(self, head):
-        assert head.children[0].struct.type is not None
         head.struct.type = head.children[0].struct.type
 
     def termtype2_self_inh(self, head):
@@ -248,7 +251,6 @@ class Semantics:
 
     def makecode_self_syncode(self, head):
         TERMAUX = head.children[1]
-        assert TERMAUX.struct.syncode is not ""
         assert TERMAUX.struct.addr is not None
 
         head.struct.syncode = TERMAUX.struct.syncode
@@ -258,6 +260,8 @@ class Semantics:
     def makecode_termaux_inhcode(self, head):
         UNARYEXPR = head.children[0]
         TERMAUX = head.children[1]
+        if UNARYEXPR.struct.addr is None:
+            print(head.parent.parent)
         assert UNARYEXPR.struct.addr is not None
         assert UNARYEXPR.struct.code is not None
 
@@ -265,46 +269,42 @@ class Semantics:
         TERMAUX.struct.code += UNARYEXPR.struct.code
 
     def factorint_self_code(self, head):
-        addr = self._get_addr()
         id_node = head.children[0]
         id_val = id_node.entry
+        addr = self._get_addr(id_val)
         head.struct.code += "t{} = {}\n".format(str(addr), id_val)
         head.struct.addr = addr
 
     def factorfloat_self_code(self, head):
-        addr = self._get_addr()
         id_node = head.children[0]
         id_val = id_node.entry
+        addr = self._get_addr(id_val)
         head.struct.code += "t{} = {}\n".format(str(addr), id_val)
         head.struct.addr = addr
 
     def factorstring_self_code(self, head):
-        addr = self._get_addr()
         id_node = head.children[0]
         id_val = id_node.entry
+        addr = self._get_addr(id_val)
         head.struct.code += "t{} = {}\n".format(str(addr), id_val)
         head.struct.addr = addr
 
     def factornull_self_code(self, head):
-        addr = self._get_addr()
         id_node = head.children[0]
         id_val = id_node.entry
+        addr = self._get_addr(id_val)
         head.struct.code += "t{} = {}\n".format(str(addr), id_val)
         head.struct.addr = addr
 
     def factorparenthesis_self_code(self, head):
-        addr = self._get_addr()
         id_node = head.children[0]
         id_val = id_node.entry
+        addr = self._get_addr(id_val)
         head.struct.code += "t{} = {}\n".format(str(addr), id_val)
         head.struct.addr = addr
 
     def factorlvalue_self_code(self, head):
-        addr = self._get_addr()
-        id_node = head.children[0]
-        id_val = id_node.entry
-        head.struct.code += "t{} = {}\n".format(str(addr), id_val)
-        head.struct.addr = addr
+        head.struct.addr = head.children[0].struct.id
 
     def termauxcode_termaux_inhcode(self, head):
         SIGN = head.children[0]
@@ -322,7 +322,9 @@ class Semantics:
         UNARYEXPR.struct.inhaddr = self._get_addr()
         UNARYEXPR.struct.code += head.struct.code
         UNARYEXPR.struct.code += TERMAUX.struct.code
-        UNARYEXPR.struct.code += "t{} = t{} {} t{}\n".format(str(UNARYEXPR.struct.inhaddr), str(head.struct.inhaddr), sign, TERMAUX.struct.addr)
+        UNARYEXPR.struct.code += "{} = {} {} {}\n".format(self._treat_addr(UNARYEXPR.struct.inhaddr),
+                                                          self._treat_addr(head.struct.inhaddr),
+                                                          sign, self._treat_addr(TERMAUX.struct.addr))
 
     def termauxcode_self_syncode(self, head):
         UNARYEXPR = head.children[2]
@@ -332,10 +334,8 @@ class Semantics:
         head.struct.addr = UNARYEXPR.struct.addr
 
     def termauxepsilon_self_syncode(self, head):
-        assert head.struct.code is not ""
         head.struct.syncode = head.struct.code
         head.struct.addr = head.struct.inhaddr
-
 
     def unarycode_self_code(self, head):
         head.struct.code = head.children[0].struct.code
@@ -349,14 +349,82 @@ class Semantics:
         head.children[0].struct.code = head.struct.code
         head.children[0].struct.inhaddr = head.struct.inhaddr
 
-
     def codeheritage_self_syncode(self, head):
         head.struct.syncode = head.children[0].struct.syncode
         head.struct.addr = head.children[0].struct.addr
 
     def atribcode_self_code(self, head):
         id = head.children[0].struct.id
-
         taddr = head.children[2].struct.addr
         self.code += "{} = t{}\n".format(id, taddr)
 
+    def _treat_addr(self, addr):
+        tmp = str(addr)
+        if tmp.isnumeric():
+            return "t" + tmp
+        else:
+            return tmp
+
+    def if_simpleif_code(self, head):
+        label = "L" + str(self._get_label())
+        self.code += "if False {} goto {}\n".format(self._treat_addr(head.children[2].struct.addr), label)
+        head.struct.label = label
+
+    def if_self_code(self, head):
+        self.code += "{}:\n".format(head.struct.label)
+
+    def while_statement_code(self, head):
+        label = "L" + str(self._get_label())
+        self.code += "{}:\n".format(label)
+        head.struct.label = label
+        scapelabel = "L" + str(self._get_label())
+        head.struct.scapelabel = scapelabel
+        self.while_keeper.append(scapelabel)
+
+    def while_self_code(self, head):
+        self.code += "goto {}\n".format(head.struct.label)
+        self.code += "{}:\n".format(head.struct.scapelabel)
+
+    def break_self_inh(self, head):
+        self.code += "goto {}\n".format(self.while_keeper.pop())
+
+    def paramlist_funclist0_code(self, head):
+        func = head.children[1].entry
+        self.headers[func] = []
+
+        for param in head.children[3].struct.paramsyn:
+            self.headers[func].append(param)
+
+    def paramlist_statelist_code(self, head):
+        label = head.children[1].entry
+        self.code += "{}:\n".format(label)
+
+    def paramcollector_paramlist1_paraminh(self, head):
+        head.children[1].struct.paraminh.append(head.children[0].entry)
+        if head.struct.paraminh:
+            head.children[1].struct.paraminh += head.struct.paraminh
+
+    def paramcollector_paramlist_paraminh(self, head):
+        head.children[1].struct.paraminh = head.struct.paraminh
+
+    def paramcollector_paramlistcall0_paraminh(self, head):
+        head.children[1].struct.paraminh.append(head.children[0].entry)
+        if head.struct.paraminh:
+            head.children[1].struct.paraminh += head.struct.paraminh
+    def paramcollector_paramlist0_paraminh(self, head):
+        head.children[1].struct.paraminh = head.struct.paraminh
+
+    def paramcollector_paramlistcall_paraminh(self, head):
+        head.children[1].struct.paraminh = head.struct.paraminh
+
+    def paramcollector_self_paramsyn(self, head):
+        head.struct.paramsyn = head.children[1].struct.paramsyn
+
+    def paramcollectorepsilon_self_paramsyn(self, head):
+        head.struct.paramsyn = head.struct.paraminh
+
+    def funccall_self_code(self, head):
+        func = head.children[1].entry
+        self.code += "goto {}\n".format(func)
+        for i in range(0, len(head.children[3].struct.paramsyn)):
+            self.code += "{} = {}\n".format(head.children[3].struct.paramsyn[i], self.headers[func][i])
