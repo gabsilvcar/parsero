@@ -18,11 +18,37 @@ def welcome_message():
     """
     )
 
+def run_cli():
+    while True:
+        print(
+"""
+Escolha a gramatica desejada para o Parsero
+    
+(1) Gramatica EXPA (declaracoes e expressoes aritmeticas)
+(2) Gramatica DEC (apenas declaracoes)
+(3) Gramatica para Geracao de Codigo Intermediario
+(0) Sair
+""")
+    
+        param = []
+        choice = str(input())
+        if choice == "0":
+            break
+        elif choice == "1":
+            param = expa_param
+        elif choice == "2":
+            param = dec_param
+        elif choice == "3":
+            param = gci_param
+        else:
+            print("Escolha invalida. Escolha entre 0-3\n\n")
+    
+        parsero_cli(param)
 
-def parsero_cli():
-    filename_regex = "examples/ConvCC-2023-1/regex.regex"
-    filename_ghm = "examples/ConvCC-2023-1/EXPA/wip_expa_completo.ghm12"
-    filename_semantic_lib = "examples/ConvCC-2023-1/EXPA/semantics/expa.py"
+def parsero_cli(fileparam):
+    filename_regex = fileparam[0]
+    filename_ghm = fileparam[1]
+    filename_semantic_lib = fileparam[2]
     parsero_obj = Parsero(filename_regex, filename_ghm, False, filename_semantic_lib)
     while True:
         print("Forneça o arquivo para analisar")
@@ -39,7 +65,17 @@ def boolean_select() -> bool:
     selected = input("s/n: ")
     return selected.lower() == "s" or selected.lower() == "y"
 
+expa_param = ["examples/ConvCC-2023-1/regex.regex", 
+              "examples/ConvCC-2023-1/EXPA/wip_expa_completo.ghm12", 
+              "examples/ConvCC-2023-1/EXPA/semantics/__init__.py"]
 
+dec_param = ["examples/ConvCC-2023-1/regex.regex",
+             "examples/ConvCC-2023-1/DEC/gramatica_DEC.ghm12",
+             "examples/ConvCC-2023-1/DEC/semantics/__init__.py"]
+
+gci_param = ["examples/ConvCC-2023-1/regex.regex",
+             "examples/ConvCC-2023-1/GCI/gramatica_GCI.ghm12",
+             "examples/ConvCC-2023-1/GCI/semantics/__init__.py"]
 # os.system("cls||clear")
 welcome_message()
-parsero_cli()
+run_cli()

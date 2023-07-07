@@ -178,6 +178,9 @@ class Parsero:
 
         reconstructed = "".join(output) + "\n"
 
+        if last_error:
+            return reconstructed
+
         exp_trees = list()
         if tree is not None:
             self.show_expression_tree(tree, exp_trees)
