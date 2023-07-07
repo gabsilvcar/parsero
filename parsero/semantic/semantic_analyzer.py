@@ -6,7 +6,6 @@ class SemanticError(Exception):
     def __init__(self, message: str, tree: SyntacticTree):
         super().__init__(message)
         self.tree = tree
-        print(tree.parent)
 
 
 class SemanticAnalyser:

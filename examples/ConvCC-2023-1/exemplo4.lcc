@@ -3,7 +3,15 @@ int a;
 int b;
 a = 5;
 b = 4;
+{
+def teste(int A, int B) {
+int z;
+z = A + B;
+}
+}
 if (a > b) {
-print a;
+int c;
+} else {
+int d;
 }
 }

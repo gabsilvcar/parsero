@@ -19,7 +19,7 @@ class IncompatibleTypes(SemanticError):
 
 
 class BreakOutsideLoopScope(SemanticError):
-    def __init__(self, lhs_type: str, rhs_type: str, tree: SyntacticTree):
+    def __init__(self, tree: SyntacticTree):
         super().__init__(f"Break fora de escopo de loop", tree)
 
 class InvalidSymbol(SemanticError):
@@ -123,6 +123,7 @@ class Semantics:
     def vardcl_self_type(self, head):
         head.struct.type = head.children[2].struct.type
         self._get_entry_from_scope(head.children[1].entry, head).type = head.struct.type
+
     def alloc_self_type(self, head):
         head.struct.type = head.children[2].struct.type
 
@@ -168,7 +169,6 @@ class Semantics:
         rhs = head.children[2].struct.type
         head.struct.type = rhs
         if lhs != rhs and rhs != "null":
-            print(self.tree)
             raise IncompatibleTypes(lhs, rhs, head)
 
     def factorfloat_self_type(self, head):
@@ -226,8 +226,6 @@ class Semantics:
         UNARYEXPR = head.children[0]
         TERMAUX = head.children[1]
         if UNARYEXPR.struct.node is None:
-            print(self.tree)
-            print(head)
             raise ValueNotDefined(UNARYEXPR, head)
         TERMAUX.struct.inhnode = UNARYEXPR.struct.node
 
@@ -279,12 +277,18 @@ class Semantics:
     def scope_statelist_inh(self, head):
         self._push_scope(False)
 
+    def scope_funclist_inh(self, head):
+        self._push_scope(False)
+
+    def scope_paramlist_scope(self, head):
+        self._push_scope(False)
+
     def scope_statement_for(self, head):
         self._push_scope(True)
 
     def break_self_inh(self, head):
         if not self._check_break_forscope():
-            raise BreakOutsideLoopScope("", "", head)
+            raise BreakOutsideLoopScope(head)
 
     def nodefromscope_self_node(self, head):
         head.struct.node = self._get_from_scope(head.children[0].struct.id, head).node
